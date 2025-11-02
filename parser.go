@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"sync"
+	// "sync"
 	"time"
 
 	"github.com/gocolly/colly/v2"
@@ -19,9 +19,7 @@ type DownloadInfo struct {
 	URL        string
 	Version    string
 	Loader     string
-	LoaderType string
 	Downloads  string
-	Screenshots []string
 }
 
 type MinecraftMod struct {
@@ -31,6 +29,7 @@ type MinecraftMod struct {
 	Description string
 	Versions    []string
 	Screenshots []string
+	Loaders     []string
 	Details     []DownloadInfo
 }
 
@@ -71,29 +70,6 @@ func ScrapeMinecraftInsideModsFull(page int) ([]MinecraftMod, error) {
 	c.Wait()
 	log.Printf("✅ Found %d mods on page %d", len(mods), page)
 
-	const maxWorkers = 5
-	sem := make(chan struct{}, maxWorkers)
-	var wg sync.WaitGroup
-
-	for i := range mods {
-		wg.Add(1)
-		sem <- struct{}{}
-
-		go func(mod *MinecraftMod) {
-			defer wg.Done()
-			defer func() { <-sem }()
-
-			time.Sleep(300 * time.Millisecond)
-			if err := ScrapeMinecraftPageMod(mod); err != nil {
-				log.Printf("⚠️ Error scraping mod '%s': %v", mod.Name, err)
-			} else {
-				log.Printf("✅ Scraped mod: %s", mod.Name)
-			}
-		}(&mods[i])
-	}
-
-	wg.Wait()
-	log.Printf("✅ Page %d: all mods scraped successfully", page)
 	return mods, nil
 }
 
@@ -186,39 +162,33 @@ func ScrapDetails(link string) (MinecraftMod, error) {
 	var screenshots []string
 	c.OnHTML("img[src*='/uploads/files/']", func(e *colly.HTMLElement) {
 		imgSrc := e.Attr("src")
-		fmt.Printf("Found image with uploads path: %s\n", imgSrc)
 		
 		if strings.Contains(imgSrc, "/mini/") {
 			absoluteURL := e.Request.AbsoluteURL(imgSrc)
 			found := slices.Contains(screenshots, absoluteURL)
 			
 			if !found {
-				screenshots = append(screenshots, absoluteURL)
-				fmt.Printf("✅ Added image from uploads selector: %s\n", absoluteURL)
-				
+				screenshots = append(screenshots, absoluteURL)			
 			}
 		}
 	})
 
+	c.OnHTML("td.dl__info", func(e *colly.HTMLElement) {
+		download := DownloadInfo{
+			URL:       e.Request.AbsoluteURL(e.ChildAttr("a", "href")),
+			Version:   parseVersion(e.ChildText("span.dl__name")),
+			Downloads: parseDownloadCount(e.ChildAttr("span.dl__link", "title")),
+		}
 
-	c.OnHTML("td.dl__info", func(h *colly.HTMLElement) {
-		var detail DownloadInfo
-		detail.URL = h.ChildAttr("a","href")
-
-		h.ForEach("span.dl__name", func(_ int, el *colly.HTMLElement) {
-			vers := strings.TrimSpace(el.Text)
-			data := strings.Split(vers, " ")
-			
-			detail.Version = data[1]
-
-			if len(data) > 2 {
-				detail.Loader = data[2]
-			}
-
-			
-			mod.Details = append(mod.Details, detail)
-		
+		var loaders []string
+		e.ForEach("span.dl__loader", func(_ int, el *colly.HTMLElement) {
+			loaders = append(loaders, strings.TrimSpace(el.Text))
 		})
+		download.Loader = strings.Join(loaders, ", ")
+
+		if download.URL != "" {
+			mod.Details = append(mod.Details, download)
+		}
 	})
 
     c.Visit(link)
@@ -267,10 +237,10 @@ func removeDuplicates(urls []string) []string {
 
 func ParseModBlock(e *colly.HTMLElement) MinecraftMod {
 	name, versions := nameParser(strings.TrimSpace(e.ChildText("h2.box__title a")), "[")
-
 	return MinecraftMod{
 		Name:        name,
 		Versions:    nameVersionParse(versions),
+		Loaders: 	 e.ChildAttrs("i.icon", "title"),	
 		ModPageLink: e.Request.AbsoluteURL(e.ChildAttr("h2.box__title a", "href")),
 		Icon:        e.Request.AbsoluteURL(e.ChildAttr("a.post__cover img", "src")),
 		Description: cleanDescription(e.ChildText("div.box__body > div:first-child"), name),
@@ -309,7 +279,18 @@ func parseVersion(text string) string {
 	if idx := strings.Index(text, "<span"); idx != -1 {
 		text = strings.TrimSpace(text[:idx])
 	}
-	return strings.TrimPrefix(text, "Для ")
+
+	text = strings.TrimPrefix(text, "Для ")
+	
+	versText := strings.Split(text, " ")
+
+	if len(versText) > 2 {
+		text = fmt.Sprintf("%s, %s", versText[0], versText[2])
+	}else{
+		text = versText[0]
+	}
+
+	return text
 }
 
 func parseDownloadCount(title string) string {
