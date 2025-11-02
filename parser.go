@@ -194,7 +194,6 @@ func ScrapDetails(link string) (MinecraftMod, error) {
 	c.Wait()
 
 	screenshots = processScreenshots(screenshots)
-	fmt.Println(screenshots)
     mod.Screenshots = screenshots
     
 	return mod, nil
