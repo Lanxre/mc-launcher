@@ -160,17 +160,16 @@ func ScrapDetails(link string) (MinecraftMod, error) {
     })
 
 	var screenshots []string
-	c.OnHTML("img[src*='/uploads/files/']", func(e *colly.HTMLElement) {
+	c.OnHTML("div.box__body img[src*='/uploads/files/']", func(e *colly.HTMLElement) {
 		imgSrc := e.Attr("src")
 		
-		if strings.Contains(imgSrc, "/mini/") {
-			absoluteURL := e.Request.AbsoluteURL(imgSrc)
-			found := slices.Contains(screenshots, absoluteURL)
-			
-			if !found {
-				screenshots = append(screenshots, absoluteURL)			
-			}
+		absoluteURL := e.Request.AbsoluteURL(imgSrc)
+		found := slices.Contains(screenshots, absoluteURL)
+		
+		if !found {
+			screenshots = append(screenshots, absoluteURL)			
 		}
+		
 	})
 
 	c.OnHTML("td.dl__info", func(e *colly.HTMLElement) {
@@ -195,6 +194,7 @@ func ScrapDetails(link string) (MinecraftMod, error) {
 	c.Wait()
 
 	screenshots = processScreenshots(screenshots)
+	fmt.Println(screenshots)
     mod.Screenshots = screenshots
     
 	return mod, nil
@@ -202,7 +202,6 @@ func ScrapDetails(link string) (MinecraftMod, error) {
 
 func processScreenshots(urls []string) []string {
     urls = removeDuplicates(urls)
-
     for i, url := range urls {
         parts := strings.Split(url, ".")
         if len(parts) > 0 {
