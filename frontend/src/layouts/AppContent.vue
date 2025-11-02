@@ -4,10 +4,11 @@ import { useModStore } from '../stores/modStore'
 import { GetMods, GetModsByPage } from "../../wailsjs/go/main/ScraperService"
 import { SortByVersions, SortByLoader } from '../../wailsjs/go/main/FuncService'
 import { MinecraftMod } from '../types'
+import { uniqueBy } from '../api/utils'
+
 import ModsList from '../components/Mods/ModsList.vue'
 import ModLoader from '../components/Mods/ModLoader.vue'
 import SearchFilter from '../components/SearchFilter/SearchFilter.vue'
-import { uniqueBy } from '../api/utils'
 
 const modStore = useModStore()
 const mods = ref<MinecraftMod[]>([])
@@ -26,12 +27,14 @@ const loadMods = async () => {
   try {
     if (modStore.getAllMods.length > 0) {
       mods.value = modStore.getAllMods
+      allMods.value = modStore.getAllMods
+      hasMore.value = true
     } else {
       const result = await GetMods()
       mods.value = result as MinecraftMod[]
       allMods.value = [...uniqueBy(mods.value, m => m.Name) as MinecraftMod[]]
       hasMore.value = result.length > 0
-      modStore.addMods(uniqueBy(mods.value, m => m.Name))
+      modStore.addMods(allMods.value)
       modStore.setCurrentParsePage(1)
     }
 
@@ -134,7 +137,7 @@ const initInfiniteScroll = () => {
     }
   }, {
     root: null,
-    rootMargin: '40px',
+    rootMargin: '30px',
     threshold: 0.1
   })
 
@@ -147,21 +150,7 @@ const getUniqueVersions = computed(() => {
 })
 
 const getUniqueLoaders = computed(() => {
-  const allLoaders = allMods.value.flatMap(mod => 
-    (mod.Details || []).flatMap(detail => {
-      const loader = detail.Loader
-      if (typeof loader === 'string' && loader.includes(',')) {
-        return loader.split(',')
-          .map(item => item.trim().toLowerCase())
-          .filter(item => item && item !== 'quilt')
-      } else if (typeof loader === 'string') {
-        const processedLoader = loader.toLowerCase()
-        return processedLoader !== 'quilt' ? [processedLoader] : []
-      }
-      return []
-    })
-  )
-
+  const allLoaders = allMods.value.flatMap(mod => mod.Loaders)
   return [...new Set(allLoaders)].filter(l => l !== "").sort()
 })
 
@@ -196,6 +185,10 @@ onUnmounted(() => {
       :auto-load="true"
       @load-more="loadMoreMods"
     />
+    <div style="display: flex; justify-content: center;">
+      <button class="button" style="width: 50%; background-color: green;" @click="loadMoreMods"> Загрузить ещё </button>
+    </div>
+
   </div>
 </template>
 

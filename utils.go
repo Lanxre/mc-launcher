@@ -3,7 +3,6 @@ package main
 import (
 	"slices"
 	"cmp"
-	"strings"
 )
 
 type FuncService struct {}
@@ -31,25 +30,12 @@ func (s *FuncService) SortByVersions(mods []MinecraftMod, version string) []Mine
 }
 
 
-func (s *FuncService) SortByLoader(mods []MinecraftMod, loader string) []MinecraftMod {
+func (s *FuncService) SortByLoader(mods []MinecraftMod, searchedLoader string) []MinecraftMod {
     var filteredMods []MinecraftMod
     
     for _, mod := range mods {
-        for _, detail := range mod.Details {
-            if detail.Loader == loader {
-                filteredMods = append(filteredMods, mod)
-                break
-            }
-            
-            if strings.Contains(detail.Loader, ",") {
-                loaders := strings.SplitSeq(detail.Loader, ",")
-                for l := range loaders {
-                    if strings.TrimSpace(l) == loader {
-                        filteredMods = append(filteredMods, mod)
-                        break
-                    }
-                }
-            }
+        if slices.Contains(mod.Loaders, searchedLoader) {
+            filteredMods = append(filteredMods, mod)
         }
     }
     

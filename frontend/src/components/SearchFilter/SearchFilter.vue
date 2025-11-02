@@ -10,7 +10,7 @@ interface Props {
     loaders: string[]
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
 const emit = defineEmits<{
   'filter': [version: string, loader: string]
