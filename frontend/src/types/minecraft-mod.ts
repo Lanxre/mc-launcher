@@ -2,9 +2,7 @@ export interface DownloadInfo {
   URL: string;
   Version: string;
   Loader: string;
-  LoaderType: string;
   Downloads: string;
-  Screenshots: string[];
 }
 
 export interface MinecraftMod {
@@ -14,6 +12,7 @@ export interface MinecraftMod {
   Description: string;
   Versions: string[];
   Screenshots: string[];
+  Loaders: string[];
   Details: DownloadInfo[];
 
   convertValues: any

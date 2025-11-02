@@ -54,17 +54,20 @@ onMounted(async () => {
               <p class="text text-shd">Скриншоты не найдены</p>
             </div>
           </div>
-        <div class="mod-content">
-          <h1>{{ mod?.Name }}</h1>
-          <p v-if="mod?.Versions && mod.Versions.length === 1">Версия: {{ mod?.Versions[0] }}</p>
-          <p v-else>Версии: {{ mod?.Versions.join(', ') }}</p>
-          <br/>
-          <span> {{ mod?.Description }}</span>
-          <div v-if="mod?.Details && mod.Details.length > 1" v-for="(detail) in mod?.Details" style="display: flex; justify-content: center;">
-            <button class="button" @click="downloadMod(detail.URL, mod.Name)" style="background-color: green; width: 50%;">
-              Скачать {{ detail.Version }} | {{ detail.Loader }}
-            </button>
+        <div style="height: 100%;">
+          <div class="mod-content">
+            <h1>{{ mod?.Name }}</h1>
+            <p v-if="mod?.Versions && mod.Versions.length === 1">Версия: {{ mod?.Versions[0] }}</p>
+            <p v-else>Версии: {{ mod?.Versions.join(', ') }}</p>
+            <br/>
+            <span style="margin-bottom: 3px;"> {{ mod?.Description }}</span>
           </div>
+          <div class="mod-download">
+              <button v-if="mod?.Details && mod.Details.length >= 1" v-for="(detail) in mod?.Details"  class="button" @click="downloadMod(detail.URL, mod.Name)" style="background-color: green; width: 50%; margin-bottom: 14px;">
+                Скачать {{ detail.Version }} | {{ detail.Loader }} | Скачано {{ detail.Downloads ? detail.Downloads : '0' }} раз
+              </button>
+          </div>
+
         </div>
   </div>
 
@@ -73,10 +76,9 @@ onMounted(async () => {
 
 <style lang="css">
 .mod {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   
-  height: 100%;
   width: 100%;
   
   padding: 20px;
@@ -88,14 +90,6 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
 
-  gap: 14px;
-}
-
-.screenshots {
-  display: flex;
-  justify-content: center;
-
-  height: 400px;
 }
 
 .no-screenshots {
@@ -103,6 +97,15 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.mod-download{
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+  
 }
 
 </style>

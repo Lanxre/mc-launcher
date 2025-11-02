@@ -110,7 +110,6 @@ const isDisabled = (item: any): boolean => {
 
 const getTriggerText = (): string => {
   if (selectedItems.value.length === 0 || !selectedItems.value[0]) {
-    console.log('place', props.placeholder)
     return props.placeholder
   }
 

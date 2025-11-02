@@ -18,26 +18,6 @@ defineProps<{
     mods: MinecraftMod[]
 }>()
 
-const getUniqueLoaders = (details: DownloadInfo[]) => {
-  if (!details || !Array.isArray(details)) return [];
-  
-  const loaders = details
-    .map(detail => detail.Loader)
-    .flatMap(loader => {
-      if (loader.includes(',')) {
-        return loader.split(',')
-          .map(item => item.trim().toLowerCase())
-          .filter(item => item && item !== 'quilt');
-      } else {
-        const processedLoader = loader.toLowerCase();
-        return processedLoader !== 'quilt' ? [processedLoader] : [];
-      }
-    })
-    .filter(loader => loader && loader !== 'quilt');
-  
-  return [...new Set(loaders)];
-}
-
 const loaderToTag = (loader: string) => {
   const loaderMap: Record<string, { name: string; imageUrl: string }> = {
     'forge': { 
@@ -54,8 +34,7 @@ const loaderToTag = (loader: string) => {
 }
 
 const getLoaderTags = (mod: MinecraftMod) => {
-  const uniqueLoaders = getUniqueLoaders(mod.Details || []);
-  return uniqueLoaders.map(loader => {
+  return mod.Loaders.map(loader => {
     const tag = loaderToTag(loader);
     return {
       id: loader,
@@ -63,7 +42,7 @@ const getLoaderTags = (mod: MinecraftMod) => {
       imageUrl: tag.imageUrl,
       altText: `${tag.name} loader`
     };
-  });
+  }).filter(l => l.name !== 'quilt');
 }
 
 const redirectToMod = (mod: MinecraftMod): void => {

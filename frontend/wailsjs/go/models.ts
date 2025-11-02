@@ -4,9 +4,7 @@ export namespace main {
 	    URL: string;
 	    Version: string;
 	    Loader: string;
-	    LoaderType: string;
 	    Downloads: string;
-	    Screenshots: string[];
 	
 	    static createFrom(source: any = {}) {
 	        return new DownloadInfo(source);
@@ -17,9 +15,7 @@ export namespace main {
 	        this.URL = source["URL"];
 	        this.Version = source["Version"];
 	        this.Loader = source["Loader"];
-	        this.LoaderType = source["LoaderType"];
 	        this.Downloads = source["Downloads"];
-	        this.Screenshots = source["Screenshots"];
 	    }
 	}
 	export class MinecraftMod {
@@ -29,6 +25,7 @@ export namespace main {
 	    Description: string;
 	    Versions: string[];
 	    Screenshots: string[];
+	    Loaders: string[];
 	    Details: DownloadInfo[];
 	
 	    static createFrom(source: any = {}) {
@@ -43,6 +40,7 @@ export namespace main {
 	        this.Description = source["Description"];
 	        this.Versions = source["Versions"];
 	        this.Screenshots = source["Screenshots"];
+	        this.Loaders = source["Loaders"];
 	        this.Details = this.convertValues(source["Details"], DownloadInfo);
 	    }
 	
