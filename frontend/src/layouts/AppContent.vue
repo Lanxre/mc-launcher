@@ -1,0 +1,214 @@
+<script lang="ts" setup>
+import { onMounted, onUnmounted, ref, nextTick, computed } from 'vue'
+import { useModStore } from '../stores/modStore'
+import { GetMods, GetModsByPage } from "../../wailsjs/go/main/ScraperService"
+import { SortByVersions, SortByLoader } from '../../wailsjs/go/main/FuncService'
+import { MinecraftMod } from '../types'
+import ModsList from '../components/Mods/ModsList.vue'
+import ModLoader from '../components/Mods/ModLoader.vue'
+import SearchFilter from '../components/SearchFilter/SearchFilter.vue'
+import { uniqueBy } from '../api/utils'
+
+const modStore = useModStore()
+const mods = ref<MinecraftMod[]>([])
+const allMods = ref<MinecraftMod[]>([])
+const loaderE = ref("")
+const versionE = ref("")
+const currentPage = ref(1)
+const loadingMore = ref(false)
+const hasMore = ref(true)
+
+let observer: IntersectionObserver | null = null
+const loaderTrigger = ref<HTMLElement>()
+const mainElement = ref<HTMLElement>()
+
+const loadMods = async () => {  
+  try {
+    if (modStore.getAllMods.length > 0) {
+      mods.value = modStore.getAllMods
+    } else {
+      const result = await GetMods()
+      mods.value = result as MinecraftMod[]
+      allMods.value = [...uniqueBy(mods.value, m => m.Name) as MinecraftMod[]]
+      hasMore.value = result.length > 0
+      modStore.addMods(uniqueBy(mods.value, m => m.Name))
+      modStore.setCurrentParsePage(1)
+    }
+
+    await nextTick()
+    checkIfNeedMoreContent()
+  } catch (err) {
+    console.error('Ошибка загрузки модов:', err)
+  }
+}
+
+const loadMoreMods = async () => {
+  if (loadingMore.value || !hasMore.value) return
+
+  loadingMore.value = true
+
+  const nextPage = modStore.getParsePage !== null ? modStore.getParsePage + 1 : currentPage.value + 1
+
+  try {
+    const result = await GetModsByPage(nextPage)
+    
+    if (!result || result.length === 0) {
+      hasMore.value = false
+      return
+    }
+
+    const existingUrls = new Set(allMods.value.map(mod => mod.ModPageLink))
+    const newMods = result.filter(mod => !existingUrls.has(mod.ModPageLink))
+      
+    if (newMods.length > 0) {
+      mods.value.push(...uniqueBy(newMods, m => m.Name))
+      allMods.value.push(...uniqueBy(newMods, m => m.Name))
+      
+      currentPage.value = nextPage
+      if (modStore.getParsePage !== null) {
+        modStore.setCurrentParsePage(nextPage)
+      }
+      
+      if (versionE.value || loaderE.value) {
+        await handleFilter(versionE.value, loaderE.value)
+      }
+
+      await nextTick()
+      reinitObserver()
+    } else {
+      hasMore.value = false
+    }
+  } catch (err) {
+    console.error('Ошибка подгрузки модов:', err)
+    hasMore.value = false
+  } finally {
+    loadingMore.value = false
+  }
+}
+
+const reinitObserver = () => {
+  if (observer && loaderTrigger.value) {
+    observer.disconnect()
+    observer.observe(loaderTrigger.value)
+  }
+}
+
+const checkIfNeedMoreContent = () => {
+  if (!mainElement.value || !hasMore.value || loadingMore.value) return
+  
+  const containerRect = mainElement.value.getBoundingClientRect()
+  const availableHeight = window.innerHeight - 100
+  
+  if (containerRect.height < availableHeight) {
+    loadMoreMods()
+  }
+}
+
+const handleFilter = async (version: string, loader: string) => {
+  try {
+    let filteredMods = [...allMods.value]
+
+    if (version) {
+      versionE.value = version
+      filteredMods = await SortByVersions(filteredMods, version)
+    }
+
+    if (loader) {
+      loaderE.value = loader
+      filteredMods = await SortByLoader(filteredMods, loader)
+    }
+
+    mods.value = filteredMods
+  } catch (error) {
+    console.error('Ошибка фильтрации:', error)
+    mods.value = [...allMods.value]
+  }
+}
+
+const initInfiniteScroll = () => {
+  if (!loaderTrigger.value) return
+  
+  observer = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting && hasMore.value && !loadingMore.value) {
+      loadMoreMods()
+    }
+  }, {
+    root: null,
+    rootMargin: '40px',
+    threshold: 0.1
+  })
+
+  observer.observe(loaderTrigger.value)
+}
+
+const getUniqueVersions = computed(() => {
+  const allVersions = allMods.value.flatMap(mod => mod.Versions || [])
+  return [...new Set(allVersions)].sort()
+})
+
+const getUniqueLoaders = computed(() => {
+  const allLoaders = allMods.value.flatMap(mod => 
+    (mod.Details || []).flatMap(detail => {
+      const loader = detail.Loader
+      if (typeof loader === 'string' && loader.includes(',')) {
+        return loader.split(',')
+          .map(item => item.trim().toLowerCase())
+          .filter(item => item && item !== 'quilt')
+      } else if (typeof loader === 'string') {
+        const processedLoader = loader.toLowerCase()
+        return processedLoader !== 'quilt' ? [processedLoader] : []
+      }
+      return []
+    })
+  )
+
+  return [...new Set(allLoaders)].filter(l => l !== "").sort()
+})
+
+onMounted(async () => {
+  await loadMods()
+  await nextTick()
+  initInfiniteScroll()
+  
+  window.addEventListener('resize', checkIfNeedMoreContent)
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+  window.removeEventListener('resize', checkIfNeedMoreContent)
+})
+</script>
+
+<template>
+  <div class="main" ref="mainElement">
+    <SearchFilter 
+      :versions="getUniqueVersions" 
+      :loaders="getUniqueLoaders"
+      @filter="handleFilter"
+    />
+    <ModsList :mods="mods"/>
+    <ModLoader
+      :has-more="hasMore"
+      :loading-more="loadingMore"
+      :count="mods.length"
+      loading-text="Загрузка модов..."
+      end-message="Все моды загружены"
+      :auto-load="true"
+      @load-more="loadMoreMods"
+    />
+  </div>
+</template>
+
+<style lang="css" scoped>
+.main {
+  display: flex;
+  flex-direction: column;
+  
+  width: 100%;
+  flex: 1;
+  
+  padding: 20px;
+  
+  gap: 15px;
+}
+</style>

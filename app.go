@@ -1,0 +1,31 @@
+package main
+
+import (
+	"context"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
+)
+
+type App struct {
+	ctx context.Context
+}
+
+func NewApp() *App {
+	return &App{}
+}
+
+func (a *App) startup(ctx context.Context) {
+	a.ctx = ctx
+}
+
+func (a *App) OpenExternalLink(url string) {
+	runtime.BrowserOpenURL(a.ctx, url)
+}
+
+func (a *App) ShowInfoMessage(title, message string) {
+    runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+        Type:    runtime.InfoDialog,
+        Title:   title,
+        Message: message,
+    })
+}
