@@ -39,7 +39,7 @@ func initHTTPClient() *http.Client {
 	}
 }
 
-func downloadFileFromURL(client *http.Client, url string, filename string) error {
+func downloadFileFromURL(client *http.Client, url, filename string) error {
 	fmt.Printf("Attempting to download from: %s\n", url)
 	
 	resp, err := makeRequest(client, url)
@@ -53,7 +53,7 @@ func downloadFileFromURL(client *http.Client, url string, filename string) error
 	case http.StatusFound, http.StatusMovedPermanently:
 		return handleRedirect(client, resp, filename)
 	case http.StatusOK:
-		return handleOKResponse(client, resp, url, filename)
+		return handleOKResponse(client, resp, filename)
 	default:
 		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
@@ -109,7 +109,7 @@ func handleRedirect(client *http.Client, resp *http.Response, filename string) e
 	return downloadDirectFile(client, location, filename)
 }
 
-func handleOKResponse(client *http.Client, resp *http.Response, originalURL string, filename string) error {
+func handleOKResponse(client *http.Client, resp *http.Response, filename string) error {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("failed to read response body: %w", err)
@@ -165,7 +165,7 @@ func extractDownloadURL(body string) string {
 	return ""
 }
 
-func downloadDirectFile(client *http.Client, fileURL string, filename string) error {
+func downloadDirectFile(client *http.Client, fileURL, filename string) error {
 	req, err := http.NewRequest("GET", fileURL, nil)
 	if err != nil {
 		return err
