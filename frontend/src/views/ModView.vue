@@ -16,8 +16,8 @@ const modStore = useModStore()
 
 const mod = ref<MinecraftMod | null>(null)
 
-const downloadMod = async (url: string, modName: string) => {
-  await DownloadFileToMinecraftMods(url, modName);
+const downloadMod = async (url: string, modName: string, modVersion: string) => {
+  await DownloadFileToMinecraftMods(url, modName, modVersion);
   await showNotify()
 }
 
@@ -63,7 +63,7 @@ onMounted(async () => {
             <span style="margin-bottom: 3px;"> {{ mod?.Description }}</span>
           </div>
           <div class="mod-download">
-              <button v-if="mod?.Details && mod.Details.length >= 1" v-for="(detail) in mod?.Details"  class="button" @click="downloadMod(detail.URL, mod.Name)" style="background-color: green; width: 50%; margin-bottom: 14px;">
+              <button v-if="mod?.Details && mod.Details.length >= 1" v-for="(detail) in mod?.Details"  class="button" @click="downloadMod(detail.URL, mod.Name, detail.Version)" style="background-color: green; width: 50%; margin-bottom: 14px;">
                 Скачать {{ detail.Version }} | {{ detail.Loader }} | Скачано {{ detail.Downloads ? detail.Downloads : '0' }} раз
               </button>
           </div>
