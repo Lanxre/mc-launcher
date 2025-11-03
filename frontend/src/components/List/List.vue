@@ -224,7 +224,7 @@ onUnmounted(() => {
 }
 
 .dropdown__placeholder {
-  color: #6b7280;
+  color: #ffffff;
   width: 60px;
 }
 
@@ -259,6 +259,7 @@ onUnmounted(() => {
   transition: background-color 0.2s ease;
   border-bottom: 1px solid #f3f4f6;
   min-height: 20px;
+  color: white;
 }
 
 .dropdown__item:last-child {

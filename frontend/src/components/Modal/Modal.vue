@@ -48,7 +48,7 @@ const props = withDefaults(defineProps<Props>(), {
   closable: true,
   closeOnOverlay: true,
   closeOnEscape: true,
-  preventScroll: true,
+  preventScroll: false,
   width: 'auto',
   maxWidth: '600px'
 })

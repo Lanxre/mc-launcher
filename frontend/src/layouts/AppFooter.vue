@@ -17,12 +17,12 @@ const openLink = async (url: string) => {
         <div class="link-group">
             <div class="group" @click="openLink('https://github.com/lanxre')">
                 <img :src="GithubIcon" alt="github" class="icon"/>
-                <p class="text">GitHub</p>
+                <p class="text" style="color: white;">GitHub</p>
             </div>
 
             <div class="group" @click="openLink('https://t.me/lanxreeazy')">
                 <img :src="TelegramIcon" alt="github" class="icon"/>
-                <p class="text">Telegram</p>
+                <p class="text" style="color: white;">Telegram</p>
                 
             </div>
         </div>

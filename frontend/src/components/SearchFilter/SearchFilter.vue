@@ -43,22 +43,24 @@ const handleModalReset = () => {
 
 <template>
 <div class="search-filter">
-      <img :src="SettingsIcon" 
+      <div class="search-button">
+        <img :src="SettingsIcon" 
             class="icon" 
             style="cursor: pointer;"
             @click="handleModalOpen"
         />
+      </div>
       <Modal  v-model="isModalOpen"
               title="Фильтры поиска"
       >
       <div class="search-settings">
         <div class="search-settings-item">
-            <p class="text text-shd">Загрузчик</p>
+            <p class="text text-shd" style="color: white;">Загрузчик</p>
             <List :items="loaders" v-model="loader" placeholder="Загрузчик" style="width: 100px;"/>
         </div>
         
         <div class="search-settings-item">
-            <p class="text text-shd">Версия</p>
+            <p class="text text-shd" style="color: white;">Версия</p>
             <List :items="versions" v-model="version" placeholder="Версия" style="width: 100px;"/>
         </div>
         
@@ -71,7 +73,7 @@ const handleModalReset = () => {
             Сбросить
         </button>
         <button class="button"
-                style="background-color: #123432;"
+                style="background-color: green;"
                 @click="handleModalConfirm">
             Подтвердить
         </button>
@@ -110,6 +112,19 @@ const handleModalReset = () => {
 
 .search-settings-item {
     font-size: 12px;
+}
+
+.search-button {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border-radius: 30%;
+    background-color: lightgray;
+    transition: 1s;
+}
+
+.search-button:hover {
+    background-color: lightgreen;
 }
 
 </style>

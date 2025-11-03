@@ -37,7 +37,7 @@ func main() {
 			DisableFramelessWindowDecorations: false,
 			WebviewUserDataPath:               "",
 			WebviewBrowserPath:                "",
-			Theme:                             windows.SystemDefault,
+			Theme:                             windows.Dark,
 		},
 	})
 
