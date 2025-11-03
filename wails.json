@@ -1,13 +1,17 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "myproject",
-  "outputfilename": "myproject",
+  "name": "mclauncher",
+  "outputfilename": "mclauncher",
   "frontend:install": "bun install",
   "frontend:build": "bun run build",
   "frontend:dev:watcher": "bun run dev",
   "frontend:dev:serverUrl": "auto",
+  "files": [
+    "frontend/dist/**/*"
+  ],
   "author": {
     "name": "Lanxre",
     "email": "tat4vit7@gmail.com"
   }
+  
 }
