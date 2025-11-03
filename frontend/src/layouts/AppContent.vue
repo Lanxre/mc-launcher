@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, ref, nextTick, computed } from 'vue'
 import { useModStore } from '../stores/modStore'
 import { GetMods, GetModsByPage, GetSearchMods } from '../../wailsjs/go/main/ScraperService'
 import { SortByVersions, SortByLoader } from '../../wailsjs/go/main/FuncService'
-import { MinecraftMod } from '../types'
+import type { MinecraftMod } from '@/types'
 import { uniqueBy } from '../api/utils'
 
 import ModsList from '../components/Mods/ModsList.vue'
@@ -134,7 +134,7 @@ const initInfiniteScroll = () => {
   if (observer) observer.disconnect()
 
   observer = new IntersectionObserver(([entry]) => {
-    if (entry.isIntersecting && hasMore.value && !loadingMore.value) {
+    if (entry!.isIntersecting && hasMore.value && !loadingMore.value) {
       loadMoreMods()
     }
   }, {

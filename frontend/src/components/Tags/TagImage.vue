@@ -44,10 +44,6 @@ const fallbackText = computed(() => {
     return props.name.charAt(0).toUpperCase()
 })
 
-const altTextComputed = computed(() => {
-    return props.altText || `${props.name} avatar`
-})
-
 const handleClick = (event: Event) => {
     if (props.clickable) {
         emit('click', event)

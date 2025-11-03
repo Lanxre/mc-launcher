@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { useModStore } from '../../stores/modStore';
+import { useModStore } from '@/stores/modStore';
 
-import { MinecraftMod, DownloadInfo } from '../../types';
-import Tag from '../Tags/Tag.vue';
-import TagImage from '../Tags/TagImage.vue';
-import TagImageGroup from '../Tags/TagImageGroup.vue';
+import type { MinecraftMod } from '@/types';
+import Tag from '@/components/Tags/Tag.vue';
+import TagImage from '@/components/Tags/TagImage.vue';
+import TagImageGroup from '@/components/Tags/TagImageGroup.vue';
 
-import ForgeMinecraftIcon from '../../assets/images/forge_minecraft.jpeg'
-import FabricMinecraftIcon from '../../assets/images/fabric_minecraft.png'
-import { uniqueBy } from '../../api/utils';
+import ForgeMinecraftIcon from '@/assets/images/forge_minecraft.jpeg'
+import FabricMinecraftIcon from '@/assets/images/fabric_minecraft.png'
+import { uniqueBy } from '@/api/utils';
 
 const router = useRouter()
 const modStore = useModStore()
@@ -75,6 +75,7 @@ const redirectToMod = (mod: MinecraftMod): void => {
                 v-else-if="getLoaderTags(item).length === 1"
                 v-bind="getLoaderTags(item)[0]"
                 class="loader-tag"
+                :name="item.Name"
             />
             
             <img 

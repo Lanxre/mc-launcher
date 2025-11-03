@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { MinecraftMod } from '../types'
+import type { MinecraftMod } from '@/types'
 
 export const useModStore = defineStore('mod', {
   state: () => ({

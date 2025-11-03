@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
-import SettingsIcon from '../../assets/images/setting.png'
-import Modal from '../Modal/Modal.vue';
-import List from '../List/List.vue';
+import SettingsIcon from '@/assets/images/setting.png'
+import Modal from '@/components/Modal/Modal.vue';
+import List from '@/components/List/List.vue';
 
 interface Props {
     versions: string[]

@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-import { useModStore } from '../stores/modStore';
+import { useModStore } from '@/stores/modStore';
 import { GetModDetails } from "../../wailsjs/go/main/ScraperService"
 import { DownloadFileToMinecraftMods } from "../../wailsjs/go/main/FileService"
 import { ShowInfoMessage } from "../../wailsjs/go/main/App"
 
-import AppHeader from '../layouts/AppHeader.vue';
-import AppFooter from '../layouts/AppFooter.vue';
-import Slider from '../components/Slider/Slider.vue';
+import AppHeader from '@/layouts/AppHeader.vue';
+import AppFooter from '@/layouts/AppFooter.vue';
+import Slider from '@/components/Slider/Slider.vue';
 
-import type { MinecraftMod } from '../types';
+import type { MinecraftMod } from '@/types';
 
 
 const modStore = useModStore()

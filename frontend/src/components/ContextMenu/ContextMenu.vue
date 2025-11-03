@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import type { ContextMenuItem } from '@/types';
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
-import { ContextMenuItem } from '../../types';
+
 
 interface Props {
   items: ContextMenuItem[]

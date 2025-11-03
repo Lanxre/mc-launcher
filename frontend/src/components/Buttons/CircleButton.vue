@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import ArrowUpIcon from '../../assets/images/upload.png'
+import ArrowUpIcon from '@/assets/images/upload.png'
 
 const showButton = ref(false)
 

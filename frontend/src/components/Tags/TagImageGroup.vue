@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import TagImage from './TagImage.vue';
+import TagImage from '@/components/Tags/TagImage.vue';
 
 import type { PropType } from 'vue';
 
-import { Tag } from '../../types/tag';
-
+import type { Tag } from '@/types/tag';
 
 defineProps({
   tags: {

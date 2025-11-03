@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import SearchIcon from "../../assets/images/search.png"
+import SearchIcon from "@/assets/images/search.png"
 
 interface Props<T> {
   placeholder?: string
