@@ -7,3 +7,5 @@ export function GetModDetails(arg1:string):Promise<main.MinecraftMod>;
 export function GetMods():Promise<Array<main.MinecraftMod>>;
 
 export function GetModsByPage(arg1:number):Promise<Array<main.MinecraftMod>>;
+
+export function GetSearchMods(arg1:string):Promise<Array<main.MinecraftMod>>;

@@ -13,3 +13,7 @@ export function GetMods() {
 export function GetModsByPage(arg1) {
   return window['go']['main']['ScraperService']['GetModsByPage'](arg1);
 }
+
+export function GetSearchMods(arg1) {
+  return window['go']['main']['ScraperService']['GetSearchMods'](arg1);
+}

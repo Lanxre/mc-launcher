@@ -180,7 +180,7 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .dropdown {
   position: relative;
   display: flex;

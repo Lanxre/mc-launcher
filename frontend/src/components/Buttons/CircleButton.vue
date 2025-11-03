@@ -40,7 +40,7 @@ onUnmounted(() => {
     </div>
 </template>
 
-<style lang="css">
+<style lang="css" scoped>
 .button-circle {
     position: fixed;
     bottom: 70px;

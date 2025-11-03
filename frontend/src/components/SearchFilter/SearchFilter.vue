@@ -82,7 +82,7 @@ const handleModalReset = () => {
     </div>
 </template>
 
-<style lang="css">
+<style lang="css" scoped>
 
 .search-filter {
     display: flex;

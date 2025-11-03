@@ -120,7 +120,7 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .modal-overlay {
   position: fixed;
   top: 0;

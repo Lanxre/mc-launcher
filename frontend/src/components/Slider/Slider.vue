@@ -22,7 +22,6 @@
       </div>
     </div>
 
-    <!-- Навигационные стрелки -->
     <button 
       v-if="showArrows"
       class="slider-arrow slider-arrow--prev"
@@ -40,7 +39,6 @@
       ›
     </button>
 
-    <!-- Точки-индикаторы -->
     <div v-if="showDots" class="slider-dots">
       <button
         v-for="(_, index) in slides"
@@ -56,14 +54,12 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 
-// Типы
 interface Slide {
   image: string
   alt?: string
   title?: string
 }
 
-// Props
 interface Props {
   slides: Slide[]
   autoplay?: boolean
@@ -79,16 +75,14 @@ const props = withDefaults(defineProps<Props>(), {
   showDots: true
 })
 
-// Реактивные данные
 const currentIndex = ref(0)
 let autoplayTimer: number | null = null
 
-// Методы
 const nextSlide = () => {
   if (currentIndex.value < props.slides.length - 1) {
     currentIndex.value++
   } else {
-    currentIndex.value = 0 // Возврат к первому слайду
+    currentIndex.value = 0 
   }
 }
 
@@ -96,7 +90,7 @@ const prevSlide = () => {
   if (currentIndex.value > 0) {
     currentIndex.value--
   } else {
-    currentIndex.value = props.slides.length - 1 // Переход к последнему слайду
+    currentIndex.value = props.slides.length - 1 
   }
 }
 
@@ -119,7 +113,6 @@ const stopAutoplay = () => {
   }
 }
 
-// Watchers
 watch(() => props.autoplay, (newValue) => {
   if (newValue) {
     startAutoplay()
@@ -128,7 +121,6 @@ watch(() => props.autoplay, (newValue) => {
   }
 })
 
-// Lifecycle hooks
 onMounted(() => {
   if (props.autoplay) {
     startAutoplay()
@@ -140,7 +132,7 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .slider {
   position: relative;
   width: 100%;

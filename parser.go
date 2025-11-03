@@ -1,13 +1,12 @@
 package main
 
 import (
-	"slices"
 	"crypto/tls"
 	"fmt"
 	"log"
 	"net/http"
+	"slices"
 	"strings"
-	// "sync"
 	"time"
 
 	"github.com/gocolly/colly/v2"
@@ -38,19 +37,28 @@ func NewScraperService() *ScraperService {
 }
 
 func (s *ScraperService) GetMods() ([]MinecraftMod, error) {
-	return ScrapeMinecraftInsideModsFull(1)
+	url := "https://minecraft-inside.ru/mods/page/1/"
+	return ScrapeMinecraftInsideModsFull(url)
 }
 
 func (s *ScraperService) GetModsByPage(page int) ([]MinecraftMod, error) {
-	return ScrapeMinecraftInsideModsFull(page)
+	url := fmt.Sprintf("https://minecraft-inside.ru/mods/page/%d/", page)
+	return ScrapeMinecraftInsideModsFull(url)
 }
 
 func (s *ScraperService) GetModDetails(link string) (MinecraftMod, error) {
 	return ScrapDetails(link)
 }
 
-func ScrapeMinecraftInsideModsFull(page int) ([]MinecraftMod, error) {
-	url := fmt.Sprintf("https://minecraft-inside.ru/mods/page/%d/", page)
+func (s *ScraperService) GetSearchMods(searchedValue string) ([]MinecraftMod, error) {
+	searchedValue = strings.ReplaceAll(searchedValue, " ", "+")
+	url := fmt.Sprintf("https://minecraft-inside.ru/mods/?q=%s", searchedValue)
+
+	return ScrapeMinecraftInsideModsFull(url)
+}
+
+func ScrapeMinecraftInsideModsFull(url string) ([]MinecraftMod, error) {
+	
 	log.Printf("🔍 Scraping mods list: %s", url)
 
 	c := newCollectorWithRetry(3)
@@ -64,11 +72,10 @@ func ScrapeMinecraftInsideModsFull(page int) ([]MinecraftMod, error) {
 	})
 
 	if err := c.Visit(url); err != nil {
-		return nil, fmt.Errorf("failed to visit page %d: %w", page, err)
+		return nil, fmt.Errorf("failed to visit page: %w", err)
 	}
 
 	c.Wait()
-	log.Printf("✅ Found %d mods on page %d", len(mods), page)
 
 	return mods, nil
 }
