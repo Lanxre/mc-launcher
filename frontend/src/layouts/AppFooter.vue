@@ -3,12 +3,7 @@ import GithubIcon from '@/assets/images/github_icon.png'
 import TelegramIcon from '@/assets/images/telegram-4.png'
 
 import CircleButton from '@/components/Buttons/CircleButton.vue'
-import { OpenExternalLink } from '../../wailsjs/go/main/App'
-
-const openLink = async (url: string) => {
-    await OpenExternalLink(url)
-}
-
+import { openLink } from '@/api/utils'
 </script>
        
 <template>

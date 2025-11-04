@@ -50,9 +50,9 @@ func (s *ScraperService) GetModDetails(link string) (MinecraftMod, error) {
 	return ScrapDetails(link)
 }
 
-func (s *ScraperService) GetSearchMods(searchedValue string) ([]MinecraftMod, error) {
+func (s *ScraperService) GetSearchMods(searchedValue string, page int) ([]MinecraftMod, error) {
 	searchedValue = strings.ReplaceAll(searchedValue, " ", "+")
-	url := fmt.Sprintf("https://minecraft-inside.ru/mods/?q=%s", searchedValue)
+	url := fmt.Sprintf("https://minecraft-inside.ru/mods/page/%d/?q=%s", page, searchedValue)
 
 	return ScrapeMinecraftInsideModsFull(url)
 }

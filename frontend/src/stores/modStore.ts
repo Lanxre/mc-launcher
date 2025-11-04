@@ -5,6 +5,9 @@ export const useModStore = defineStore('mod', {
   state: () => ({
     currentMod: null as MinecraftMod | null,
     currentParsePage: null as  number | null,
+    currentVersionFilter: null as string | null,
+    currentLoaderFilter: null as string | null, 
+    currentSearchFilter: null as string | null, 
     allMods: [] as MinecraftMod[],
     isLoading: false,
     error: null as string | null
@@ -15,7 +18,10 @@ export const useModStore = defineStore('mod', {
     getAllMods: (state) => state.allMods,
     getModsCount: (state) => state.allMods.length,
     getParsePage: (state) => state.currentParsePage,
-    
+    getVersionFilter: (state) => state.currentVersionFilter,
+    getLoaderFilter: (state) => state.currentLoaderFilter,
+    getSearchFilter: (state) => state.currentSearchFilter,
+
     searchMods: (state) => (query: string) => {
       return state.allMods.filter(mod => 
         mod.Name.toLowerCase().includes(query.toLowerCase())
@@ -48,6 +54,18 @@ export const useModStore = defineStore('mod', {
 
     setCurrentParsePage(page: number) {
       this.currentParsePage = page
+    },
+
+    setVersionFilter(version: string) {
+      this.currentVersionFilter = version
+    },
+
+    setLoaderFilter(loader: string) {
+      this.currentLoaderFilter = loader
+    },
+
+    setSearchFilter(inputSearch: string) {
+      this.currentSearchFilter = inputSearch
     },
 
     clearCurrentMod() {

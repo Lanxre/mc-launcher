@@ -13,7 +13,8 @@ const props = withDefaults(defineProps<Props<any>>(), {
 const searchValue = ref("")
 
 const emit = defineEmits<{
-  'search': [inputSearch: string]
+  'update:modelValue': [value: string],
+  'search': [inputSearch: string],
 }>()
 
 const handleEnterSearch = (e: KeyboardEvent) => {
@@ -23,10 +24,8 @@ const handleEnterSearch = (e: KeyboardEvent) => {
 }
 
 const handleSearch = () => {
-    if(!searchValue.value) return
-
+    emit('update:modelValue', searchValue.value)
     emit('search', searchValue.value)
-    searchValue.value = ""
 }
 
 onMounted(() => {

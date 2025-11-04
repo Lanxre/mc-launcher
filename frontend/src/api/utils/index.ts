@@ -1,3 +1,5 @@
+import { OpenExternalLink } from '../../../wailsjs/go/main/App'
+
 export const uniqueBy = <T>(array: T[], keyFn: (item: T) => string): T[] => {
   const seen = new Set<string>()
   const result: T[] = []
@@ -11,4 +13,9 @@ export const uniqueBy = <T>(array: T[], keyFn: (item: T) => string): T[] => {
   }
 
   return result
+}
+
+
+export const openLink = async (url: string) => {
+    await OpenExternalLink(url)
 }

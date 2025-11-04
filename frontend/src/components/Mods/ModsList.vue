@@ -50,7 +50,7 @@ const getLoaderTags = (mod: MinecraftMod) => {
 
 const redirectToMod = (mod: MinecraftMod): void => {
   saveScrollBeforeLeave()
-  modStore.setCurrentMod(mod) 
+  modStore.setCurrentMod(mod)
   router.push({
     name: 'mod',
     params: {

@@ -5,11 +5,14 @@ import { GetModDetails } from "../../wailsjs/go/main/ScraperService"
 import { DownloadFileToMinecraftMods } from "../../wailsjs/go/main/FileService"
 import { ShowInfoMessage } from "../../wailsjs/go/main/App"
 
+
 import AppHeader from '@/layouts/AppHeader.vue';
 import AppFooter from '@/layouts/AppFooter.vue';
 import Slider from '@/components/Slider/Slider.vue';
 
 import type { MinecraftMod } from '@/types';
+import { openLink } from '@/api/utils';
+import LinkIcon from '@/assets/images/link.png'
 
 
 const modStore = useModStore()
@@ -56,7 +59,10 @@ onMounted(async () => {
           </div>
         <div style="height: 100%;">
           <div class="mod-content">
-            <h1>{{ mod?.Name }}</h1>
+            <div class="mod-name" @click="openLink(mod?.ModPageLink!)">
+              <h1>{{ mod?.Name }} </h1>
+              <img :src="LinkIcon" alt="modlink" class="icon"/>
+            </div>
             <p v-if="mod?.Versions && mod.Versions.length === 1">Версия: {{ mod?.Versions[0] }}</p>
             <p v-else>Версии: {{ mod?.Versions.join(', ') }}</p>
             <br/>
@@ -106,6 +112,20 @@ onMounted(async () => {
   justify-content: center;
   align-items: center;
   
+}
+
+.mod-name {
+  display: flex;
+  flex-direction: row;
+
+  gap: 5px;
+  cursor: pointer;
+}
+
+.mod-name img {
+  width: 15px;
+  height: 15px;
+  filter: brightness(0) invert(1);
 }
 
 </style>
