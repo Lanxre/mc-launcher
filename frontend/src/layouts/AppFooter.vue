@@ -13,7 +13,7 @@ const openLink = async (url: string) => {
        
 <template>
     <div class="footer">
-        <CircleButton/>
+        <CircleButton bottom="70px" right="1%"/>
         <div class="link-group">
             <div class="group" @click="openLink('https://github.com/lanxre')">
                 <img :src="GithubIcon" alt="github" class="icon"/>

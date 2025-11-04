@@ -10,8 +10,12 @@ import ModsList from '@/components/Mods/ModsList.vue'
 import ModLoader from '@/components/Mods/ModLoader.vue'
 import SearchFilter from '@/components/SearchFilter/SearchFilter.vue'
 import InputSearch from '@/components/InputSearch/InputSearch.vue'
+import { useScrollManager } from '@/composables/useScrollManager'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const modStore = useModStore()
+const { restoreMainPageScroll } = useScrollManager()
 
 const mods        = ref<MinecraftMod[]>([])
 const allMods     = ref<MinecraftMod[]>([])
@@ -174,6 +178,11 @@ const handleSearchFilter = async (inputSearch: string) => {
 }
 
 onMounted(async () => {
+  
+  if (route.path === '/') {
+    restoreMainPageScroll()
+  }
+  
   await loadMods()
   await nextTick()
   initInfiniteScroll()

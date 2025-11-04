@@ -10,9 +10,12 @@ import TagImageGroup from '@/components/Tags/TagImageGroup.vue';
 import ForgeMinecraftIcon from '@/assets/images/forge_minecraft.jpeg'
 import FabricMinecraftIcon from '@/assets/images/fabric_minecraft.png'
 import { uniqueBy } from '@/api/utils';
+import { useScrollManager } from '@/composables/useScrollManager';
 
 const router = useRouter()
 const modStore = useModStore()
+
+const { saveScrollBeforeLeave } = useScrollManager()
 
 defineProps<{
     mods: MinecraftMod[]
@@ -46,6 +49,7 @@ const getLoaderTags = (mod: MinecraftMod) => {
 }
 
 const redirectToMod = (mod: MinecraftMod): void => {
+  saveScrollBeforeLeave()
   modStore.setCurrentMod(mod) 
   router.push({
     name: 'mod',

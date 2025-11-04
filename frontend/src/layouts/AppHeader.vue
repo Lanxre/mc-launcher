@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import MinecraftIcon from '@/assets/images/minecraft_icon.jpg'
 import { RouterLink } from 'vue-router';
+
 </script>
        
 <template>
     <div class="header">
-        
         <RouterLink to="/" class="link">
             <div class="title">
                 <img :src="MinecraftIcon" class="mc-logo"/>
