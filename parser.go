@@ -7,12 +7,22 @@ import (
 	"net/http"
 	"slices"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gocolly/colly/v2"
 )
 
 type ScraperService struct{}
+
+type ModDependency struct {
+	ModPageLink string
+	URL     string
+	Name    string
+	Version string
+	Loader 	string
+	Type    string 
+}
 
 type DownloadInfo struct {
 	URL        string
@@ -29,6 +39,7 @@ type MinecraftMod struct {
 	Versions    []string
 	Screenshots []string
 	Loaders     []string
+	Dependency  []ModDependency
 	Details     []DownloadInfo
 }
 
@@ -41,8 +52,15 @@ func (s *ScraperService) GetMods() ([]MinecraftMod, error) {
 	return ScrapeMinecraftInsideModsFull(url)
 }
 
-func (s *ScraperService) GetModsByPage(page int) ([]MinecraftMod, error) {
-	url := fmt.Sprintf("https://minecraft-inside.ru/mods/page/%d/", page)
+func (s *ScraperService) GetModsByPage(page int, inputSearch *string) ([]MinecraftMod, error) {
+	var url string
+	if inputSearch != nil {
+		searchedValue := strings.ReplaceAll(*inputSearch, " ", "+")
+		url = fmt.Sprintf("https://minecraft-inside.ru/mods/page/%d/?q=%s", page, searchedValue)
+	} else {
+		url = fmt.Sprintf("https://minecraft-inside.ru/mods/page/%d/", page)
+	}
+
 	return ScrapeMinecraftInsideModsFull(url)
 }
 
@@ -57,6 +75,81 @@ func (s *ScraperService) GetSearchMods(searchedValue string, page int) ([]Minecr
 	return ScrapeMinecraftInsideModsFull(url)
 }
 
+func (s *ScraperService) GetModDepends(depends []ModDependency) []ModDependency {
+	c := colly.NewCollector(
+		colly.Async(true),
+		colly.AllowedDomains("minecraft-inside.ru"),
+	)
+
+	var mu sync.Mutex
+	var wg sync.WaitGroup
+	visited := make(map[string]bool)
+
+	c.OnHTML("td.dl__info", func(e *colly.HTMLElement) {
+		parentURL := e.Request.URL.String()
+		info := DownloadInfo{
+			// URL:       e.Request.AbsoluteURL(e.ChildAttr("a", "href")),
+			Version:   parseVersion(e.ChildText("span.dl__name")),
+			// Downloads: parseDownloadCount(e.ChildAttr("span.dl__link", "title")),
+		}
+		var loaders []string
+		e.ForEach("span.dl__loader", func(_ int, el *colly.HTMLElement) {
+			loaders = append(loaders, strings.TrimSpace(el.Text))
+		})
+		info.Loader = strings.Join(loaders, ", ")
+
+		mu.Lock()
+		for i := range depends {
+			if strings.Contains(parentURL, depends[i].ModPageLink) {
+				fmt.Println(info)
+				depends[i].Version = info.Version
+				depends[i].Loader = info.Loader
+			}
+		}
+		mu.Unlock()
+	})
+
+	c.OnHTML("div.box__body", func(e *colly.HTMLElement) {
+		var newDeps []ModDependency
+		e.ForEach("ol li", func(_ int, li *colly.HTMLElement) {
+			link := li.ChildAttr("a", "href")
+			if link == "" {
+				return
+			}
+			name := li.ChildText("a")
+			url := e.Request.AbsoluteURL(link)
+			newDeps = append(newDeps, ModDependency{URL: url, Name: name})
+		})
+		mu.Lock()
+		for _, nd := range newDeps {
+			if !visited[nd.ModPageLink] {
+				visited[nd.ModPageLink] = true
+				depends = append(depends, nd)
+				wg.Add(1)
+				go func(d ModDependency) {
+					defer wg.Done()
+					c.Visit(d.ModPageLink)
+				}(nd)
+			}
+		}
+		mu.Unlock()
+	})
+
+	for _, dep := range depends {
+		if !visited[dep.URL] {
+			visited[dep.URL] = true
+			wg.Add(1)
+			go func(d ModDependency) {
+				defer wg.Done()
+				c.Visit(d.URL)
+			}(dep)
+		}
+	}
+
+	wg.Wait()
+	c.Wait()
+	return depends
+}
 func ScrapeMinecraftInsideModsFull(url string) ([]MinecraftMod, error) {
 	
 	log.Printf("🔍 Scraping mods list: %s", url)
@@ -197,12 +290,47 @@ func ScrapDetails(link string) (MinecraftMod, error) {
 		}
 	})
 
+	var depends []ModDependency
+	isDependsFound := false
+	c.OnHTML("div.box__body", func(e *colly.HTMLElement) {
+		if isDependsFound {
+			return 
+		}
+		
+		e.ForEach("ol li", func(_ int, li *colly.HTMLElement) {
+			link := li.DOM.Find("a").First()
+
+			if link.Length() == 0 {
+				return
+			}
+
+			href, _ := link.Attr("href")
+			text := link.Text()
+
+			deps := ModDependency {
+				ModPageLink: fmt.Sprintf("%s%s", "https://minecraft-inside.ru", href),
+				URL:     "",
+				Name:    text,
+				Version: "",
+				Loader:  "",
+				Type:    "",
+			}
+			depends = append(depends, deps)
+			isDependsFound = true
+		})
+		
+		if len(depends) > 2 {
+			depends = depends[1: len(depends) - 1]
+		}
+	})
+
     c.Visit(link)
 	c.Wait()
-
+	
 	screenshots = processScreenshots(screenshots)
     mod.Screenshots = screenshots
-    
+	mod.Dependency  = depends
+
 	return mod, nil
 }
 

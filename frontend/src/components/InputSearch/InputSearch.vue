@@ -40,7 +40,7 @@ onMounted(() => {
         <div class="search-button">
             <img :src="SearchIcon"
                 class="icon" 
-                style="cursor: pointer; padding: 5px;"
+                style=" padding: 10px;"
                 @click="handleSearch"
             />
         </div>
@@ -51,7 +51,8 @@ onMounted(() => {
 .input-search {
     display: flex;
     justify-content: row;
-
+    
+    align-items: center;
     gap: 10px;
 }
 
@@ -71,10 +72,10 @@ onMounted(() => {
 .search-button {
     display: flex;
     align-items: center;
-    padding: 5px;
     border-radius: 30%;
     background-color: lightgray;
     transition: 1s;
+    cursor: pointer;
 }
 
 .search-button:hover {

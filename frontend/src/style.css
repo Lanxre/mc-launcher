@@ -91,6 +91,10 @@ html, body {
   opacity: .75;
 }
 
+.cmp-h {
+  height: 25px;
+}
+
 @font-face {
     font-family: "Minecraftv1";
     src: url('assets/fonts/MinecraftTen-VGORe.ttf') format('truetype');

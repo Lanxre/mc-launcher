@@ -46,7 +46,7 @@ const handleModalReset = () => {
       <div class="search-button">
         <img :src="SettingsIcon" 
             class="icon" 
-            style="cursor: pointer;"
+            style="cursor: pointer; padding: 10px;"
             @click="handleModalOpen"
         />
       </div>
@@ -117,7 +117,6 @@ const handleModalReset = () => {
 .search-button {
     display: flex;
     align-items: center;
-    padding: 5px;
     border-radius: 30%;
     background-color: lightgray;
     transition: 1s;

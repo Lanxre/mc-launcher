@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { useModStore } from '@/stores/modStore';
-import { GetModDetails } from "../../wailsjs/go/main/ScraperService"
+import { GetModDetails, GetModDepends } from "../../wailsjs/go/main/ScraperService"
 import { DownloadFileToMinecraftMods } from "../../wailsjs/go/main/FileService"
 import { ShowInfoMessage } from "../../wailsjs/go/main/App"
 
@@ -34,8 +34,11 @@ onMounted(async () => {
       const customMod = await GetModDetails(mod.value.ModPageLink)
       mod.value.Screenshots = customMod.Screenshots
       mod.value.Details = customMod.Details
-
+      mod.value.Dependency = customMod.Dependency
       console.log(mod.value)
+      const s = await GetModDepends(mod.value.Dependency)
+      console.log(s)
+
     }
 })
 

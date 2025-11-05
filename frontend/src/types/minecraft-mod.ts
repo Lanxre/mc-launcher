@@ -1,3 +1,12 @@
+export interface  ModDependency {
+  ModPageLink: string;
+  URL: string;
+  Name: string;
+  Version: string;
+  Loader: string;
+  Type: string;
+}
+
 export interface DownloadInfo {
   URL: string;
   Version: string;
@@ -13,6 +22,7 @@ export interface MinecraftMod {
   Versions: string[];
   Screenshots: string[];
   Loaders: string[];
+  Dependency:  ModDependency[];
   Details: DownloadInfo[];
 
   convertValues: any

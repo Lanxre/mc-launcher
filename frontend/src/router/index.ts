@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import HomeView from '@/views/HomeView.vue'
 import ModView from '@/views/ModView.vue'
+import DownloadsView from '@/views/DownloadsView.vue'
 
 const routes = [
   {
@@ -13,6 +14,11 @@ const routes = [
     path: '/mod',
     name: 'mod',
     component: ModView,
+  },
+  {
+    path: '/mod-downloads',
+    name: 'mod-downloads',
+    component: DownloadsView,
   }
 ]
 

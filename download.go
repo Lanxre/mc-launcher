@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"time"
 	"strings"
 )
@@ -184,20 +183,7 @@ func downloadDirectFile(client *http.Client, fileURL, filename string) error {
 		return fmt.Errorf("download failed with status: %d", resp.StatusCode)
 	}
 
-    var finalPath string
-    if runtime.GOOS == "windows" {
-        appData := os.Getenv("APPDATA")
-        if appData == "" {
-            return fmt.Errorf("APPDATA environment variable not found")
-        }
-        finalPath = filepath.Join(appData, ".minecraft", "mods", filename)
-    } else {
-        homeDir, err := os.UserHomeDir()
-        if err != nil {
-            return fmt.Errorf("failed to get user home directory: %v", err)
-        }
-        finalPath = filepath.Join(homeDir, ".minecraft", "mods", filename)
-    }
+    finalPath, _ := GetMinecraftModPath(filename)
 
     dir := filepath.Dir(finalPath)
     if err := os.MkdirAll(dir, 0755); err != nil {

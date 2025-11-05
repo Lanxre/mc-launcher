@@ -18,6 +18,28 @@ export namespace main {
 	        this.Downloads = source["Downloads"];
 	    }
 	}
+	export class ModDependency {
+	    ModPageLink: string;
+	    URL: string;
+	    Name: string;
+	    Version: string;
+	    Loader: string;
+	    Type: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ModDependency(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ModPageLink = source["ModPageLink"];
+	        this.URL = source["URL"];
+	        this.Name = source["Name"];
+	        this.Version = source["Version"];
+	        this.Loader = source["Loader"];
+	        this.Type = source["Type"];
+	    }
+	}
 	export class MinecraftMod {
 	    Name: string;
 	    Icon: string;
@@ -26,6 +48,7 @@ export namespace main {
 	    Versions: string[];
 	    Screenshots: string[];
 	    Loaders: string[];
+	    Dependency: ModDependency[];
 	    Details: DownloadInfo[];
 	
 	    static createFrom(source: any = {}) {
@@ -41,6 +64,7 @@ export namespace main {
 	        this.Versions = source["Versions"];
 	        this.Screenshots = source["Screenshots"];
 	        this.Loaders = source["Loaders"];
+	        this.Dependency = this.convertValues(source["Dependency"], ModDependency);
 	        this.Details = this.convertValues(source["Details"], DownloadInfo);
 	    }
 	

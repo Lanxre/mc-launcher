@@ -1,8 +1,13 @@
 package main
 
 import (
-	"slices"
 	"cmp"
+	"fmt"
+	"os"
+	"path"
+	"path/filepath"
+	"runtime"
+	"slices"
 )
 
 type FuncService struct {}
@@ -40,4 +45,63 @@ func (s *FuncService) SortByLoader(mods []MinecraftMod, searchedLoader string) [
     }
     
     return filteredMods
+}
+
+func(s *FuncService) GetSavedMods() ([]string, error ){
+	finalPath, err := GetMinecraftModsPath()
+
+	if err != nil {
+		return nil, nil
+	}
+
+	entries, err := os.ReadDir(finalPath)
+    if err != nil {
+        return nil, nil
+    }
+
+	filesNames := make([]string, len(entries))
+    for _, entry := range entries {
+        filesNames = append(
+        	filesNames,
+        	entry.Name(),
+        )
+    }
+
+	return filesNames, nil
+}
+
+func (s * FuncService) DeleteSavedMod(modName string) {
+    minecraftDir, _ := GetMinecraftModsPath()
+    finalPath := path.Join(minecraftDir, modName)
+
+    os.Remove(finalPath)
+}
+
+func GetMinecraftModsPath() (string, error) {
+    var finalPath string
+    if runtime.GOOS == "windows" {
+        appData := os.Getenv("APPDATA")
+        if appData == "" {
+            return "", fmt.Errorf("APPDATA environment variable not found")
+        }
+        finalPath = filepath.Join(appData, ".minecraft", "mods")
+    } else {
+        homeDir, err := os.UserHomeDir()
+        if err != nil {
+            return "", fmt.Errorf("failed to get user home directory: %v", err)
+        }
+        finalPath = filepath.Join(homeDir, ".minecraft", "mods")
+    }
+
+    return finalPath, nil
+}
+
+func GetMinecraftModPath(filename string) (string, error) {
+    finalPath, err := GetMinecraftModsPath()
+
+    if err != nil {
+        return  "", err
+    }
+
+    return fmt.Sprintf("%s/%s",finalPath, filename), nil
 }
