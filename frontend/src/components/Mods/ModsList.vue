@@ -17,8 +17,10 @@ const modStore = useModStore()
 
 const { saveScrollBeforeLeave } = useScrollManager()
 
-defineProps<{
-    mods: MinecraftMod[]
+const props = defineProps<{
+    mods: MinecraftMod[],
+    loaderf?: string,
+    versionf?: string,
 }>()
 
 const loaderToTag = (loader: string) => {
@@ -51,6 +53,15 @@ const getLoaderTags = (mod: MinecraftMod) => {
 const redirectToMod = (mod: MinecraftMod): void => {
   saveScrollBeforeLeave()
   modStore.setCurrentMod(mod)
+
+  if (props.loaderf !== undefined && props.loaderf !== "") {
+    modStore.setLoaderFilter(props.loaderf)
+  }
+
+  if (props.versionf !== undefined && props.versionf !== "") {
+    modStore.setVersionFilter(props.versionf)
+  }
+
   router.push({
     name: 'mod',
     params: {

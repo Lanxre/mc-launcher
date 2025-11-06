@@ -34,7 +34,7 @@ const hasMore = ref(true)
 
 let observer: IntersectionObserver | null = null
 
-const loaderTrigger = ref<HTMLElement | null>(null)
+const loaderTrigger = ref<any>(null)
 const mainElement = ref<HTMLElement | null>(null)
 
 const loadMods = async () => {
@@ -121,11 +121,10 @@ const loadMoreMods = async () => {
 }
 
 const reinitObserver = async () => {
+  if (!loaderTrigger.value?.loaderTrigger) return
   observer?.disconnect()
   await nextTick()
-  if (loaderTrigger.value) {
-    observer?.observe(loaderTrigger.value)
-  }
+  observer?.observe(loaderTrigger.value.loaderTrigger)
 }
 
 const checkIfNeedMoreContent = () => {
@@ -157,20 +156,17 @@ const handleFilter = async (version: string, loader: string) => {
   mods.value = filteredMods
 }
 
-const initObserver = async () => {
-  await nextTick()
-  if (!loaderTrigger.value || observer) return
-
+const initObserver = async (element: HTMLElement) => {
+  observer?.disconnect()
   observer = new IntersectionObserver(
     ([entry]) => {
-      if (entry!.isIntersecting && hasMore.value && !loadingMore.value) {
+      if (entry != undefined && entry.isIntersecting && hasMore.value && !loadingMore.value) {
         loadMoreMods()
       }
     },
     { root: null, rootMargin: '100px', threshold: 0.1 }
   )
-
-  observer.observe(loaderTrigger.value)
+  observer.observe(element)
 }
 
 const getUniqueVersions = computed(() => {
@@ -220,10 +216,10 @@ watch(searchE, (newVal) => {
   if (!newVal) searchPage.value = 1
 })
 
-watch(loaderTrigger, async (newVal) => {
-  if (newVal && hasMore.value) {
+watch(loaderTrigger, async (comp) => {
+  if (comp?.loaderTrigger && hasMore.value) {
     await nextTick()
-    initObserver()
+    initObserver(comp.loaderTrigger)
   }
 }, { flush: 'post' })
 
@@ -251,7 +247,7 @@ onUnmounted(() => {
       <InputSearch v-model="searchE" @search="handleSearchFilter" />
       <SearchFilter :versions="getUniqueVersions" :loaders="getUniqueLoaders" @filter="handleFilter" />
     </div>
-    <ModsList :mods="mods" />
+    <ModsList :mods="mods" :loaderf="loaderE" :versionf="versionE" />
     <ModLoader
       ref="loaderTrigger"
       :has-more="hasMore"
@@ -259,7 +255,7 @@ onUnmounted(() => {
       :count="mods.length"
       loading-text="Загрузка модов..."
       end-message="Все моды загружены"
-      :auto-load="true"
+      :auto-load="false"
       @load-more="loadMoreMods"
     />
   </div>
@@ -269,12 +265,9 @@ onUnmounted(() => {
 .main {
   display: flex;
   flex-direction: column;
-  
   width: 100%;
   flex: 1;
-  
   padding: 20px;
-  
   gap: 15px;
 }
 
@@ -282,8 +275,6 @@ onUnmounted(() => {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-
   gap: 5px;
 }
-
 </style>

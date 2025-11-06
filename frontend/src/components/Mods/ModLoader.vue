@@ -34,7 +34,7 @@ const props = withDefaults(defineProps<Props>(), {
   loadingText: 'Загрузка...',
   endMessage: 'Все моды загружены',
   autoLoad: true,
-  rootMargin: '0px 0px 100px 0px',
+  rootMargin: '0px 0px 30px 0px',
   threshold: 0
 });
 
@@ -73,6 +73,8 @@ const destroyObserver = () => {
   }
 };
 
+defineExpose({ loaderTrigger });
+
 watch(() => props.autoLoad, (newVal) => {
   destroyObserver();
   if (newVal) {
@@ -95,6 +97,7 @@ onMounted(() => {
 onUnmounted(() => {
   destroyObserver();
 });
+
 </script>
 
 <style lang="css" scoped>

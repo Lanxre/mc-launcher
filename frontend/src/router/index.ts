@@ -11,7 +11,7 @@ const routes = [
     component: HomeView,
   },
   {
-    path: '/mod',
+    path: '/:name',
     name: 'mod',
     component: ModView,
   },

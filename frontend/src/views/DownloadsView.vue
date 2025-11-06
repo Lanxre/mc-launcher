@@ -17,7 +17,7 @@ const handleDeleteMod = async (modName: string) => {
 }
 
 onMounted(async () => {
-    savedNameMods.value = await GetSavedMods()
+    savedNameMods.value = await GetSavedMods() 
 })
 
 </script>
@@ -26,7 +26,7 @@ onMounted(async () => {
     <AppHeader/>
     <View>
         <div class="downloads-list">
-            <div v-for="modName in savedNameMods.filter((m) => m !== '')" :key="modName" class="mod-item">
+            <div v-for="modName in savedNameMods" :key="modName" class="mod-item">
                <div class="mod-name"> {{ modName }} </div>
                <div class="mod-details"> 
                   <ImageButton :img="CrossIcon" @click="handleDeleteMod(modName)" title="Удалить"/>  

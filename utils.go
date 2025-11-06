@@ -59,12 +59,14 @@ func(s *FuncService) GetSavedMods() ([]string, error ){
         return nil, nil
     }
 
-	filesNames := make([]string, len(entries))
+	filesNames := make([]string, 0, len(entries))
     for _, entry := range entries {
-        filesNames = append(
-        	filesNames,
-        	entry.Name(),
-        )
+        if !entry.IsDir() {
+            filesNames = append(
+                filesNames,
+                entry.Name(),
+            )
+        }
     }
 
 	return filesNames, nil

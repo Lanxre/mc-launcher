@@ -315,13 +315,14 @@ func ScrapDetails(link string) (MinecraftMod, error) {
 				Loader:  "",
 				Type:    "",
 			}
-			depends = append(depends, deps)
+
+			if deps.Name != ".minecraft" && deps.Name != "Minecraft Forge" {
+				depends = append(depends, deps)
+			}
+
 			isDependsFound = true
 		})
 		
-		if len(depends) > 2 {
-			depends = depends[1: len(depends) - 1]
-		}
 	})
 
     c.Visit(link)
