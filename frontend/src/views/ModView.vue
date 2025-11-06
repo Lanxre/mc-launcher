@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { useModStore } from '@/stores/modStore';
-import { GetModDetails } from "../../wailsjs/go/main/ScraperService"
+import { GetModDetails, GetModDepends } from "../../wailsjs/go/parser/ScraperService"
 import { DownloadFileToMinecraftMods } from "../../wailsjs/go/main/FileService"
 import { ShowInfoMessage } from "../../wailsjs/go/main/App"
 
@@ -10,7 +10,7 @@ import AppHeader from '@/layouts/AppHeader.vue';
 import AppFooter from '@/layouts/AppFooter.vue';
 import Slider from '@/components/Slider/Slider.vue';
 
-import type { MinecraftMod } from '@/types';
+import type { MinecraftMod, ModDependency, DownloadInfo } from '@/types';
 import { openLink } from '@/api/utils';
 import LinkIcon from '@/assets/images/link.png'
 
@@ -18,15 +18,44 @@ import LinkIcon from '@/assets/images/link.png'
 const modStore = useModStore()
 
 const mod = ref<MinecraftMod | null>(null)
+const depends = ref<ModDependency[]>([])
 
-const downloadMod = async (url: string, modName: string, modVersion: string) => {
-  await DownloadFileToMinecraftMods(url, modName, modVersion);
+const downloadMod = async (mod: MinecraftMod ,detail: DownloadInfo) => {
+  await DownloadFileToMinecraftMods(detail.URL, mod.Name, detail.Version);
   await showNotify()
 }
 
 const showNotify = async () => {
     await ShowInfoMessage("Успех", "Мод успешно сохранён!");
 };
+
+async function FetchAllDependencies(initialDeps: ModDependency[]) {
+  const visited = new Set()
+  const allDeps: ModDependency[] = []
+
+  async function processDeps(deps: ModDependency[]) {
+    const uniqueDeps = deps.filter(d => d.ModPageLink && !visited.has(d.ModPageLink))
+    if (uniqueDeps.length === 0) return
+
+    uniqueDeps.forEach(d => visited.add(d.ModPageLink))
+
+    const newDeps = await GetModDepends(uniqueDeps)
+    allDeps.push(...newDeps)
+
+    const nestedDeps = newDeps
+      .map(d => d.Dependency)
+      .filter(Boolean)
+      .flat()            
+      .filter(d => d.ModPageLink && !visited.has(d.ModPageLink))
+
+    if (nestedDeps.length > 0) {
+      await processDeps(nestedDeps)
+    }
+  }
+
+  await processDeps(initialDeps)
+  return allDeps
+}
 
 onMounted(async () => {
     mod.value = modStore.currentMod
@@ -48,6 +77,16 @@ onMounted(async () => {
         mod.value.Details = mod.value.Details.filter((d) => d.Version == versionf)
       }
 
+      let allDepends = await FetchAllDependencies(mod.value.Dependency)
+      allDepends = allDepends.filter((dep, ind, self) => dep.ModPageLink && ind === self.findIndex(d => d.ModPageLink === dep.ModPageLink))
+      allDepends.forEach(async d => {
+        if(d.Details == null){
+          const data = await GetModDetails(d.ModPageLink)
+          d.Details = data.Details
+        }
+      })
+
+      depends.value = allDepends
     }
 })
 
@@ -81,7 +120,7 @@ onMounted(async () => {
             <span style="margin-bottom: 3px;"> {{ mod?.Description }}</span>
           </div>
           <div class="mod-download">
-              <button v-if="mod?.Details && mod.Details.length >= 1" v-for="(detail) in mod?.Details"  class="button" @click="downloadMod(detail.URL, mod.Name, detail.Version)" style="background-color: green; width: 50%; margin-bottom: 14px;">
+              <button v-if="mod?.Details && mod.Details.length >= 1" v-for="(detail) in mod?.Details"  class="button" @click="downloadMod(mod, detail)" style="background-color: green; width: 50%; margin-bottom: 14px;">
                 Скачать {{ detail.Version }} | {{ detail.Loader }} | Скачано {{ detail.Downloads ? detail.Downloads : '0' }} раз
               </button>
           </div>

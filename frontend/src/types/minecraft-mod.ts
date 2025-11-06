@@ -4,7 +4,10 @@ export interface  ModDependency {
   Name: string;
   Version: string;
   Loader: string;
-  Type: string;
+  Dependency: ModDependency[];
+  Details: DownloadInfo[];
+
+  convertValues: any
 }
 
 export interface DownloadInfo {

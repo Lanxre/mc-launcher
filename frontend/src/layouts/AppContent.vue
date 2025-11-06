@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref, nextTick, computed, watch } from 'vue'
 import { useModStore } from '@/stores/modStore'
-import { GetMods, GetModsByPage } from '../../wailsjs/go/main/ScraperService'
+import { GetMods, GetModsByPage } from '../../wailsjs/go/parser/ScraperService'
 import { SortByVersions, SortByLoader } from '../../wailsjs/go/main/FuncService'
 import type { MinecraftMod } from '@/types'
 import { uniqueBy } from '@/api/utils'

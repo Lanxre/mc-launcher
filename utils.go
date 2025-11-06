@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"slices"
+
+    "github.com/lanxre/mc-launcher/parser"
 )
 
 type FuncService struct {}
@@ -16,8 +18,8 @@ func NewFuncService() *FuncService {
     return &FuncService{}
 }
 
-func (s *FuncService) SortByVersions(mods []MinecraftMod, version string) []MinecraftMod {
-    var filteredMods []MinecraftMod
+func (s *FuncService) SortByVersions(mods []parser.MinecraftMod, version string) []parser.MinecraftMod {
+    var filteredMods []parser.MinecraftMod
     
     for _, mod := range mods {
         for _, v := range mod.Versions {
@@ -35,8 +37,8 @@ func (s *FuncService) SortByVersions(mods []MinecraftMod, version string) []Mine
 }
 
 
-func (s *FuncService) SortByLoader(mods []MinecraftMod, searchedLoader string) []MinecraftMod {
-    var filteredMods []MinecraftMod
+func (s *FuncService) SortByLoader(mods []parser.MinecraftMod, searchedLoader string) []parser.MinecraftMod {
+    var filteredMods []parser.MinecraftMod
     
     for _, mod := range mods {
         if slices.Contains(mod.Loaders, searchedLoader) {

@@ -21,6 +21,9 @@ func NewFileService() *FileService {
 func (fs *FileService) DownloadFileToMinecraftMods(url, modName, version string) error {
     filename := fmt.Sprintf("%s_%s.jar", strings.ToLower(strings.ReplaceAll(modName, " ", "_", )), version)
     client := initHTTPClient()
+
+	// Save yaml config
+
     downloadFileFromURL(client, url, filename)
 
     return nil
