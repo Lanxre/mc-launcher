@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { useModStore } from '@/stores/modStore';
 import { GetModDetails, GetModDepends } from "../../wailsjs/go/parser/ScraperService"
-import { DownloadFileToMinecraftMods } from "../../wailsjs/go/main/FileService"
+import { DownloadFileToMinecraftMods, DownloadsMods } from "../../wailsjs/go/main/FileService"
 import { ShowInfoMessage } from "../../wailsjs/go/main/App"
 
 
@@ -20,8 +20,15 @@ const modStore = useModStore()
 const mod = ref<MinecraftMod | null>(null)
 const depends = ref<ModDependency[]>([])
 
-const downloadMod = async (mod: MinecraftMod ,detail: DownloadInfo) => {
-  await DownloadFileToMinecraftMods(detail.URL, mod.Name, detail.Version);
+const downloadMod = async (mod: MinecraftMod, detail: DownloadInfo) => {
+  if (depends.value.length > 0) {
+    const names = depends.value.map(d => d.Name)
+    const dep = depends.value.flatMap(d => d.Details.filter(dl => dl.Version.includes(detail.Version) && dl.Loader === detail.Loader))
+    await DownloadsMods(names, dep)
+    await DownloadFileToMinecraftMods(detail.URL, mod.Name, detail.Version);
+  } else {
+    await DownloadFileToMinecraftMods(detail.URL, mod.Name, detail.Version);
+  }
   await showNotify()
 }
 

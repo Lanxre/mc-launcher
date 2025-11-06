@@ -8,8 +8,10 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"time"
 	"strings"
+	"time"
+
+	"github.com/lanxre/mc-launcher/parser"
 )
 
 type FileService struct {}
@@ -21,13 +23,17 @@ func NewFileService() *FileService {
 func (fs *FileService) DownloadFileToMinecraftMods(url, modName, version string) error {
     filename := fmt.Sprintf("%s_%s.jar", strings.ToLower(strings.ReplaceAll(modName, " ", "_", )), version)
     client := initHTTPClient()
-
-	// Save yaml config
-
     downloadFileFromURL(client, url, filename)
 
     return nil
 }
+
+func (fs *FileService) DownloadsMods(modNames []string, details []parser.DownloadInfo) {
+	for i, detail := range details {
+		fs.DownloadFileToMinecraftMods(detail.URL, modNames[i], detail.Version)
+	}
+}
+
 
 func initHTTPClient() *http.Client {
 	jar, _ := cookiejar.New(nil)
@@ -187,7 +193,7 @@ func downloadDirectFile(client *http.Client, fileURL, filename string) error {
 	}
 
     finalPath, _ := GetMinecraftModPath(filename)
-
+	
     dir := filepath.Dir(finalPath)
     if err := os.MkdirAll(dir, 0755); err != nil {
         return fmt.Errorf("failed to create directory %s: %v", dir, err)

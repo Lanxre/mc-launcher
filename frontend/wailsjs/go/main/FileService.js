@@ -5,3 +5,7 @@
 export function DownloadFileToMinecraftMods(arg1, arg2, arg3) {
   return window['go']['main']['FileService']['DownloadFileToMinecraftMods'](arg1, arg2, arg3);
 }
+
+export function DownloadsMods(arg1, arg2) {
+  return window['go']['main']['FileService']['DownloadsMods'](arg1, arg2);
+}
