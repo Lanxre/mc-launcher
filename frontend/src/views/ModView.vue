@@ -1,46 +1,30 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
-import { useModStore } from '@/stores/modStore';
-import { GetModDetails, GetModDepends } from "../../wailsjs/go/parser/ScraperService"
-import { DownloadFileToMinecraftMods, DownloadsMods } from "../../wailsjs/go/main/FileService"
-import { ShowInfoMessage } from "../../wailsjs/go/main/App"
+import { onMounted, ref } from 'vue'
+import { useModStore } from '@/stores/modStore'
+import { GetModDetails, GetModDepends } from '@/../wailsjs/go/parser/ScraperService'
+import type { MinecraftMod, ModDependency } from '@/types'
 
+import AppHeader from '@/layouts/AppHeader.vue'
+import AppFooter from '@/layouts/AppFooter.vue'
 
-import AppHeader from '@/layouts/AppHeader.vue';
-import AppFooter from '@/layouts/AppFooter.vue';
-import Slider from '@/components/Slider/Slider.vue';
-
-import type { MinecraftMod, ModDependency, DownloadInfo } from '@/types';
-import { openLink } from '@/api/utils';
-import LinkIcon from '@/assets/images/link.png'
-
+import ModTitle from '@/components/ModDetails/ModTitle.vue'
+import ModVersions from '@/components/ModDetails/ModVersions.vue'
+import ModDescription from '@/components/ModDetails/ModDescription.vue'
+import ModDownloads from '@/components/ModDetails/ModDownloads.vue'
+import ModScreenshots from '@/components/ModDetails/ModScreenshots.vue'
 
 const modStore = useModStore()
-
 const mod = ref<MinecraftMod | null>(null)
 const depends = ref<ModDependency[]>([])
+const isLoading = ref(true)
+const isError = ref(false)
 
-const downloadMod = async (mod: MinecraftMod, detail: DownloadInfo) => {
-  if (depends.value.length > 0) {
-    const names = depends.value.map(d => d.Name)
-    const dep = depends.value.flatMap(d => d.Details.filter(dl => dl.Version.includes(detail.Version) && dl.Loader === detail.Loader))
-    await DownloadsMods(names, dep)
-    await DownloadFileToMinecraftMods(detail.URL, mod.Name, detail.Version);
-  } else {
-    await DownloadFileToMinecraftMods(detail.URL, mod.Name, detail.Version);
-  }
-  await showNotify()
-}
-
-const showNotify = async () => {
-    await ShowInfoMessage("Успех", "Мод успешно сохранён!");
-};
-
-async function FetchAllDependencies(initialDeps: ModDependency[]) {
+async function fetchDependencies(initialDeps: ModDependency[]): Promise<ModDependency[]> {
   const visited = new Set()
   const allDeps: ModDependency[] = []
 
   async function processDeps(deps: ModDependency[]) {
+    if (deps == null) return
     const uniqueDeps = deps.filter(d => d.ModPageLink && !visited.has(d.ModPageLink))
     if (uniqueDeps.length === 0) return
 
@@ -64,126 +48,102 @@ async function FetchAllDependencies(initialDeps: ModDependency[]) {
   return allDeps
 }
 
-onMounted(async () => {
-    mod.value = modStore.currentMod
-    if (mod.value?.ModPageLink) {
-      const customMod = await GetModDetails(mod.value.ModPageLink)
-      mod.value.Screenshots = customMod.Screenshots
-      mod.value.Details = customMod.Details
-      mod.value.Dependency = customMod.Dependency
-      console.log(mod.value)
-
-      const loaderf = modStore.getLoaderFilter
-      const versionf = modStore.getVersionFilter
-
-      if (loaderf != null && loaderf != "") {
-        mod.value.Details = mod.value.Details.filter((d) => d.Loader == loaderf)
-      }
-
-      if (versionf != null && versionf != "") {
-        mod.value.Details = mod.value.Details.filter((d) => d.Version == versionf)
-      }
-
-      let allDepends = await FetchAllDependencies(mod.value.Dependency)
-      allDepends = allDepends.filter((dep, ind, self) => dep.ModPageLink && ind === self.findIndex(d => d.ModPageLink === dep.ModPageLink))
-      allDepends.forEach(async d => {
-        if(d.Details == null){
-          const data = await GetModDetails(d.ModPageLink)
-          d.Details = data.Details
-        }
-      })
-
-      depends.value = allDepends
+async function enrichDependencies(deps: ModDependency[]) {
+  for (const dep of deps) {
+    if (dep.Details == null) {
+      console.log(dep.ModPageLink)
+      const data = await GetModDetails(dep.ModPageLink)
+      console.log('data', data)
+      dep.Details = data.Details
     }
-})
+  }
+}
+
+function applyFilters(modObj: MinecraftMod) {
+  const loaderFilter = modStore.getLoaderFilter
+  const versionFilter = modStore.getVersionFilter
+
+  if (loaderFilter) {
+    modObj.Details = modObj.Details.filter(d => d.Loader === loaderFilter)
+  }
+
+  if (versionFilter) {
+    modObj.Details = modObj.Details.filter(d => d.Version === versionFilter)
+  }
+}
+
+async function loadModDetails() {
+  try {
+    let currentMod = modStore.currentMod
+    if (!currentMod?.ModPageLink) return
+
+    const fullDetails = await GetModDetails(currentMod.ModPageLink)
+    currentMod.Screenshots = fullDetails.Screenshots
+    currentMod.Details = fullDetails.Details
+    currentMod.Dependency = fullDetails.Dependency
+
+    applyFilters(currentMod)
+    console.log('1-current', currentMod.Dependency)
+    let allDeps = await fetchDependencies(currentMod.Dependency)
+    console.log('2-after', allDeps)
+    allDeps = allDeps.filter(
+      (dep, i, self) => dep.ModPageLink && i === self.findIndex(d => d.ModPageLink === dep.ModPageLink)
+    )
+    
+    await enrichDependencies(allDeps)
+    console.log('3', allDeps)
+    depends.value = allDeps
+    mod.value = currentMod
+
+  } catch (err) {
+    console.error('Ошибка при загрузке данных мода:', err)
+    isError.value = true
+  } finally {
+    isLoading.value = false
+  }
+}
+onMounted(loadModDetails)
 
 </script>
 
+
 <template>
-  <AppHeader/>
+  <AppHeader />
 
-  <div class="mod">
-        <div class="screenshots">
-            <Slider v-if="mod?.Screenshots && mod.Screenshots.length > 0" :slides="mod?.Screenshots.map((s) => {
-              return {
-                image: s,
-                alt: 'no screen',
-              }
-            })"
-            />
-            <div v-else class="no-screenshots">
-              <p class="text text-shd">Скриншоты не найдены</p>
-            </div>
-          </div>
-        <div style="height: 100%;">
-          <div class="mod-content">
-            <div class="mod-name" @click="openLink(mod?.ModPageLink!)">
-              <h1>{{ mod?.Name }} </h1>
-              <img :src="LinkIcon" alt="modlink" class="icon"/>
-            </div>
-            <p v-if="mod?.Versions && mod.Versions.length === 1">Версия: {{ mod?.Versions[0] }}</p>
-            <p v-else>Версии: {{ mod?.Versions.join(', ') }}</p>
-            <br/>
-            <span style="margin-bottom: 3px;"> {{ mod?.Description }}</span>
-          </div>
-          <div class="mod-download">
-              <button v-if="mod?.Details && mod.Details.length >= 1" v-for="(detail) in mod?.Details"  class="button" @click="downloadMod(mod, detail)" style="background-color: green; width: 50%; margin-bottom: 14px;">
-                Скачать {{ detail.Version }} | {{ detail.Loader }} | Скачано {{ detail.Downloads ? detail.Downloads : '0' }} раз
-              </button>
-          </div>
+  <div class="mod" v-if="mod">
+    <ModScreenshots v-if="mod && mod.Screenshots !== null" :screenshots="mod.Screenshots" />
 
-        </div>
+    <div class="mod-content">
+      <ModTitle :name="mod.Name" :link-page="mod.ModPageLink" />
+      <ModVersions :versions="mod.Versions" />
+      <ModDescription :description="mod.Description" />
+      <ModDownloads :mod="mod" :depends="depends" />
+    </div>
   </div>
-
-  <AppFooter/>
+  <AppFooter />
 </template>
 
-<style lang="css">
+<style scoped>
 .mod {
   display: flex;
   flex-direction: column;
-  
-  width: 100%;
-  
+  gap: 24px;
   padding: 20px;
-  
-  gap: 15px;
 }
 
 .mod-content {
   display: flex;
   flex-direction: column;
-
+  gap: 16px;
 }
 
-.no-screenshots {
+.loading-state,
+.error-state {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.mod-download{
-  display: flex;
-  flex-direction: column;
-
   justify-content: center;
   align-items: center;
-  
+  height: 60vh;
+  font-size: 1.2rem;
+  color: #888;
 }
-
-.mod-name {
-  display: flex;
-  flex-direction: row;
-
-  gap: 5px;
-  cursor: pointer;
-}
-
-.mod-name img {
-  width: 15px;
-  height: 15px;
-  filter: brightness(0) invert(1);
-}
-
 </style>
