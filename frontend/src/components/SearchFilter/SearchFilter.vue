@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 import SettingsIcon from '@/assets/images/setting.png'
-import Modal from '@/components/Modal/Modal.vue';
-import List from '@/components/List/List.vue';
+import Modal from '@/components/Modal/Modal.vue'
+import List from '@/components/List/List.vue'
+import ImageButton from '../Buttons/ImageButton.vue'
 
 interface Props {
-    versions: string[]
-    loaders: string[]
+  versions: string[]
+  loaders: string[]
 }
 
 defineProps<Props>()
@@ -16,114 +17,110 @@ const emit = defineEmits<{
   'filter': [version: string, loader: string]
 }>()
 
-const isModalOpen = ref(false);
-const version     = ref("");
-const loader      = ref("");
+const isModalOpen = ref(false)
+const version = ref('')
+const loader = ref('')
 
+const openModal = () => (isModalOpen.value = true)
 
-const handleModalOpen = () => {
-    isModalOpen.value = true
+const confirmFilter = () => {
+  isModalOpen.value = false
+  emit('filter', version.value, loader.value)
 }
 
-const handleModalConfirm = () => {
-    isModalOpen.value = false
-    emit('filter', version.value, loader.value)
+const resetFilter = () => {
+  isModalOpen.value = false
+  version.value = ''
+  loader.value = ''
+  emit('filter', version.value, loader.value)
 }
-
-const handleModalReset = () => {
-    isModalOpen.value = false
-    
-    version.value = ""
-    loader.value  = ""
-
-    emit('filter', version.value, loader.value)
-}
-
 </script>
 
 <template>
-<div class="search-filter">
-      <div class="search-button">
-        <img :src="SettingsIcon" 
-            class="icon" 
-            style="cursor: pointer; padding: 10px;"
-            @click="handleModalOpen"
-        />
-      </div>
-      <Modal  v-model="isModalOpen"
-              title="Фильтры поиска"
-      >
+  <div class="search-filter">
+    <ImageButton :img="SettingsIcon" @click="openModal" style="border-radius: 50%;"/>
+
+    <Modal v-model="isModalOpen" title="Фильтры поиска">
       <div class="search-settings">
         <div class="search-settings-item">
-            <p class="text text-shd" style="color: white;">Загрузчик</p>
-            <List :items="loaders" v-model="loader" placeholder="Загрузчик" style="width: 100px;"/>
+          <p class="text text-shd">Загрузчик</p>
+          <List :items="loaders" v-model="loader" placeholder="Загрузчик" />
         </div>
-        
+
         <div class="search-settings-item">
-            <p class="text text-shd" style="color: white;">Версия</p>
-            <List :items="versions" v-model="version" placeholder="Версия" style="width: 100px;"/>
+          <p class="text text-shd">Версия</p>
+          <List :items="versions" v-model="version" placeholder="Версия" />
         </div>
-        
       </div>
 
       <template #footer>
-        <button class="button"
-                style="background-color: #a51717;"
-                @click="handleModalReset">
-            Сбросить
-        </button>
-        <button class="button"
-                style="background-color: green;"
-                @click="handleModalConfirm">
-            Подтвердить
-        </button>
+        <button class="button reset-button" @click="resetFilter">Сбросить</button>
+        <button class="button confirm-button" @click="confirmFilter">Подтвердить</button>
       </template>
-      </Modal>
-    </div>
+    </Modal>
+  </div>
 </template>
 
-<style lang="css" scoped>
-
+<style scoped>
 .search-filter {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: 12px;
-
-    align-items: center;
-}
-
-.search-settings {
-    display: flex;
-    flex-direction: column;
-
-    gap: 10px;
-    padding: 40px 0 40px;
-    height: 350px;
-}
-
-.search-settings-item {
-    display: flex;
-    flex-direction: row;
-
-    justify-content: space-between;
-
-}
-
-.search-settings-item {
-    font-size: 12px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
 }
 
 .search-button {
-    display: flex;
-    align-items: center;
-    border-radius: 30%;
-    background-color: lightgray;
-    transition: 1s;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  background-color: lightgray;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .search-button:hover {
-    background-color: lightgreen;
+  background-color: lightgreen;
 }
 
+.search-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 40px 0;
+  height: 350px;
+}
+
+.search-settings-item {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+  margin-right: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.reset-button {
+  background-color: #a51717;
+}
+
+.confirm-button {
+  background-color: #2d8a4d;
+}
+
+.button:hover {
+  opacity: 0.9;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}
 </style>

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import SearchIcon from "@/assets/images/search.png"
+import ImageButton from "../Buttons/ImageButton.vue";
 
-interface Props<T> {
+interface Props {
   placeholder?: string
 }
 
-const props = withDefaults(defineProps<Props<any>>(), {
+withDefaults(defineProps<Props>(), {
   placeholder: 'Название мода',
 })
 
@@ -37,13 +38,7 @@ onMounted(() => {
 <template>
     <div class="input-search">
         <input v-model="searchValue" class="search" type="text" :placeholder="placeholder"/>
-        <div class="search-button">
-            <img :src="SearchIcon"
-                class="icon" 
-                style=" padding: 10px;"
-                @click="handleSearch"
-            />
-        </div>
+        <ImageButton :img="SearchIcon" @click="handleSearch" style="border-radius: 50%;"/>
     </div>
 </template>
 
@@ -54,6 +49,7 @@ onMounted(() => {
     
     align-items: center;
     gap: 10px;
+    color: white;
 }
 
 .search {
@@ -72,10 +68,14 @@ onMounted(() => {
 .search-button {
     display: flex;
     align-items: center;
-    border-radius: 30%;
+    border-radius: 50%;
     background-color: lightgray;
-    transition: 1s;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-button img {
+    padding: 10px;
 }
 
 .search-button:hover {

@@ -8,11 +8,13 @@ import { uniqueBy } from '@/api/utils'
 import type { MinecraftMod } from '@/types'
 import { useScrollManager } from '@/composables/useScrollManager'
 
+import FileIcon from '@/assets/images/file.png'
+
 import ModsList from '@/components/Mods/ModsList.vue'
 import ModLoader from '@/components/Mods/ModLoader.vue'
 import SearchFilter from '@/components/SearchFilter/SearchFilter.vue'
 import InputSearch from '@/components/InputSearch/InputSearch.vue'
-import Button from '@/components/Buttons/Button.vue'
+import ImageButton from '@/components/Buttons/ImageButton.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -185,7 +187,7 @@ onUnmounted(() => {
 <template>
   <div class="main" ref="mainElement">
     <div class="filters">
-      <Button name="Список установленных модов" @click="goToDownloads" />
+      <ImageButton :img="FileIcon" @click="goToDownloads" style="border-radius: 50%;"/>
       <InputSearch v-model="searchE" @search="applySearch" />
       <SearchFilter
         :versions="getUniqueVersions"

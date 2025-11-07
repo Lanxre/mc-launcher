@@ -185,6 +185,7 @@ onUnmounted(() => {
   position: relative;
   display: flex;
   width: 100%;
+  justify-content: flex-end;
 }
 
 .dropdown__trigger {
@@ -241,13 +242,14 @@ onUnmounted(() => {
 .dropdown__menu {
   position: absolute;
   top: 100%;
-  left: 0;
+  left: 100px;
   right: 0;
   background: var(--main-bg-color);
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   max-height: 200px;
+  max-width: 100px;
   overflow-y: auto; 
   z-index: 1000;
   margin-top: 4px;
@@ -260,34 +262,47 @@ onUnmounted(() => {
   border-bottom: 1px solid #f3f4f6;
   min-height: 20px;
   color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdown__item:last-child {
   border-bottom: none;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdown__item:hover {
   background-color: #123432;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdown__item--selected {
   background-color: var(--main-bg-color);
   color: #ffffff;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdown__item--disabled {
   opacity: 0.5;
   cursor: not-allowed;
   background-color: #f9fafb;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdown__item--disabled:hover {
   background-color: #f9fafb;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdown__item-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
@@ -301,7 +316,6 @@ onUnmounted(() => {
   margin-left: 8px;
 }
 
-/* Анимации */
 .dropdown-enter-active,
 .dropdown-leave-active {
   transition: all 0.2s ease;
