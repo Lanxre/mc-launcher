@@ -120,6 +120,13 @@ onMounted(loadModDetails)
       <ModDownloads :mod="mod" :depends="depends" />
     </div>
   </div>
+  <div v-else-if="isLoading" class="loading-state">
+    <p>Загрузка информации о моде...</p>
+  </div>
+
+  <div v-else-if="isError" class="error-state">
+    <p>Не удалось загрузить данные. Попробуйте позже.</p>
+  </div>
   <AppFooter />
 </template>
 
