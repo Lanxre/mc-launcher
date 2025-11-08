@@ -40,6 +40,7 @@ const handleClick = (event: MouseEvent) => {
 
   gap: 5px;
   cursor: pointer;
+  color: white;
 }
 
 .mod-name img {

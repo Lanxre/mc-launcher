@@ -131,7 +131,7 @@ const handleDelete = (mod: MinecraftMod, event: MouseEvent) => {
 }
 
 .mod-card {
-  border: 1px solid #ddd;
+  border: 1px solid whitesmoke;
   border-radius: 8px;
   padding: 15px;
   text-align: center;
@@ -140,7 +140,7 @@ const handleDelete = (mod: MinecraftMod, event: MouseEvent) => {
 }
 
 .mod-card:hover{
-  background-color: rgb(126, 136, 124);
+  background-color: rgb(69, 71, 69);
   transition: 0.9s;
 }
 
@@ -169,6 +169,7 @@ const handleDelete = (mod: MinecraftMod, event: MouseEvent) => {
   margin-top: 10px;
   font-weight: bold;
   word-break: break-word;
+  color: white;
 }
 
 .version-tags {

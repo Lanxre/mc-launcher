@@ -17,5 +17,6 @@ withDefaults(defineProps<Props>(), {
 <style lang="css" scoped>
 .mod-description {
     margin-bottom: 3px;
+    color: white;
 }
 </style>

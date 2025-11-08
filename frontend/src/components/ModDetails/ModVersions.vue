@@ -34,6 +34,7 @@ const hasVersions = computed(() => props.versions && props.versions.length > 0)
   flex-direction: column;
   gap: 6px;
   margin-bottom: 8px;
+  color: white;
 }
 
 .versions-list {

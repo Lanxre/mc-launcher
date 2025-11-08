@@ -16,7 +16,6 @@ import ModLoader from '@/components/Mods/ModLoader.vue'
 import SearchFilter from '@/components/SearchFilter/SearchFilter.vue'
 import InputSearch from '@/components/InputSearch/InputSearch.vue'
 import ImageButton from '@/components/Buttons/ImageButton.vue'
-import Button from '@/components/Buttons/Button.vue'
 
 const route = useRoute()
 const router = useRouter()

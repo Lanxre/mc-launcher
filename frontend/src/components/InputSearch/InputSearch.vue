@@ -63,6 +63,7 @@ onMounted(() => {
     background-color: rgb(34, 33, 33);
     border: 1px solid whitesmoke;
     outline: none;
+    color: white;
 }
 
 .search-button {
