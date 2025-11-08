@@ -6,9 +6,10 @@ import AppHeader from '@/layouts/AppHeader.vue'
 import View from '@/components/View/View.vue'
 import ModsList from '@/components/Mods/ModsList.vue'
 
-import { GetYamlConfig, RemoveFromYamlConfig } from '../../wailsjs/go/main/FuncService'
+import { GetYamlConfig, RemoveFromYamlConfig, DeleteSavedMod } from '../../wailsjs/go/main/FuncService'
 import { ShowInfoMessage } from '../../wailsjs/go/main/App'
 import type { MinecraftMod } from '@/types'
+import { getMinecraftDownloadFileName } from '@/api/utils'
 
 const savedMods = ref<MinecraftMod[]>([])
 
@@ -25,6 +26,8 @@ const removeFromDownloads = async (mod: MinecraftMod) => {
   try {
     savedMods.value = savedMods.value.filter(m => m.Name !== mod.Name)
     await RemoveFromYamlConfig(mod, 'downloads')
+    const filename = getMinecraftDownloadFileName(mod.Name, mod.Versions)
+    await DeleteSavedMod(filename)
     await ShowInfoMessage('Удалён', `Мод "${mod.Name}" успешно удалён`)
   } catch (err) {
     console.error('Ошибка при удалении мода:', err)

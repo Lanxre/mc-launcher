@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { DownloadFileToMinecraftMods, DownloadsMods } from '@/../wailsjs/go/main/FileService'
 import { ShowInfoMessage } from '@/../wailsjs/go/main/App'
 import type { MinecraftMod, DownloadInfo, ModDependency } from '@/types'
-import { saveModToYaml } from '@/api/utils'
+import { saveModToYaml, getMinecraftDownloadFileName } from '@/api/utils'
 
 interface Props {
   mod: MinecraftMod
@@ -35,7 +35,8 @@ const downloadMod = async (mod: MinecraftMod, detail: DownloadInfo) => {
       }
     }
 
-    await DownloadFileToMinecraftMods(detail.URL, mod.Name, detail.Version)
+    const filenameToDownload =  getMinecraftDownloadFileName(mod.Name, mod.Versions)
+    await DownloadFileToMinecraftMods(detail.URL, filenameToDownload)
     await saveModToYaml(mod, 'downloads')
     await showNotify('Успех', `Мод "${mod.Name}" успешно загружен!`)
   } catch (err: any) {

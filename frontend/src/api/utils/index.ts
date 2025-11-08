@@ -31,3 +31,10 @@ export const saveModToYaml = async (mod: MinecraftMod, filename: string) => {
     console.error('Ошибка сохранения:', err)
   }
 }
+
+export const getMinecraftDownloadFileName = (modName: string, versions: string[]): string => {
+  const normalizedModName = modName.toLowerCase().replaceAll(' ', '_');
+  const normalizedVersions = versions.join('_').toLowerCase();
+  
+  return `${normalizedModName}_${normalizedVersions}.jar`;
+};

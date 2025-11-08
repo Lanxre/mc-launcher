@@ -97,7 +97,7 @@ func (s *FuncService) RemoveFromYamlConfig(mod parser.MinecraftMod, filename str
 		}
 	}
 
-	filePath, err := s.getYamlFilePath(FAVOURITES)
+	filePath, err := s.getYamlFilePath(filename)
 	if err != nil {
 		return err
 	}

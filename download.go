@@ -20,8 +20,7 @@ func NewFileService() *FileService {
     return &FileService{}
 }
 
-func (fs *FileService) DownloadFileToMinecraftMods(url, modName, version string) error {
-    filename := fmt.Sprintf("%s_%s.jar", strings.ToLower(strings.ReplaceAll(modName, " ", "_", )), version)
+func (fs *FileService) DownloadFileToMinecraftMods(url, filename string) error {
     client := initHTTPClient()
     downloadFileFromURL(client, url, filename)
 
@@ -30,7 +29,8 @@ func (fs *FileService) DownloadFileToMinecraftMods(url, modName, version string)
 
 func (fs *FileService) DownloadsMods(modNames []string, details []parser.DownloadInfo) {
 	for i, detail := range details {
-		fs.DownloadFileToMinecraftMods(detail.URL, modNames[i], detail.Version)
+		filename := fmt.Sprintf("%s_%s.jar", strings.ToLower(strings.ReplaceAll(modNames[i], " ", "_", )), detail.Version)
+		fs.DownloadFileToMinecraftMods(detail.URL, filename)
 	}
 }
 
