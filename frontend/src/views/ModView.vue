@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useModStore } from '@/stores/modStore'
 import { GetModDetails, GetModDepends } from '@/../wailsjs/go/parser/ScraperService'
-import { SaveYamlModConfig } from '../../wailsjs/go/main/FuncService'
+import { saveModToYaml } from '@/api/utils'
 
 import type { MinecraftMod, ModDependency } from '@/types'
 
@@ -100,16 +100,6 @@ async function loadModDetails() {
   }
 }
 
-const saveModToYaml = async () => {
-  try {
-    if (mod.value !== null && mod.value !== undefined) { 
-      await SaveYamlModConfig(mod.value, 'favourite') 
-    }
-  } catch (err) {
-    console.error('Ошибка сохранения:', err)
-  }
-}
-
 onMounted(loadModDetails)
 </script>
 
@@ -121,7 +111,7 @@ onMounted(loadModDetails)
     <ModScreenshots v-if="mod && mod.Screenshots !== null" :screenshots="mod.Screenshots" />
 
     <div class="mod-content">
-      <ModTitle :name="mod.Name" :link-page="mod.ModPageLink" @save-favourite="saveModToYaml"/>
+      <ModTitle :name="mod.Name" :link-page="mod.ModPageLink" @save-favourite="saveModToYaml(mod, 'favourite')"/>
       <ModVersions :versions="mod.Versions" />
       <ModDescription :description="mod.Description" />
       <ModDownloads :mod="mod" :depends="depends" />

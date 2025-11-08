@@ -1,4 +1,6 @@
+import type { MinecraftMod } from '@/types'
 import { OpenExternalLink } from '../../../wailsjs/go/main/App'
+import { SaveYamlModConfig } from '../../../wailsjs/go/main/FuncService'
 
 export const uniqueBy = <T>(array: T[], keyFn: (item: T) => string): T[] => {
   const seen = new Set<string>()
@@ -18,4 +20,14 @@ export const uniqueBy = <T>(array: T[], keyFn: (item: T) => string): T[] => {
 
 export const openLink = async (url: string) => {
     await OpenExternalLink(url)
+}
+
+export const saveModToYaml = async (mod: MinecraftMod, filename: string) => {
+  try {
+    if (mod !== null && mod !== undefined) { 
+      await SaveYamlModConfig(mod, filename) 
+    }
+  } catch (err) {
+    console.error('Ошибка сохранения:', err)
+  }
 }

@@ -1,76 +1,67 @@
 <script setup lang="ts">
-import AppFooter from '@/layouts/AppFooter.vue';
-import AppHeader from '@/layouts/AppHeader.vue';
-import View from '@/components/View/View.vue';
-import ImageButton from '@/components/Buttons/ImageButton.vue';
-import CrossIcon from '@/assets/images/close.png'
+import { onMounted, ref } from 'vue'
 
+import AppFooter from '@/layouts/AppFooter.vue'
+import AppHeader from '@/layouts/AppHeader.vue'
+import View from '@/components/View/View.vue'
+import ModsList from '@/components/Mods/ModsList.vue'
 
-import { onMounted, ref } from 'vue';
-import { GetSavedMods, DeleteSavedMod} from '../../wailsjs/go/main/FuncService' 
+import { GetYamlConfig, RemoveFromYamlConfig } from '../../wailsjs/go/main/FuncService'
+import { ShowInfoMessage } from '../../wailsjs/go/main/App'
+import type { MinecraftMod } from '@/types'
 
-const savedNameMods = ref<string[]>([])
+const savedMods = ref<MinecraftMod[]>([])
 
-const handleDeleteMod = async (modName: string) => {
-    await DeleteSavedMod(modName)
-    savedNameMods.value = savedNameMods.value.filter((m) => m != modName)
+const loadDownloadedMods = async () => {
+  try {
+    const mods = await GetYamlConfig('downloads')
+    savedMods.value = mods ?? []
+  } catch (err) {
+    console.error('Ошибка при получении скачанных модов:', err)
+  }
 }
 
-onMounted(async () => {
-    savedNameMods.value = await GetSavedMods() 
-})
+const removeFromDownloads = async (mod: MinecraftMod) => {
+  try {
+    savedMods.value = savedMods.value.filter(m => m.Name !== mod.Name)
+    await RemoveFromYamlConfig(mod, 'downloads')
+    await ShowInfoMessage('Удалён', `Мод "${mod.Name}" успешно удалён`)
+  } catch (err) {
+    console.error('Ошибка при удалении мода:', err)
+  }
+}
 
+onMounted(loadDownloadedMods)
 </script>
 
 <template>
-    <AppHeader/>
-    <View>
-        <div class="downloads-list">
-            <div v-for="modName in savedNameMods" :key="modName" class="mod-item">
-               <div class="mod-name"> {{ modName }} </div>
-               <div class="mod-details"> 
-                  <ImageButton :img="CrossIcon" @click="handleDeleteMod(modName)" title="Удалить"/>  
-               </div>
-            </div>
-        </div>
-    </View>
-    <AppFooter/>
+  <AppHeader />
+  <View min-height="100vh">
+    <div class="downloads-list">
+      <ModsList
+        v-if="savedMods.length > 0"
+        :mods="savedMods"
+        :onDelete="removeFromDownloads"
+      />
+      <p v-else class="no-mods">Нет скачанных модов</p>
+    </div>
+  </View>
+  <AppFooter />
 </template>
 
-<style lang="css" scoped>
-
+<style scoped>
 .downloads-list {
-    display: flex;
-    flex-direction: column;
-
-    height: 25px;
-    padding: 10px;
-    margin: 5px;
-
-    height: 100%;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
-.mod-item {
-    display: flex;
-    flex-direction: row;
+.no-mods {
+  text-align: center;
+  color: #ccc;
+  font-size: 18px;
+  margin-top: 40px;
 }
-
-.mod-name {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 100%;
-}
-
-.mod-details {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-
-    width: 300px;
-    gap: 5px;
-}
-
 </style>
