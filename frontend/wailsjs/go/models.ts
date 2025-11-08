@@ -20,10 +20,7 @@ export namespace parser {
 	}
 	export class ModDependency {
 	    ModPageLink: string;
-	    URL: string;
 	    Name: string;
-	    Version: string;
-	    Loader: string;
 	    Dependency: ModDependency[];
 	    Details: DownloadInfo[];
 	
@@ -34,10 +31,7 @@ export namespace parser {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.ModPageLink = source["ModPageLink"];
-	        this.URL = source["URL"];
 	        this.Name = source["Name"];
-	        this.Version = source["Version"];
-	        this.Loader = source["Loader"];
 	        this.Dependency = this.convertValues(source["Dependency"], ModDependency);
 	        this.Details = this.convertValues(source["Details"], DownloadInfo);
 	    }

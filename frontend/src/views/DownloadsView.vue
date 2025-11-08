@@ -8,15 +8,23 @@ import ModsList from '@/components/Mods/ModsList.vue'
 
 import { GetYamlConfig, RemoveFromYamlConfig, DeleteSavedMod } from '../../wailsjs/go/main/FuncService'
 import { ShowInfoMessage } from '../../wailsjs/go/main/App'
-import type { MinecraftMod } from '@/types'
-import { getMinecraftDownloadFileName } from '@/api/utils'
+import type { MinecraftMod, ModDependency } from '@/types'
+import { enrichDependencies, getMinecraftDownloadFileName, uniqueBy } from '@/api/utils'
 
 const savedMods = ref<MinecraftMod[]>([])
+const depends = ref<ModDependency[]>([])
 
 const loadDownloadedMods = async () => {
   try {
     const mods = await GetYamlConfig('downloads')
     savedMods.value = mods ?? []
+
+    if (savedMods.value != null) {
+        const uniqeDeps = uniqueBy(savedMods.value.flatMap(m => m.Dependency), d => d.Name)
+        depends.value = uniqeDeps
+        console.log(depends.value)
+    }
+    
   } catch (err) {
     console.error('Ошибка при получении скачанных модов:', err)
   }
@@ -46,7 +54,13 @@ onMounted(loadDownloadedMods)
         :mods="savedMods"
         :onDelete="removeFromDownloads"
       />
+
       <p v-else class="no-mods">Нет скачанных модов</p>
+
+       <div v-for="item in depends" :key="item.Name">
+        {{ item.Name }}
+       </div>
+
     </div>
   </View>
   <AppFooter />

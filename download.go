@@ -29,7 +29,7 @@ func (fs *FileService) DownloadFileToMinecraftMods(url, filename string) error {
 
 func (fs *FileService) DownloadsMods(modNames []string, details []parser.DownloadInfo) {
 	for i, detail := range details {
-		filename := fmt.Sprintf("%s_%s.jar", strings.ToLower(strings.ReplaceAll(modNames[i], " ", "_", )), detail.Version)
+		filename := fmt.Sprintf("%s_%s.jar", strings.ToLower(strings.ReplaceAll(modNames[i], " ", "_", )), strings.Join(strings.Split(detail.Version, ", "), "_"))
 		fs.DownloadFileToMinecraftMods(detail.URL, filename)
 	}
 }

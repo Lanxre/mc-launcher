@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useModStore } from '@/stores/modStore'
 import { GetModDetails, GetModDepends } from '@/../wailsjs/go/parser/ScraperService'
-import { saveModToYaml } from '@/api/utils'
+import { enrichDependencies, saveModToYaml } from '@/api/utils'
 
 import type { MinecraftMod, ModDependency } from '@/types'
 
@@ -50,15 +50,6 @@ async function fetchDependencies(initialDeps: ModDependency[]): Promise<ModDepen
   return allDeps
 }
 
-async function enrichDependencies(deps: ModDependency[]) {
-  for (const dep of deps) {
-    if (dep.Details == null) {
-      const data = await GetModDetails(dep.ModPageLink)
-      dep.Details = data.Details
-    }
-  }
-}
-
 function applyFilters(modObj: MinecraftMod) {
   const loaderFilter = modStore.getLoaderFilter
   const versionFilter = modStore.getVersionFilter
@@ -91,6 +82,13 @@ async function loadModDetails() {
     await enrichDependencies(allDeps)
     depends.value = allDeps
     mod.value = currentMod
+    mod.value.Dependency.forEach(dep => {
+        const as = depends.value.find(d => d.Name === dep.Name)
+        if (as != undefined) {
+          dep.Details = as.Details
+        }
+    });
+    console.log(mod.value)
 
   } catch (err) {
     console.error('Ошибка при загрузке данных мода:', err)

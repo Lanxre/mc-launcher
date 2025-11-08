@@ -1,9 +1,6 @@
 export interface  ModDependency {
   ModPageLink: string;
-  URL: string;
   Name: string;
-  Version: string;
-  Loader: string;
   Dependency: ModDependency[];
   Details: DownloadInfo[];
 

@@ -2,10 +2,7 @@ package parser
 
 type ModDependency struct {
     ModPageLink string `yaml:"mod_page_link"`
-    URL         string `yaml:"url"`
     Name        string `yaml:"name"`
-    Version     string `yaml:"version"`
-    Loader      string `yaml:"loader"`
     Dependency  []ModDependency `yaml:"dependencies"`
     Details     []DownloadInfo `yaml:"details"`
 }

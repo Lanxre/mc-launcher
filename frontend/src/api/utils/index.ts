@@ -1,6 +1,7 @@
-import type { MinecraftMod } from '@/types'
+import type { MinecraftMod, ModDependency } from '@/types'
 import { OpenExternalLink } from '../../../wailsjs/go/main/App'
 import { SaveYamlModConfig } from '../../../wailsjs/go/main/FuncService'
+import { GetModDetails } from '../../../wailsjs/go/parser/ScraperService'
 
 export const uniqueBy = <T>(array: T[], keyFn: (item: T) => string): T[] => {
   const seen = new Set<string>()
@@ -38,3 +39,12 @@ export const getMinecraftDownloadFileName = (modName: string, versions: string[]
   
   return `${normalizedModName}_${normalizedVersions}.jar`;
 };
+
+export async function enrichDependencies(deps: ModDependency[]) {
+  for (const dep of deps) {
+    if (dep.Details == null || dep.Details.length === 0) {
+      const data = await GetModDetails(dep.ModPageLink)
+      dep.Details = data.Details
+    }
+  }
+}
