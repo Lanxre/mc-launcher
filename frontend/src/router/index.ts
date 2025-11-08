@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import ModView from '@/views/ModView.vue'
 import DownloadsView from '@/views/DownloadsView.vue'
+import ModFavourites from '@/views/ModFavourites.vue'
 
 const routes = [
   {
@@ -19,7 +20,13 @@ const routes = [
     path: '/mod-downloads',
     name: 'mod-downloads',
     component: DownloadsView,
-  }
+  },
+  {
+    path: '/mod-favourites',
+    name: 'mod-favourites',
+    component: ModFavourites,
+  },
+  
 ]
 
 const router = createRouter({

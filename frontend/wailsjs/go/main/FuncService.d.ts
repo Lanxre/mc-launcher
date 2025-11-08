@@ -6,6 +6,12 @@ export function DeleteSavedMod(arg1:string):Promise<void>;
 
 export function GetSavedMods():Promise<Array<string>>;
 
+export function GetYamlConfig(arg1:string):Promise<Array<parser.MinecraftMod>>;
+
+export function RemoveFromYamlConfig(arg1:parser.MinecraftMod,arg2:string):Promise<void>;
+
+export function SaveYamlModConfig(arg1:parser.MinecraftMod,arg2:string):Promise<void>;
+
 export function SortByLoader(arg1:Array<parser.MinecraftMod>,arg2:string):Promise<Array<parser.MinecraftMod>>;
 
 export function SortByVersions(arg1:Array<parser.MinecraftMod>,arg2:string):Promise<Array<parser.MinecraftMod>>;

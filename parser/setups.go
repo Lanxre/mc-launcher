@@ -135,11 +135,15 @@ func setupDependenciesHandler(c *colly.Collector) func() []ModDependency {
 			text := link.Text()
 
 			dep := ModDependency{
-				ModPageLink: fmt.Sprintf("https://minecraft-inside.ru%s", href),
+				ModPageLink: href,
 				Name:        text,
 			}
 
-			if dep.Name != ".minecraft" && dep.Name != "Minecraft Forge" {
+			if strings.HasPrefix(dep.ModPageLink, "/mods") {
+				dep.ModPageLink = fmt.Sprintf("https://minecraft-inside.ru%s", dep.ModPageLink)
+			}
+
+			if dep.Name != ".minecraft" && dep.Name != "Minecraft Forge" && dep.Name != "Fabric" {
 				depends = append(depends, dep)
 			}
 			isDependsFound = true

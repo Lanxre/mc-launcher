@@ -55,6 +55,6 @@ const hasVersions = computed(() => props.versions && props.versions.length > 0)
 
 .version-chip:hover {
   background-color: #b2dfdb;
-  cursor: default;
+  cursor: pointer;
 }
 </style>

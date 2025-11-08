@@ -38,9 +38,9 @@ const resetFilter = () => {
 
 <template>
   <div class="search-filter">
-    <ImageButton :img="SettingsIcon" @click="openModal" style="border-radius: 50%;"/>
+    <ImageButton :img="SettingsIcon" @click="openModal" style="border-radius: 50%;" title="Настройки поиска"/>
 
-    <Modal v-model="isModalOpen" title="Фильтры поиска">
+    <Modal v-model="isModalOpen" title="Настройки поиска">
       <div class="search-settings">
         <div class="search-settings-item">
           <p class="text text-shd">Загрузчик</p>

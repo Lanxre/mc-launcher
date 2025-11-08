@@ -10,6 +10,18 @@ export function GetSavedMods() {
   return window['go']['main']['FuncService']['GetSavedMods']();
 }
 
+export function GetYamlConfig(arg1) {
+  return window['go']['main']['FuncService']['GetYamlConfig'](arg1);
+}
+
+export function RemoveFromYamlConfig(arg1, arg2) {
+  return window['go']['main']['FuncService']['RemoveFromYamlConfig'](arg1, arg2);
+}
+
+export function SaveYamlModConfig(arg1, arg2) {
+  return window['go']['main']['FuncService']['SaveYamlModConfig'](arg1, arg2);
+}
+
 export function SortByLoader(arg1, arg2) {
   return window['go']['main']['FuncService']['SortByLoader'](arg1, arg2);
 }

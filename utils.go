@@ -9,7 +9,7 @@ import (
 	"runtime"
 	"slices"
 
-    "github.com/lanxre/mc-launcher/parser"
+	"github.com/lanxre/mc-launcher/parser"
 )
 
 type FuncService struct {}
@@ -108,4 +108,23 @@ func GetMinecraftModPath(filename string) (string, error) {
     }
 
     return fmt.Sprintf("%s/%s",finalPath, filename), nil
+}
+
+func GetMinecraftPath() (string, error) {
+    var finalPath string
+    if runtime.GOOS == "windows" {
+        appData := os.Getenv("APPDATA")
+        if appData == "" {
+            return "", fmt.Errorf("APPDATA environment variable not found")
+        }
+        finalPath = filepath.Join(appData, ".minecraft")
+    } else {
+        homeDir, err := os.UserHomeDir()
+        if err != nil {
+            return "", fmt.Errorf("failed to get user home directory: %v", err)
+        }
+        finalPath = filepath.Join(homeDir, ".minecraft")
+    }
+
+    return finalPath, nil
 }

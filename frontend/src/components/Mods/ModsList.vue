@@ -9,6 +9,8 @@ import TagImageGroup from '@/components/Tags/TagImageGroup.vue';
 
 import ForgeMinecraftIcon from '@/assets/images/forge_minecraft.jpeg'
 import FabricMinecraftIcon from '@/assets/images/fabric_minecraft.png'
+import DeleteIcon from '@/assets/images/trash.png'
+
 import { uniqueBy } from '@/api/utils';
 import { useScrollManager } from '@/composables/useScrollManager';
 
@@ -21,6 +23,7 @@ const props = defineProps<{
     mods: MinecraftMod[],
     loaderf?: string,
     versionf?: string,
+    onDelete?: (mod: MinecraftMod) => void
 }>()
 
 const loaderToTag = (loader: string) => {
@@ -70,6 +73,11 @@ const redirectToMod = (mod: MinecraftMod): void => {
   })
 }
 
+const handleDelete = (mod: MinecraftMod, event: MouseEvent) => {
+  event.stopPropagation()
+  props.onDelete?.(mod)
+}
+
 </script>
 
 <template>
@@ -80,6 +88,14 @@ const redirectToMod = (mod: MinecraftMod): void => {
             class="mod-card"
             @click="redirectToMod(item)"
         >
+              <button 
+                v-if="onDelete"
+                class="delete-btn"
+                @click="handleDelete(item, $event)"
+                title="Удалить мод"
+              >
+                <img :src="DeleteIcon" alt="Удалить" />
+              </button>
             <TagImageGroup 
                 v-if="getLoaderTags(item).length > 0"
                 :tags="getLoaderTags(item)"
@@ -162,4 +178,27 @@ const redirectToMod = (mod: MinecraftMod): void => {
   gap: 4px;
   margin-top: 8px;
 }
+
+.delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+}
+
+.delete-btn img {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1);
+}
+
 </style>

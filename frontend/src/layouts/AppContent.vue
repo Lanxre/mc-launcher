@@ -9,6 +9,7 @@ import type { MinecraftMod } from '@/types'
 import { useScrollManager } from '@/composables/useScrollManager'
 
 import FileIcon from '@/assets/images/file.png'
+import StarIcon from '@/assets/images/star.png'
 
 import ModsList from '@/components/Mods/ModsList.vue'
 import ModLoader from '@/components/Mods/ModLoader.vue'
@@ -161,6 +162,10 @@ const goToDownloads = () => {
   router.push({ name: 'mod-downloads' })
 }
 
+const goToFavourites = () => {
+  router.push({ name: 'mod-favourites' })
+}
+
 watch(loaderTrigger, async comp => {
   if (comp?.loaderTrigger && hasMore.value) {
     await nextTick()
@@ -187,7 +192,8 @@ onUnmounted(() => {
 <template>
   <div class="main" ref="mainElement">
     <div class="filters">
-      <ImageButton :img="FileIcon" @click="goToDownloads" style="border-radius: 50%;"/>
+      <ImageButton :img="StarIcon" @click="goToFavourites" border-radius="50%" title="Список избранных"/>
+      <ImageButton :img="FileIcon" @click="goToDownloads" border-radius="50%" title="Список установленных модов"/>
       <InputSearch v-model="searchE" @search="applySearch" />
       <SearchFilter
         :versions="getUniqueVersions"

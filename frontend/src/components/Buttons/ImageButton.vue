@@ -4,11 +4,13 @@ interface Props {
   alt?: string
   disabled?: boolean
   title?: string
+  borderRadius?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   alt: 'icon',
   disabled: false,
+  borderRadius: '5px'
 })
 
 const emit = defineEmits<{
@@ -26,6 +28,7 @@ const handleClick = (event: MouseEvent) => {
   <div
     class="b-img"
     :class="{ 'b-img--disabled': disabled }"
+    :style="{ borderRadius: props.borderRadius }"
     @click="handleClick"
     role="button"
     :aria-disabled="disabled"

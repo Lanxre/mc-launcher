@@ -2,6 +2,8 @@
 import { onMounted, ref } from 'vue'
 import { useModStore } from '@/stores/modStore'
 import { GetModDetails, GetModDepends } from '@/../wailsjs/go/parser/ScraperService'
+import { SaveYamlModConfig } from '../../wailsjs/go/main/FuncService'
+
 import type { MinecraftMod, ModDependency } from '@/types'
 
 import AppHeader from '@/layouts/AppHeader.vue'
@@ -51,9 +53,7 @@ async function fetchDependencies(initialDeps: ModDependency[]): Promise<ModDepen
 async function enrichDependencies(deps: ModDependency[]) {
   for (const dep of deps) {
     if (dep.Details == null) {
-      console.log(dep.ModPageLink)
       const data = await GetModDetails(dep.ModPageLink)
-      console.log('data', data)
       dep.Details = data.Details
     }
   }
@@ -83,15 +83,12 @@ async function loadModDetails() {
     currentMod.Dependency = fullDetails.Dependency
 
     applyFilters(currentMod)
-    console.log('1-current', currentMod.Dependency)
     let allDeps = await fetchDependencies(currentMod.Dependency)
-    console.log('2-after', allDeps)
     allDeps = allDeps.filter(
       (dep, i, self) => dep.ModPageLink && i === self.findIndex(d => d.ModPageLink === dep.ModPageLink)
     )
     
     await enrichDependencies(allDeps)
-    console.log('3', allDeps)
     depends.value = allDeps
     mod.value = currentMod
 
@@ -102,8 +99,18 @@ async function loadModDetails() {
     isLoading.value = false
   }
 }
-onMounted(loadModDetails)
 
+const saveModToYaml = async () => {
+  try {
+    if (mod.value !== null && mod.value !== undefined) { 
+      await SaveYamlModConfig(mod.value, 'favourite') 
+    }
+  } catch (err) {
+    console.error('Ошибка сохранения:', err)
+  }
+}
+
+onMounted(loadModDetails)
 </script>
 
 
@@ -114,7 +121,7 @@ onMounted(loadModDetails)
     <ModScreenshots v-if="mod && mod.Screenshots !== null" :screenshots="mod.Screenshots" />
 
     <div class="mod-content">
-      <ModTitle :name="mod.Name" :link-page="mod.ModPageLink" />
+      <ModTitle :name="mod.Name" :link-page="mod.ModPageLink" @save-favourite="saveModToYaml"/>
       <ModVersions :versions="mod.Versions" />
       <ModDescription :description="mod.Description" />
       <ModDownloads :mod="mod" :depends="depends" />
