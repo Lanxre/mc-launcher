@@ -2,11 +2,13 @@
 import { openLink } from '@/api/utils';
 import Image from '../Image/Image.vue';
 import CrossIcon from '@/assets/images/close.png'
+
 import type { ModDependency } from '@/types';
 
 interface Props {
     depend: ModDependency
     filename?: string
+    onDelete?: () => void 
 }
 
 defineProps<Props>()
@@ -25,7 +27,7 @@ defineProps<Props>()
                 </div>
             </div>
         </div>
-        <Image :img="CrossIcon" width="25px" height="25px" border-raduis="5px" title="Удалить"/>            
+        <Image :img="CrossIcon" width="25px" height="25px" border-raduis="5px" title="Удалить" @click="onDelete"/>            
     </div>
 </template>
 
