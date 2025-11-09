@@ -53,10 +53,7 @@ const getLoaderTags = (mod: MinecraftMod) => {
   }).filter(l => l.name !== 'quilt');
 }
 
-const redirectToMod = (mod: MinecraftMod): void => {
-  saveScrollBeforeLeave()
-  modStore.setCurrentMod(mod)
-
+const applyFilters = () => {
   if (props.loaderf !== undefined && props.loaderf !== "") {
     modStore.setLoaderFilter(props.loaderf)
   }
@@ -64,13 +61,28 @@ const redirectToMod = (mod: MinecraftMod): void => {
   if (props.versionf !== undefined && props.versionf !== "") {
     modStore.setVersionFilter(props.versionf)
   }
+}
 
+const setStoreMod = (mod: MinecraftMod) => {
+  modStore.setCurrentMod(mod)
+}
+
+const routerPushPage = (modName: string) => {
   router.push({
     name: 'mod',
     params: {
-      name: mod.Name
+      name: modName
     }
   })
+}
+
+const redirectToMod = (mod: MinecraftMod): void => {
+  saveScrollBeforeLeave()
+  setStoreMod(mod)
+
+  applyFilters()
+  
+  routerPushPage(mod.Name)
 }
 
 const handleDelete = (mod: MinecraftMod, event: MouseEvent) => {
