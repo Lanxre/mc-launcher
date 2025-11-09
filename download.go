@@ -34,7 +34,6 @@ func (fs *FileService) DownloadsMods(modNames []string, details []parser.Downloa
 	}
 }
 
-
 func initHTTPClient() *http.Client {
 	jar, _ := cookiejar.New(nil)
 	

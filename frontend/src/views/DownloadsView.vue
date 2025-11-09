@@ -5,11 +5,12 @@ import AppFooter from '@/layouts/AppFooter.vue'
 import AppHeader from '@/layouts/AppHeader.vue'
 import View from '@/components/View/View.vue'
 import ModsList from '@/components/Mods/ModsList.vue'
+import ModDependsList from '@/components/ModDepends/ModDependsList.vue'
 
 import { GetYamlConfig, RemoveFromYamlConfig, DeleteSavedMod } from '../../wailsjs/go/main/FuncService'
 import { ShowInfoMessage } from '../../wailsjs/go/main/App'
 import type { MinecraftMod, ModDependency } from '@/types'
-import { enrichDependencies, getMinecraftDownloadFileName, uniqueBy } from '@/api/utils'
+import { getMinecraftDownloadFileName, uniqueBy } from '@/api/utils'
 
 const savedMods = ref<MinecraftMod[]>([])
 const depends = ref<ModDependency[]>([])
@@ -19,7 +20,7 @@ const loadDownloadedMods = async () => {
     const mods = await GetYamlConfig('downloads')
     savedMods.value = mods ?? []
 
-    if (savedMods.value != null) {
+    if (savedMods.value !== null) {
         const uniqeDeps = uniqueBy(savedMods.value.flatMap(m => m.Dependency), d => d.Name)
         depends.value = uniqeDeps
         console.log(depends.value)
@@ -56,29 +57,29 @@ onMounted(loadDownloadedMods)
       />
 
       <p v-else class="no-mods">Нет скачанных модов</p>
-
-       <div v-for="item in depends" :key="item.Name">
-        {{ item.Name }}
-       </div>
-
+      
+      <ModDependsList v-if="depends.length > 0" :depends="depends"/>
+      <span v-else class="downloads-title"> Нет зависимостей </span>
+    
     </div>
   </View>
   <AppFooter />
 </template>
 
-<style scoped>
-.downloads-list {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
-
+<style lang="css" scoped>
 .no-mods {
   text-align: center;
   color: #ccc;
   font-size: 18px;
   margin-top: 40px;
 }
+
+.downloads-title {
+  display: flex;
+  justify-content: center;
+  font-size: 30px;
+  color: white;
+  padding: 10px;
+}
+
 </style>
