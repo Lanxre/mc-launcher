@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { DownloadFileToMinecraftMods, DownloadsMods } from '@/../wailsjs/go/main/FileService'
 import { ShowInfoMessage } from '@/../wailsjs/go/main/App'
-import { saveModToYaml, getMinecraftDownloadFileName } from '@/api/utils'
+import { saveModToYaml, getMinecraftDownloadFileName, filterNoDiskModDepends } from '@/api/utils'
 import type { MinecraftMod, DownloadInfo, ModDependency } from '@/types'
 
 interface Props {
@@ -44,10 +44,10 @@ const downloadMod = async (mod: MinecraftMod, detail: DownloadInfo): Promise<voi
   isDownloading.value = true
 
   try {
-    const depFiles: DownloadInfo[] = props.depends
-  .flatMap((dep: ModDependency): DownloadInfo[] => {
+    const filtred = await filterNoDiskModDepends(props.depends)
+    const depFiles: DownloadInfo[] = filtred.flatMap((dep: ModDependency): DownloadInfo[] => {
     if (!dep?.Details || !Array.isArray(dep.Details)) return []
-
+    
     const filtered = dep.Details
         .filter((dl: DownloadInfo): dl is DownloadInfo => {
           if (!dl || typeof dl.Version !== 'string' || typeof dl.Loader !== 'string') return false

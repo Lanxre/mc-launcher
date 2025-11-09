@@ -1,42 +1,23 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import ModDependCard from './ModDependCard.vue';
-import type { ModDependency } from '@/types';
-import { GetSavedMods } from '../../../wailsjs/go/main/FuncService';
+import type { ModDependency, PairDepend } from '@/types';
+import { filterDiskModDepends } from '@/api/utils';
 
 interface Props {
     depends: ModDependency[]
 }
 
-interface PairDepend {
-    configDepend: ModDependency
-    fileDepend: string
-}
+const props = defineProps<Props>()
 
 const pairDepends = ref<PairDepend[]>([])
 
-const props = defineProps<Props>()
 
 onMounted(async () => {
     try {
-        const savedModsOnDisk = await GetSavedMods()
-
-        for (const depend of props.depends) {
-            if (!depend?.Name) continue;
-            
-            const expectedFileName = depend.Name.replaceAll(" ", "_").toLowerCase()
-             const matchingFile = savedModsOnDisk.find(file => 
-                file.toLowerCase().startsWith(expectedFileName)
-            );
-    
-            if (matchingFile) {
-                pairDepends.value.push({
-                    configDepend: depend,
-                    fileDepend: matchingFile,
-                });
-            }
-        }
-
+        const filtred = await filterDiskModDepends(props.depends)
+        pairDepends.value = filtred
+        
     } catch (err) {
         console.error(err)
     }
