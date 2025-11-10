@@ -1,19 +1,49 @@
-# README
+# Minecraft Mod Manager
 
-## About
+Десктопное приложение для удобного управления модами Minecraft, построенное с использованием **Wails** (Go backend) и **Vue 3** (frontend).
 
-This is the official Wails Vue-TS template.
+<div style="text-align: center;">
+    <img src="../mc-launcher/frontend/src/assets/images/image.jpg" height="200"/>
+</div>
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
 
-## Live Development
+## Описание
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+McLauncher — это кроссплатформенное приложение, которое упрощает работу с модами для Minecraft. Оно позволяет:
+- **Скачивать моды** из популярного источника.
+- **Просматривать страницы модов** с детальной информацией, скриншотами и зависимостями.
+- **Фильтровать и искать** нужные моды по названию, версии Minecraft, Fabric/Forge, категориям и т.д.
+- **Просматривать список установленных модов** с возможностью обновления и удаления.
+- **Добавлять моды в избранное** для быстрого доступа.
 
-## Building
+Приложение автоматически определяет папку `.minecraft/mods`, скачивает моды в правильный формат (.jar) и проверяет совместимость.
 
-To build a redistributable, production mode package, use `wails build`.
+**Поддерживаемые платформы:** Windows, Linux.
+
+## Особенности
+
+- **Поиск и фильтрация**: Мгновенный поиск по тысячам модов, фильтры по версии MC, loader (Fabric/Forge/Quilt), популярности, обновлениям.
+- **Автоматическая загрузка**: Скачивание модов с проверкой зависимостей и версии.
+- **Современный UI**: Vue 3 + Vite для быстрого и отзывчивого интерфейса.
+- **Локальное хранение**: Список установленных модов, избранное.
+- **Производительность**: Go-backend для сетевых запросов и файловых операций.
+- **Безопасность**: Только официальные источники модов, проверка целостности файлов.
+
+## Быстрый старт
+
+### Предварительные требования
+- **Go** 1.21+[](https://go.dev/dl/)
+- **Bun** 1.3+[](https://bun.com/)
+- **Wails** CLI: `go install github.com/wailsapp/wails/v2/cmd/wails`
+
+### Установка и запуск
+```bash
+
+git clone 
+cd mc-launcher
+
+wails dev
+
+wails build
+
+```
