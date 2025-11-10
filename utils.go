@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"slices"
+	"strings"
 
 	"github.com/lanxre/mc-launcher/parser"
 )
@@ -81,6 +82,30 @@ func (s * FuncService) DeleteSavedMod(modName string) {
     os.Remove(finalPath)
 }
 
+func (s *FuncService) IsModExist(modName string) bool {
+
+    onFile := isExistModInDisk(modName)
+
+    if !onFile {
+        return !onFile
+    }
+
+    modsInConfig, err := s.GetYamlConfig("downloads")
+    done := false
+
+    if err != nil {
+        return done
+    }
+
+    for _, mod := range modsInConfig {
+        if mod.Name == modName {
+            return  !done
+        }
+    }
+
+    return done
+}
+
 func GetMinecraftModsPath() (string, error) {
     var finalPath string
     if runtime.GOOS == "windows" {
@@ -127,4 +152,33 @@ func GetMinecraftPath() (string, error) {
     }
 
     return finalPath, nil
+}
+
+func ConverModName(modName string) string {
+    return strings.ToLower(strings.ReplaceAll(modName, " ", "_"))
+} 
+
+func isExistModInDisk(modName string) bool {
+
+    done := false
+
+    minecraftPath, err := GetMinecraftModsPath()
+    if err != nil{
+        return done
+    }
+
+    entries, err := os.ReadDir(minecraftPath)
+    if err != nil {
+        return done
+    }
+
+    supossedName := ConverModName(modName)
+
+    for _, entry := range entries {
+        if !entry.IsDir() && strings.HasPrefix(entry.Name(), supossedName) {
+            return !done
+        }
+    }
+
+    return done
 }

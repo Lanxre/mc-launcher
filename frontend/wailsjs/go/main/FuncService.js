@@ -14,6 +14,10 @@ export function GetYamlConfig(arg1) {
   return window['go']['main']['FuncService']['GetYamlConfig'](arg1);
 }
 
+export function IsModExist(arg1) {
+  return window['go']['main']['FuncService']['IsModExist'](arg1);
+}
+
 export function RemoveFromYamlConfig(arg1, arg2) {
   return window['go']['main']['FuncService']['RemoveFromYamlConfig'](arg1, arg2);
 }

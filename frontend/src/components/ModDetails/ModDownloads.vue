@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { DownloadFileToMinecraftMods, DownloadsMods } from '@/../wailsjs/go/main/FileService'
 import { ShowInfoMessage } from '@/../wailsjs/go/main/App'
+import { IsModExist } from '@/../wailsjs/go/main/FuncService'
 import { saveModToYaml, getMinecraftDownloadFileName, filterNoDiskModDepends } from '@/api/utils'
 import type { MinecraftMod, DownloadInfo, ModDependency } from '@/types'
 
@@ -42,6 +43,14 @@ const getFirstVersion = (dl?: DownloadInfo): string => {
 const downloadMod = async (mod: MinecraftMod, detail: DownloadInfo): Promise<void> => {
   if (isDownloading.value) return
   isDownloading.value = true
+
+  const isExist = await IsModExist(mod.Name)
+
+  if (isExist) {
+    isDownloading.value = false
+    await showNotify('Предупреждение', "Мод уже скачан")
+    return
+  }
 
   try {
     const filtred = await filterNoDiskModDepends(props.depends)
