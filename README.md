@@ -3,7 +3,7 @@
 Десктопное приложение для удобного управления модами Minecraft, построенное с использованием **Wails** (Go backend) и **Vue 3** (frontend).
 
 <div style="text-align: center;">
-    ![Image](./frontend/src/assets/images/image.jpg)
+    <img src="./frontend/src/assets/images/image.jpg" height="200"/>
 </div>
 
 
