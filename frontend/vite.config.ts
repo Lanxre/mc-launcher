@@ -11,7 +11,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': `${import.meta.dirname}/src`
+      '@': `${import.meta.dirname}/src`,
+      '@wailsjs': `${import.meta.dirname}/wailsjs`,
     }
   },
 })

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { DownloadFileToMinecraftMods, DownloadsMods } from '@/../wailsjs/go/main/FileService'
-import { ShowInfoMessage } from '@/../wailsjs/go/main/App'
-import { IsModExist } from '@/../wailsjs/go/main/FuncService'
+import { DownloadFileToMinecraftMods, DownloadsMods } from '@wailsjs/go/main/FileService'
+import { ShowInfoMessage } from '@wailsjs/go/main/App'
+import { IsModExist } from '@wailsjs/go/main/FuncService'
 import { saveModToYaml, getMinecraftDownloadFileName, filterNoDiskModDepends } from '@/api/utils'
 import type { MinecraftMod, DownloadInfo, ModDependency } from '@/types'
 

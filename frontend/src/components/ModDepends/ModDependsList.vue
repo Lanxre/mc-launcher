@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 import ModDependCard from './ModDependCard.vue';
 import type { ModDependency, PairDepend } from '@/types';
 import { filterDiskModDepends } from '@/api/utils';
-import { DeleteSavedMod } from '../../../wailsjs/go/main/FuncService'
+import { DeleteSavedMod } from '@wailsjs/go/main/FuncService'
 
 interface Props {
     depends: ModDependency[]

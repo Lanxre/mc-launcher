@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ShowInfoMessage } from '../../../wailsjs/go/main/App'
+import { ShowInfoMessage } from '@wailsjs/go/main/App'
 import { openLink } from '@/api/utils';
 
 import LinkIcon from '@/assets/images/link.png'
