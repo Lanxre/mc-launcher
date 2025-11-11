@@ -219,7 +219,7 @@ onUnmounted(() => {
       />
     </div>
 
-    <ModsList :mods="mods" :loaderf="loaderE" :versionf="versionE"/>
+    <ModsList :mods="mods" :loaderf="loaderE" :versionf="versionE" :searchf="searchE" />
 
     <ModLoader
       ref="loaderTrigger"

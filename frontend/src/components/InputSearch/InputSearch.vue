@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue";
 import SearchIcon from "@/assets/images/search.png";
 import ImageButton from "../Buttons/ImageButton.vue";
+import { useModStore } from "@/stores/modStore";
 
 interface Props {
 	placeholder?: string;
@@ -11,11 +12,12 @@ withDefaults(defineProps<Props>(), {
 	placeholder: "Название мода",
 });
 
+const modStore = useModStore()
 const searchValue = ref("");
 
 const emit = defineEmits<{
 	"update:modelValue": [value: string];
-	search: [inputSearch: string];
+	"search": [inputSearch: string];
 }>();
 
 const handleEnterSearch = (e: KeyboardEvent) => {
@@ -30,6 +32,12 @@ const handleSearch = () => {
 };
 
 onMounted(() => {
+    if (modStore.getSearchFilter !== undefined 
+        && modStore.getSearchFilter !== null 
+        && modStore.getSearchFilter !== ""
+    ) {
+        searchValue.value = modStore.getSearchFilter
+    }
 	document.addEventListener("keyup", handleEnterSearch);
 });
 </script>
