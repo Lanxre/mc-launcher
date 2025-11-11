@@ -1,48 +1,48 @@
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import ArrowUpIcon from '@/assets/images/upload.png'
+import { ref, onMounted, onUnmounted } from "vue";
+import ArrowUpIcon from "@/assets/images/upload.png";
 
 interface Props {
-  bottom?: string | number
-  right?: string | number
-  left?: string | number
-  top?: string | number
-  image?: string
+	bottom?: string | number;
+	right?: string | number;
+	left?: string | number;
+	top?: string | number;
+	image?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  bottom: '70px',
-  right: '1%',
-  left: undefined,
-  top: undefined
-})
+	bottom: "70px",
+	right: "1%",
+	left: undefined,
+	top: undefined,
+});
 
-const showButton = ref(false)
+const showButton = ref(false);
 
 const checkScrollPosition = () => {
-  const scrollPosition = window.scrollY
-  const windowHeight = window.innerHeight
-  const documentHeight = document.documentElement.scrollHeight
-  
-  const middleThreshold = documentHeight / 2 - windowHeight / 2
-  showButton.value = scrollPosition > middleThreshold
-}
+	const scrollPosition = window.scrollY;
+	const windowHeight = window.innerHeight;
+	const documentHeight = document.documentElement.scrollHeight;
+
+	const middleThreshold = documentHeight / 2 - windowHeight / 2;
+	showButton.value = scrollPosition > middleThreshold;
+};
 
 const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  })
-}
+	window.scrollTo({
+		top: 0,
+		behavior: "smooth",
+	});
+};
 
 onMounted(() => {
-  window.addEventListener('scroll', checkScrollPosition)
-  checkScrollPosition()
-})
+	window.addEventListener("scroll", checkScrollPosition);
+	checkScrollPosition();
+});
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', checkScrollPosition)
-})
+	window.removeEventListener("scroll", checkScrollPosition);
+});
 </script>
 
 <template>

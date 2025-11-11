@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import GithubIcon from '@/assets/images/github_icon.png'
-import TelegramIcon from '@/assets/images/telegram-4.png'
+import GithubIcon from "@/assets/images/github_icon.png";
+import TelegramIcon from "@/assets/images/telegram-4.png";
 
-import CircleButton from '@/components/Buttons/CircleButton.vue'
-import { openLink } from '@/api/utils'
+import CircleButton from "@/components/Buttons/CircleButton.vue";
+import { openLink } from "@/api/utils";
 </script>
        
 <template>

@@ -1,46 +1,49 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { GetYamlConfig, RemoveFromYamlConfig } from '../../wailsjs/go/main/FuncService'
-import { ShowInfoMessage } from '../../wailsjs/go/main/App'
+import { onMounted, ref } from "vue";
+import {
+	GetYamlConfig,
+	RemoveFromYamlConfig,
+} from "@wailsjs/go/functools/FuncService";
+import { ShowInfoMessage } from "@wailsjs/go/main/App";
 
-import type { MinecraftMod } from '@/types'
+import type { MinecraftMod } from "@/types";
 
-import AppHeader from '@/layouts/AppHeader.vue'
-import AppFooter from '@/layouts/AppFooter.vue'
-import View from '@/components/View/View.vue'
-import ModsList from '@/components/Mods/ModsList.vue'
+import AppHeader from "@/layouts/AppHeader.vue";
+import AppFooter from "@/layouts/AppFooter.vue";
+import View from "@/components/View/View.vue";
+import ModsList from "@/components/Mods/ModsList.vue";
 
-import StarIcon from '@/assets/images/star.png'
+import StarIcon from "@/assets/images/star.png";
 
-const mods = ref<MinecraftMod[]>([])
-const isLoading = ref(true)
-const isError = ref(false)
+const mods = ref<MinecraftMod[]>([]);
+const isLoading = ref(true);
+const isError = ref(false);
 
-const fileName = "favourite.yaml"
+const fileName = "favourite.yaml";
 
 const loadFavourites = async () => {
-  try {
-    const result = await GetYamlConfig(fileName)
-    mods.value = Array.isArray(result) ? result : []
-  } catch (err) {
-    console.error('Ошибка при получении списка избранных модов:', err)
-    isError.value = true
-  } finally {
-    isLoading.value = false
-  }
-}
+	try {
+		const result = await GetYamlConfig(fileName);
+		mods.value = Array.isArray(result) ? result : [];
+	} catch (err) {
+		console.error("Ошибка при получении списка избранных модов:", err);
+		isError.value = true;
+	} finally {
+		isLoading.value = false;
+	}
+};
 
 const removeFromFavourites = async (mod: MinecraftMod) => {
-    try {
-        mods.value = mods.value.filter(m => m.Name !== mod.Name)
-        await RemoveFromYamlConfig(mod, fileName)
-        await ShowInfoMessage("Удалён", `Мод: ${mod.Name} убран из избранных`)
-    } catch (err) {
-        console.error("Ошибка при удаление мода", err)
-    }
-}
+	try {
+		mods.value = mods.value.filter((m) => m.Name !== mod.Name);
+		await RemoveFromYamlConfig(mod, fileName);
+		await ShowInfoMessage("Удалён", `Мод: ${mod.Name} убран из избранных`);
+	} catch (err) {
+		console.error("Ошибка при удаление мода", err);
+	}
+};
 
-onMounted(loadFavourites)
+onMounted(loadFavourites);
 </script>
 
 <template>

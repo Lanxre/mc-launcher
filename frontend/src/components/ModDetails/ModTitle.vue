@@ -1,28 +1,27 @@
 <script setup lang="ts">
-import { ShowInfoMessage } from '@wailsjs/go/main/App'
-import { openLink } from '@/api/utils';
+import { ShowInfoMessage } from "@wailsjs/go/main/App";
+import { openLink } from "@/api/utils";
 
-import LinkIcon from '@/assets/images/link.png'
-import StarIcon from '@/assets/images/star.png'
+import LinkIcon from "@/assets/images/link.png";
+import StarIcon from "@/assets/images/star.png";
 
 interface Props {
-    name: string, 
-    linkPage: string
+	name: string;
+	linkPage: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    name: 'Название мода',
-})
+	name: "Название мода",
+});
 
 const emit = defineEmits<{
-  saveFavourite: [event: MouseEvent]
-}>()
+	saveFavourite: [event: MouseEvent];
+}>();
 
 const handleClick = (event: MouseEvent) => {
-  ShowInfoMessage(`${props.name}`,"Мод добавлен в избранные")
-  emit('saveFavourite', event)
-}
-
+	ShowInfoMessage(`${props.name}`, "Мод добавлен в избранные");
+	emit("saveFavourite", event);
+};
 </script>
 
 <template>

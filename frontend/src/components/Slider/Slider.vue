@@ -52,84 +52,87 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from "vue";
 
 interface Slide {
-  image: string
-  alt?: string
-  title?: string
+	image: string;
+	alt?: string;
+	title?: string;
 }
 
 interface Props {
-  slides: Slide[]
-  autoplay?: boolean
-  autoplayInterval?: number
-  showArrows?: boolean
-  showDots?: boolean
+	slides: Slide[];
+	autoplay?: boolean;
+	autoplayInterval?: number;
+	showArrows?: boolean;
+	showDots?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  autoplay: false,
-  autoplayInterval: 3000,
-  showArrows: true,
-  showDots: true
-})
+	autoplay: false,
+	autoplayInterval: 3000,
+	showArrows: true,
+	showDots: true,
+});
 
-const currentIndex = ref(0)
-let autoplayTimer: number | null = null
+const currentIndex = ref(0);
+let autoplayTimer: number | null = null;
 
 const nextSlide = () => {
-  if (currentIndex.value < props.slides.length - 1) {
-    currentIndex.value++
-  } else {
-    currentIndex.value = 0 
-  }
-}
+	if (currentIndex.value < props.slides.length - 1) {
+		currentIndex.value++;
+	} else {
+		currentIndex.value = 0;
+	}
+};
 
 const prevSlide = () => {
-  if (currentIndex.value > 0) {
-    currentIndex.value--
-  } else {
-    currentIndex.value = props.slides.length - 1 
-  }
-}
+	if (currentIndex.value > 0) {
+		currentIndex.value--;
+	} else {
+		currentIndex.value = props.slides.length - 1;
+	}
+};
 
 const goToSlide = (index: number) => {
-  currentIndex.value = index
-}
+	currentIndex.value = index;
+};
 
 const startAutoplay = () => {
-  if (props.autoplay) {
-    autoplayTimer = window.setInterval(() => {
-      nextSlide()
-    }, props.autoplayInterval)
-  }
-}
+	if (props.autoplay) {
+		autoplayTimer = window.setInterval(() => {
+			nextSlide();
+		}, props.autoplayInterval);
+	}
+};
 
 const stopAutoplay = () => {
-  if (autoplayTimer) {
-    clearInterval(autoplayTimer)
-    autoplayTimer = null
-  }
-}
+	if (autoplayTimer) {
+		clearInterval(autoplayTimer);
+		autoplayTimer = null;
+	}
+};
 
-watch(() => props.autoplay, (newValue) => {
-  if (newValue) {
-    startAutoplay()
-  } else {
-    stopAutoplay()
-  }
-})
+watch(
+	() => props.autoplay,
+	(newValue) => {
+		if (newValue) {
+			startAutoplay();
+		} else {
+			stopAutoplay();
+		}
+	},
+);
 
 onMounted(() => {
-  if (props.autoplay) {
-    startAutoplay()
-  }
-})
+	if (props.autoplay) {
+		startAutoplay();
+	}
+});
 
 onUnmounted(() => {
-  stopAutoplay()
-})
+	stopAutoplay();
+});
 </script>
 
 <style lang="css" scoped>

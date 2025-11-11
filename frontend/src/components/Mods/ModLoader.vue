@@ -17,87 +17,92 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from "vue";
 
 interface Props {
-  hasMore: boolean;
-  loadingMore: boolean;
-  count: number;
-  loadingText?: string;
-  endMessage?: string;
-  autoLoad?: boolean;
-  rootMargin?: string;
-  threshold?: number | number[];
+	hasMore: boolean;
+	loadingMore: boolean;
+	count: number;
+	loadingText?: string;
+	endMessage?: string;
+	autoLoad?: boolean;
+	rootMargin?: string;
+	threshold?: number | number[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  loadingText: 'Загрузка...',
-  endMessage: 'Все моды загружены',
-  autoLoad: true,
-  rootMargin: '0px 0px 30px 0px',
-  threshold: 0
+	loadingText: "Загрузка...",
+	endMessage: "Все моды загружены",
+	autoLoad: true,
+	rootMargin: "0px 0px 30px 0px",
+	threshold: 0,
 });
 
 const emit = defineEmits<{
-  loadMore: [];
+	loadMore: [];
 }>();
 
 const loaderTrigger = ref<HTMLElement | null>(null);
 let observer: IntersectionObserver | null = null;
 
 const initObserver = () => {
-  if (!props.autoLoad || !loaderTrigger.value) return;
+	if (!props.autoLoad || !loaderTrigger.value) return;
 
-  observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && props.hasMore && !props.loadingMore) {
-          emit('loadMore');
-        }
-      });
-    },
-    {
-      rootMargin: props.rootMargin,
-      threshold: props.threshold
-    }
-  );
+	observer = new IntersectionObserver(
+		(entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting && props.hasMore && !props.loadingMore) {
+					emit("loadMore");
+				}
+			});
+		},
+		{
+			rootMargin: props.rootMargin,
+			threshold: props.threshold,
+		},
+	);
 
-  observer.observe(loaderTrigger.value);
+	observer.observe(loaderTrigger.value);
 };
 
 const destroyObserver = () => {
-  if (observer && loaderTrigger.value) {
-    observer.unobserve(loaderTrigger.value);
-    observer.disconnect();
-    observer = null;
-  }
+	if (observer && loaderTrigger.value) {
+		observer.unobserve(loaderTrigger.value);
+		observer.disconnect();
+		observer = null;
+	}
 };
 
 defineExpose({ loaderTrigger });
 
-watch(() => props.autoLoad, (newVal) => {
-  destroyObserver();
-  if (newVal) {
-    initObserver();
-  }
-});
+watch(
+	() => props.autoLoad,
+	(newVal) => {
+		destroyObserver();
+		if (newVal) {
+			initObserver();
+		}
+	},
+);
 
-watch(() => props.hasMore, (newVal) => {
-  if (!newVal) {
-    destroyObserver();
-  }
-});
+watch(
+	() => props.hasMore,
+	(newVal) => {
+		if (!newVal) {
+			destroyObserver();
+		}
+	},
+);
 
 onMounted(() => {
-  if (props.autoLoad) {
-    initObserver();
-  }
+	if (props.autoLoad) {
+		initObserver();
+	}
 });
 
 onUnmounted(() => {
-  destroyObserver();
+	destroyObserver();
 });
-
 </script>
 
 <style lang="css" scoped>

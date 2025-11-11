@@ -42,5 +42,3 @@ func (s *ScraperService) GetSearchMods(searchedValue string, page int) ([]Minecr
 func (s *ScraperService) GetModDepends(depends []ModDependency) []ModDependency {
 	return ScrapeDependency(depends)
 }
-
-

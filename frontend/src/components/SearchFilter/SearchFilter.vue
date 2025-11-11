@@ -1,39 +1,39 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
-import SettingsIcon from '@/assets/images/setting.png'
-import Modal from '@/components/Modal/Modal.vue'
-import List from '@/components/List/List.vue'
-import ImageButton from '../Buttons/ImageButton.vue'
+import SettingsIcon from "@/assets/images/setting.png";
+import Modal from "@/components/Modal/Modal.vue";
+import List from "@/components/List/List.vue";
+import ImageButton from "../Buttons/ImageButton.vue";
 
 interface Props {
-  versions: string[]
-  loaders: string[]
+	versions: string[];
+	loaders: string[];
 }
 
-defineProps<Props>()
+defineProps<Props>();
 
 const emit = defineEmits<{
-  'filter': [version: string, loader: string]
-}>()
+	filter: [version: string, loader: string];
+}>();
 
-const isModalOpen = ref(false)
-const version = ref('')
-const loader = ref('')
+const isModalOpen = ref(false);
+const version = ref("");
+const loader = ref("");
 
-const openModal = () => (isModalOpen.value = true)
+const openModal = () => (isModalOpen.value = true);
 
 const confirmFilter = () => {
-  isModalOpen.value = false
-  emit('filter', version.value, loader.value)
-}
+	isModalOpen.value = false;
+	emit("filter", version.value, loader.value);
+};
 
 const resetFilter = () => {
-  isModalOpen.value = false
-  version.value = ''
-  loader.value = ''
-  emit('filter', version.value, loader.value)
-}
+	isModalOpen.value = false;
+	version.value = "";
+	loader.value = "";
+	emit("filter", version.value, loader.value);
+};
 </script>
 
 <template>

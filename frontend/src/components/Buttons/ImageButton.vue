@@ -1,27 +1,27 @@
 <script setup lang="ts">
 interface Props {
-  img: string
-  alt?: string
-  disabled?: boolean
-  title?: string
-  borderRadius?: string
+	img: string;
+	alt?: string;
+	disabled?: boolean;
+	title?: string;
+	borderRadius?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  alt: 'icon',
-  disabled: false,
-  borderRadius: '5px'
-})
+	alt: "icon",
+	disabled: false,
+	borderRadius: "5px",
+});
 
 const emit = defineEmits<{
-  click: [event: MouseEvent]
-}>()
+	click: [event: MouseEvent];
+}>();
 
 const handleClick = (event: MouseEvent) => {
-  if (!props.disabled) {
-    emit('click', event)
-  }
-}
+	if (!props.disabled) {
+		emit("click", event);
+	}
+};
 </script>
 
 <template>

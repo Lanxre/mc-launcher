@@ -6,37 +6,37 @@ import (
 )
 
 func processScreenshots(urls []string) []string {
-    urls = removeDuplicates(urls)
-    for i, url := range urls {
-        parts := strings.Split(url, ".")
-        if len(parts) > 0 {
-            ext := parts[len(parts)-1]
-            switch ext {
-            case "png", "jpg":
-                urls[i] = strings.Replace(url, "mini", "thumb", 1)
-            case "gif":
-                urls[i] = strings.Replace(url, "/mini", "", 1)
-            }
-        }
-    }
+	urls = removeDuplicates(urls)
+	for i, url := range urls {
+		parts := strings.Split(url, ".")
+		if len(parts) > 0 {
+			ext := parts[len(parts)-1]
+			switch ext {
+			case "png", "jpg":
+				urls[i] = strings.Replace(url, "mini", "thumb", 1)
+			case "gif":
+				urls[i] = strings.Replace(url, "/mini", "", 1)
+			}
+		}
+	}
 
-    if len(urls) > 5 {
-        urls = urls[:len(urls)-5]
-    }
+	if len(urls) > 5 {
+		urls = urls[:len(urls)-5]
+	}
 
-    return urls
+	return urls
 }
 
 func removeDuplicates(urls []string) []string {
-    keys := make(map[string]bool)
-    var result []string
-    for _, url := range urls {
-        if _, value := keys[url]; !value {
-            keys[url] = true
-            result = append(result, url)
-        }
-    }
-    return result
+	keys := make(map[string]bool)
+	var result []string
+	for _, url := range urls {
+		if _, value := keys[url]; !value {
+			keys[url] = true
+			result = append(result, url)
+		}
+	}
+	return result
 }
 
 func nameParser(fullName, symbol string) (string, string) {
@@ -73,12 +73,12 @@ func parseVersion(text string) string {
 	}
 
 	text = strings.TrimPrefix(text, "Для ")
-	
+
 	versText := strings.Split(text, " ")
 
 	if len(versText) > 2 {
 		text = fmt.Sprintf("%s, %s", versText[0], versText[2])
-	}else{
+	} else {
 		text = versText[0]
 	}
 

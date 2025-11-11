@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import TagImage from '@/components/Tags/TagImage.vue';
+import TagImage from "@/components/Tags/TagImage.vue";
 
-import type { PropType } from 'vue';
+import type { PropType } from "vue";
 
-import type { Tag } from '@/types/tag';
+import type { Tag } from "@/types/tag";
 
 defineProps({
-  tags: {
-    type: Array as PropType<Tag[]>,
-    default: () => [] as Tag[]
-  }
+	tags: {
+		type: Array as PropType<Tag[]>,
+		default: () => [] as Tag[],
+	},
 });
 
 const emit = defineEmits<{
-  'tag-click': [tag: Tag, event: Event];
-  'tag-close': [tag: Tag];
+	"tag-click": [tag: Tag, event: Event];
+	"tag-close": [tag: Tag];
 }>();
 </script>
 

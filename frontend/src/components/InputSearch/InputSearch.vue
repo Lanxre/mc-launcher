@@ -1,38 +1,37 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import SearchIcon from "@/assets/images/search.png"
+import SearchIcon from "@/assets/images/search.png";
 import ImageButton from "../Buttons/ImageButton.vue";
 
 interface Props {
-  placeholder?: string
+	placeholder?: string;
 }
 
 withDefaults(defineProps<Props>(), {
-  placeholder: 'Название мода',
-})
+	placeholder: "Название мода",
+});
 
-const searchValue = ref("")
+const searchValue = ref("");
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string],
-  'search': [inputSearch: string],
-}>()
+	"update:modelValue": [value: string];
+	search: [inputSearch: string];
+}>();
 
 const handleEnterSearch = (e: KeyboardEvent) => {
-    if(e.code === "Enter") {
-        handleSearch()
-    }
-}
+	if (e.code === "Enter") {
+		handleSearch();
+	}
+};
 
 const handleSearch = () => {
-    emit('update:modelValue', searchValue.value)
-    emit('search', searchValue.value)
-}
+	emit("update:modelValue", searchValue.value);
+	emit("search", searchValue.value);
+};
 
 onMounted(() => {
-    document.addEventListener('keyup', handleEnterSearch)
-})
-
+	document.addEventListener("keyup", handleEnterSearch);
+});
 </script>
 
 <template>

@@ -43,141 +43,150 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 
 interface Props<T> {
-  items: T[]
-  modelValue?: T | T[]
-  multiple?: boolean
-  disabled?: boolean
-  disabledItems?: T[]
-  placeholder?: string
-  itemKey?: keyof T | ((item: T) => string | number)
-  itemLabel?: keyof T | ((item: T) => string)
+	items: T[];
+	modelValue?: T | T[];
+	multiple?: boolean;
+	disabled?: boolean;
+	disabledItems?: T[];
+	placeholder?: string;
+	itemKey?: keyof T | ((item: T) => string | number);
+	itemLabel?: keyof T | ((item: T) => string);
 }
 
 const props = withDefaults(defineProps<Props<any>>(), {
-  multiple: false,
-  disabled: false,
-  disabledItems: () => [],
-  placeholder: 'Выберите элемент',
-  itemKey: 'id',
-  itemLabel: 'name'
-})
+	multiple: false,
+	disabled: false,
+	disabledItems: () => [],
+	placeholder: "Выберите элемент",
+	itemKey: "id",
+	itemLabel: "name",
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: any]
-  'select': [item: any]
-  'toggle': [isOpen: boolean]
-}>()
+	"update:modelValue": [value: any];
+	select: [item: any];
+	toggle: [isOpen: boolean];
+}>();
 
-const isOpen = ref(false)
-const dropdownRef = ref<HTMLElement>()
+const isOpen = ref(false);
+const dropdownRef = ref<HTMLElement>();
 
-const internalSelected = ref<any[]>([])
+const internalSelected = ref<any[]>([]);
 
-watch(() => props.modelValue, (newValue) => {
-  if (newValue === undefined || newValue === null || newValue === '') {
-    internalSelected.value = []
-  } else {
-    internalSelected.value = Array.isArray(newValue) ? [...newValue] : [newValue]
-  }
-}, { immediate: true })
+watch(
+	() => props.modelValue,
+	(newValue) => {
+		if (newValue === undefined || newValue === null || newValue === "") {
+			internalSelected.value = [];
+		} else {
+			internalSelected.value = Array.isArray(newValue)
+				? [...newValue]
+				: [newValue];
+		}
+	},
+	{ immediate: true },
+);
 
-const selectedItems = computed(() => internalSelected.value)
+const selectedItems = computed(() => internalSelected.value);
 
 const getKey = (item: any): string | number => {
-  if (typeof props.itemKey === 'function') {
-    return props.itemKey(item)
-  }
-  return item[props.itemKey]
-}
+	if (typeof props.itemKey === "function") {
+		return props.itemKey(item);
+	}
+	return item[props.itemKey];
+};
 
 const getItemLabel = (item: any): string => {
-  if (typeof props.itemLabel === 'function') {
-    return props.itemLabel(item)
-  }
-  return item[props.itemLabel] || String(item)
-}
+	if (typeof props.itemLabel === "function") {
+		return props.itemLabel(item);
+	}
+	return item[props.itemLabel] || String(item);
+};
 
 const isSelected = (item: any): boolean => {
-  return selectedItems.value.some(selected => getKey(selected) === getKey(item))
-}
+	return selectedItems.value.some(
+		(selected) => getKey(selected) === getKey(item),
+	);
+};
 
 const isDisabled = (item: any): boolean => {
-  return props.disabledItems.some(disabled => getKey(disabled) === getKey(item))
-}
+	return props.disabledItems.some(
+		(disabled) => getKey(disabled) === getKey(item),
+	);
+};
 
 const getTriggerText = (): string => {
-  if (selectedItems.value.length === 0 || !selectedItems.value[0]) {
-    return props.placeholder
-  }
+	if (selectedItems.value.length === 0 || !selectedItems.value[0]) {
+		return props.placeholder;
+	}
 
-  if (props.multiple) {
-    if (selectedItems.value.length === 1) {
-      return getItemLabel(selectedItems.value[0])
-    }
-    return `Выбрано: ${selectedItems.value.length}`
-  }
+	if (props.multiple) {
+		if (selectedItems.value.length === 1) {
+			return getItemLabel(selectedItems.value[0]);
+		}
+		return `Выбрано: ${selectedItems.value.length}`;
+	}
 
-  return getItemLabel(selectedItems.value[0])
-}
+	return getItemLabel(selectedItems.value[0]);
+};
 const toggleDropdown = () => {
-  if (props.disabled) return
-  isOpen.value = !isOpen.value
-  emit('toggle', isOpen.value)
-}
+	if (props.disabled) return;
+	isOpen.value = !isOpen.value;
+	emit("toggle", isOpen.value);
+};
 
 const handleItemClick = (item: any) => {
-  if (isDisabled(item)) return
+	if (isDisabled(item)) return;
 
-  let newSelected: any[]
+	let newSelected: any[];
 
-  if (props.multiple) {
-    if (isSelected(item)) {
-      newSelected = selectedItems.value.filter(
-        selected => getKey(selected) !== getKey(item)
-      )
-    } else {
-      newSelected = [...selectedItems.value, item]
-    }
-  } else {
-    newSelected = [item]
-    isOpen.value = false
-    emit('toggle', false)
-  }
+	if (props.multiple) {
+		if (isSelected(item)) {
+			newSelected = selectedItems.value.filter(
+				(selected) => getKey(selected) !== getKey(item),
+			);
+		} else {
+			newSelected = [...selectedItems.value, item];
+		}
+	} else {
+		newSelected = [item];
+		isOpen.value = false;
+		emit("toggle", false);
+	}
 
-  internalSelected.value = newSelected
+	internalSelected.value = newSelected;
 
-  const emitValue = props.multiple ? newSelected : newSelected[0] || null
-  emit('update:modelValue', emitValue)
-  emit('select', item)
-}
+	const emitValue = props.multiple ? newSelected : newSelected[0] || null;
+	emit("update:modelValue", emitValue);
+	emit("select", item);
+};
 
 const handleClickOutside = (event: MouseEvent) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
-    isOpen.value = false
-    emit('toggle', false)
-  }
-}
+	if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
+		isOpen.value = false;
+		emit("toggle", false);
+	}
+};
 
 const handleEscape = (event: KeyboardEvent) => {
-  if (event.key === 'Escape' && isOpen.value) {
-    isOpen.value = false
-    emit('toggle', false)
-  }
-}
-
+	if (event.key === "Escape" && isOpen.value) {
+		isOpen.value = false;
+		emit("toggle", false);
+	}
+};
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-  document.addEventListener('keydown', handleEscape)
-})
+	document.addEventListener("click", handleClickOutside);
+	document.addEventListener("keydown", handleEscape);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-  document.removeEventListener('keydown', handleEscape)
-})
+	document.removeEventListener("click", handleClickOutside);
+	document.removeEventListener("keydown", handleEscape);
+});
 </script>
 
 <style lang="css" scoped>

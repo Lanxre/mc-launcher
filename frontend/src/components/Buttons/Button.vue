@@ -1,31 +1,31 @@
 <script lang="ts" setup>
 interface Props {
-  name?: string
-  disabled?: boolean
-  size?: 'small' | 'medium' | 'large'
+	name?: string;
+	disabled?: boolean;
+	size?: "small" | "medium" | "large";
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  name: 'Нажать',
-  disabled: false,
-  size: 'medium'
-})
+	name: "Нажать",
+	disabled: false,
+	size: "medium",
+});
 
 const emit = defineEmits<{
-  click: [event: MouseEvent]
-}>()
+	click: [event: MouseEvent];
+}>();
 
 const handleClick = (event: MouseEvent) => {
-  if (!props.disabled) {
-    emit('click', event)
-  }
-}
+	if (!props.disabled) {
+		emit("click", event);
+	}
+};
 
 const sizeClasses = {
-  small: 'py-1 px-3 text-sm',
-  medium: 'py-2 px-4 text-base',
-  large: 'py-3 px-6 text-lg'
-}
+	small: "py-1 px-3 text-sm",
+	medium: "py-2 px-4 text-base",
+	large: "py-3 px-6 text-lg",
+};
 </script>
 
 <template>

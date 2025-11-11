@@ -1,27 +1,26 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from "vue";
 
 interface Props {
-    img: string
-    alt?: string
-    height?: string
-    width?: string
-    borderRaduis?: string
-    backgroundColor?: string
+	img: string;
+	alt?: string;
+	height?: string;
+	width?: string;
+	borderRaduis?: string;
+	backgroundColor?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    alt: 'no-img',
-    height: '50px',
-    width: '50px',
-    backgroundColor: 'grey'
-})
+	alt: "no-img",
+	height: "50px",
+	width: "50px",
+	backgroundColor: "grey",
+});
 
 const blockStyle = computed(() => ({
-    borderRadius: props.borderRaduis,
-    backgroundColor: props.backgroundColor
-}))
-
+	borderRadius: props.borderRaduis,
+	backgroundColor: props.backgroundColor,
+}));
 </script>
 
 <template>

@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import Slider from '@/components/Slider/Slider.vue'
+import { computed } from "vue";
+import Slider from "@/components/Slider/Slider.vue";
 
 interface Props {
-  screenshots: string[]
+	screenshots: string[];
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const slides = computed(() =>
-  props.screenshots?.length
-    ? props.screenshots.map((s, i) => ({
-        image: s,
-        alt: `Скриншот ${i + 1}`,
-        id: i,
-      }))
-    : []
-)
+	props.screenshots?.length
+		? props.screenshots.map((s, i) => ({
+				image: s,
+				alt: `Скриншот ${i + 1}`,
+				id: i,
+			}))
+		: [],
+);
 </script>
 
 <template>

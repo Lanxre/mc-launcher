@@ -1,104 +1,112 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
-import { useModStore } from '@/stores/modStore'
-import { GetModDetails, GetModDepends } from '@/../wailsjs/go/parser/ScraperService'
-import { enrichDependencies, saveModToYaml } from '@/api/utils'
+import { onMounted, ref } from "vue";
+import { useModStore } from "@/stores/modStore";
+import {
+	GetModDetails,
+	GetModDepends,
+} from "@wailsjs/go/parser/ScraperService";
+import { enrichDependencies, saveModToYaml } from "@/api/utils";
 
-import type { MinecraftMod, ModDependency } from '@/types'
+import type { MinecraftMod, ModDependency } from "@/types";
 
-import AppHeader from '@/layouts/AppHeader.vue'
-import AppFooter from '@/layouts/AppFooter.vue'
+import AppHeader from "@/layouts/AppHeader.vue";
+import AppFooter from "@/layouts/AppFooter.vue";
 
-import ModTitle from '@/components/ModDetails/ModTitle.vue'
-import ModVersions from '@/components/ModDetails/ModVersions.vue'
-import ModDescription from '@/components/ModDetails/ModDescription.vue'
-import ModDownloads from '@/components/ModDetails/ModDownloads.vue'
-import ModScreenshots from '@/components/ModDetails/ModScreenshots.vue'
+import ModTitle from "@/components/ModDetails/ModTitle.vue";
+import ModVersions from "@/components/ModDetails/ModVersions.vue";
+import ModDescription from "@/components/ModDetails/ModDescription.vue";
+import ModDownloads from "@/components/ModDetails/ModDownloads.vue";
+import ModScreenshots from "@/components/ModDetails/ModScreenshots.vue";
 
-const modStore = useModStore()
-const mod = ref<MinecraftMod | null>(null)
-const depends = ref<ModDependency[]>([])
-const isLoading = ref(true)
-const isError = ref(false)
+const modStore = useModStore();
+const mod = ref<MinecraftMod | null>(null);
+const depends = ref<ModDependency[]>([]);
+const isLoading = ref(true);
+const isError = ref(false);
 
-async function fetchDependencies(initialDeps: ModDependency[]): Promise<ModDependency[]> {
-  const visited = new Set()
-  const allDeps: ModDependency[] = []
+async function fetchDependencies(
+	initialDeps: ModDependency[],
+): Promise<ModDependency[]> {
+	const visited = new Set();
+	const allDeps: ModDependency[] = [];
 
-  async function processDeps(deps: ModDependency[]) {
-    if (deps == null) return
-    const uniqueDeps = deps.filter(d => d.ModPageLink && !visited.has(d.ModPageLink))
-    if (uniqueDeps.length === 0) return
+	async function processDeps(deps: ModDependency[]) {
+		if (deps == null) return;
+		const uniqueDeps = deps.filter(
+			(d) => d.ModPageLink && !visited.has(d.ModPageLink),
+		);
+		if (uniqueDeps.length === 0) return;
 
-    uniqueDeps.forEach(d => visited.add(d.ModPageLink))
+		uniqueDeps.forEach((d) => visited.add(d.ModPageLink));
 
-    const newDeps = await GetModDepends(uniqueDeps)
-    allDeps.push(...newDeps)
+		const newDeps = await GetModDepends(uniqueDeps);
+		allDeps.push(...newDeps);
 
-    const nestedDeps = newDeps
-      .map(d => d.Dependency)
-      .filter(Boolean)
-      .flat()            
-      .filter(d => d.ModPageLink && !visited.has(d.ModPageLink))
+		const nestedDeps = newDeps
+			.map((d) => d.Dependency)
+			.filter(Boolean)
+			.flat()
+			.filter((d) => d.ModPageLink && !visited.has(d.ModPageLink));
 
-    if (nestedDeps.length > 0) {
-      await processDeps(nestedDeps)
-    }
-  }
+		if (nestedDeps.length > 0) {
+			await processDeps(nestedDeps);
+		}
+	}
 
-  await processDeps(initialDeps)
-  return allDeps
+	await processDeps(initialDeps);
+	return allDeps;
 }
 
 function applyFilters(modObj: MinecraftMod) {
-  const loaderFilter = modStore.getLoaderFilter
-  const versionFilter = modStore.getVersionFilter
+	const loaderFilter = modStore.getLoaderFilter;
+	const versionFilter = modStore.getVersionFilter;
 
-  if (loaderFilter) {
-    modObj.Details = modObj.Details.filter(d => d.Loader === loaderFilter)
-  }
+	if (loaderFilter) {
+		modObj.Details = modObj.Details.filter((d) => d.Loader === loaderFilter);
+	}
 
-  if (versionFilter) {
-    modObj.Details = modObj.Details.filter(d => d.Version === versionFilter)
-  }
+	if (versionFilter) {
+		modObj.Details = modObj.Details.filter((d) => d.Version === versionFilter);
+	}
 }
 
 async function loadModDetails() {
-  try {
-    let currentMod = modStore.currentMod
-    if (!currentMod?.ModPageLink) return
+	try {
+		let currentMod = modStore.currentMod;
+		if (!currentMod?.ModPageLink) return;
 
-    const fullDetails = await GetModDetails(currentMod.ModPageLink)
-    currentMod.Screenshots = fullDetails.Screenshots
-    currentMod.Details = fullDetails.Details
-    currentMod.Dependency = fullDetails.Dependency
+		const fullDetails = await GetModDetails(currentMod.ModPageLink);
+		currentMod.Screenshots = fullDetails.Screenshots;
+		currentMod.Details = fullDetails.Details;
+		currentMod.Dependency = fullDetails.Dependency;
 
-    applyFilters(currentMod)
-    let allDeps = await fetchDependencies(currentMod.Dependency)
-    allDeps = allDeps.filter(
-      (dep, i, self) => dep.ModPageLink && i === self.findIndex(d => d.ModPageLink === dep.ModPageLink)
-    )
-    
-    await enrichDependencies(allDeps)
-    depends.value = allDeps
-    mod.value = currentMod
-    mod.value.Dependency.forEach(dep => {
-        const as = depends.value.find(d => d.Name === dep.Name)
-        if (as != undefined) {
-          dep.Details = as.Details
-        }
-    });
-    console.log(mod.value)
+		applyFilters(currentMod);
+		let allDeps = await fetchDependencies(currentMod.Dependency);
+		allDeps = allDeps.filter(
+			(dep, i, self) =>
+				dep.ModPageLink &&
+				i === self.findIndex((d) => d.ModPageLink === dep.ModPageLink),
+		);
 
-  } catch (err) {
-    console.error('Ошибка при загрузке данных мода:', err)
-    isError.value = true
-  } finally {
-    isLoading.value = false
-  }
+		await enrichDependencies(allDeps);
+		depends.value = allDeps;
+		mod.value = currentMod;
+		mod.value.Dependency.forEach((dep) => {
+			const as = depends.value.find((d) => d.Name === dep.Name);
+			if (as != undefined) {
+				dep.Details = as.Details;
+			}
+		});
+		console.log(mod.value);
+	} catch (err) {
+		console.error("Ошибка при загрузке данных мода:", err);
+		isError.value = true;
+	} finally {
+		isLoading.value = false;
+	}
 }
 
-onMounted(loadModDetails)
+onMounted(loadModDetails);
 </script>
 
 

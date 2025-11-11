@@ -1,49 +1,55 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref } from "vue";
 
-import AppFooter from '@/layouts/AppFooter.vue'
-import AppHeader from '@/layouts/AppHeader.vue'
-import View from '@/components/View/View.vue'
-import ModsList from '@/components/Mods/ModsList.vue'
-import ModDependsList from '@/components/ModDepends/ModDependsList.vue'
+import AppFooter from "@/layouts/AppFooter.vue";
+import AppHeader from "@/layouts/AppHeader.vue";
+import View from "@/components/View/View.vue";
+import ModsList from "@/components/Mods/ModsList.vue";
+import ModDependsList from "@/components/ModDepends/ModDependsList.vue";
 
-import { GetYamlConfig, RemoveFromYamlConfig, DeleteSavedMod } from '../../wailsjs/go/main/FuncService'
-import { ShowInfoMessage } from '../../wailsjs/go/main/App'
-import type { MinecraftMod, ModDependency } from '@/types'
-import { getMinecraftDownloadFileName, uniqueBy } from '@/api/utils'
+import {
+	GetYamlConfig,
+	RemoveFromYamlConfig,
+	DeleteSavedMod,
+} from "@wailsjs/go/functools/FuncService";
+import { ShowInfoMessage } from "@wailsjs/go/main/App";
+import type { MinecraftMod, ModDependency } from "@/types";
+import { getMinecraftDownloadFileName, uniqueBy } from "@/api/utils";
 
-const savedMods = ref<MinecraftMod[]>([])
-const depends = ref<ModDependency[]>([])
+const savedMods = ref<MinecraftMod[]>([]);
+const depends = ref<ModDependency[]>([]);
 
 const loadDownloadedMods = async () => {
-  try {
-    const mods = await GetYamlConfig('downloads')
-    savedMods.value = mods ?? []
+	try {
+		const mods = await GetYamlConfig("downloads");
+		savedMods.value = mods ?? [];
 
-    if (savedMods.value !== null) {
-        const uniqeDeps = uniqueBy(savedMods.value.flatMap(m => m.Dependency), d => d.Name)
-        depends.value = uniqeDeps
-        console.log(depends.value)
-    }
-    
-  } catch (err) {
-    console.error('Ошибка при получении скачанных модов:', err)
-  }
-}
+		if (savedMods.value !== null) {
+			const uniqeDeps = uniqueBy(
+				savedMods.value.flatMap((m) => m.Dependency),
+				(d) => d.Name,
+			);
+			depends.value = uniqeDeps;
+			console.log(depends.value);
+		}
+	} catch (err) {
+		console.error("Ошибка при получении скачанных модов:", err);
+	}
+};
 
 const removeFromDownloads = async (mod: MinecraftMod) => {
-  try {
-    savedMods.value = savedMods.value.filter(m => m.Name !== mod.Name)
-    await RemoveFromYamlConfig(mod, 'downloads')
-    const filename = getMinecraftDownloadFileName(mod.Name, mod.Versions)
-    await DeleteSavedMod(filename)
-    await ShowInfoMessage('Удалён', `Мод "${mod.Name}" успешно удалён`)
-  } catch (err) {
-    console.error('Ошибка при удалении мода:', err)
-  }
-}
+	try {
+		savedMods.value = savedMods.value.filter((m) => m.Name !== mod.Name);
+		await RemoveFromYamlConfig(mod, "downloads");
+		const filename = getMinecraftDownloadFileName(mod.Name, mod.Versions);
+		await DeleteSavedMod(filename);
+		await ShowInfoMessage("Удалён", `Мод "${mod.Name}" успешно удалён`);
+	} catch (err) {
+		console.error("Ошибка при удалении мода:", err);
+	}
+};
 
-onMounted(loadDownloadedMods)
+onMounted(loadDownloadedMods);
 </script>
 
 <template>

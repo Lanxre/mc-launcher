@@ -23,9 +23,9 @@ func (a *App) OpenExternalLink(url string) {
 }
 
 func (a *App) ShowInfoMessage(title, message string) {
-    runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
-        Type:    runtime.InfoDialog,
-        Title:   title,
-        Message: message,
-    })
+	runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+		Type:    runtime.InfoDialog,
+		Title:   title,
+		Message: message,
+	})
 }

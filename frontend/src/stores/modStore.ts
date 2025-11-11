@@ -1,88 +1,90 @@
-import { defineStore } from 'pinia'
-import type { MinecraftMod } from '@/types'
+import { defineStore } from "pinia";
+import type { MinecraftMod } from "@/types";
 
-export const useModStore = defineStore('mod', {
-  state: () => ({
-    currentMod: null as MinecraftMod | null,
-    currentParsePage: null as  number | null,
-    currentVersionFilter: null as string | null,
-    currentLoaderFilter: null as string | null, 
-    currentSearchFilter: null as string | null, 
-    allMods: [] as MinecraftMod[],
-    isLoading: false,
-    error: null as string | null
-  }),
+export const useModStore = defineStore("mod", {
+	state: () => ({
+		currentMod: null as MinecraftMod | null,
+		currentParsePage: null as number | null,
+		currentVersionFilter: null as string | null,
+		currentLoaderFilter: null as string | null,
+		currentSearchFilter: null as string | null,
+		allMods: [] as MinecraftMod[],
+		isLoading: false,
+		error: null as string | null,
+	}),
 
-  getters: {
-    getCurrentMod: (state) => state.currentMod,
-    getAllMods: (state) => state.allMods,
-    getModsCount: (state) => state.allMods.length,
-    getParsePage: (state) => state.currentParsePage,
-    getVersionFilter: (state) => state.currentVersionFilter,
-    getLoaderFilter: (state) => state.currentLoaderFilter,
-    getSearchFilter: (state) => state.currentSearchFilter,
+	getters: {
+		getCurrentMod: (state) => state.currentMod,
+		getAllMods: (state) => state.allMods,
+		getModsCount: (state) => state.allMods.length,
+		getParsePage: (state) => state.currentParsePage,
+		getVersionFilter: (state) => state.currentVersionFilter,
+		getLoaderFilter: (state) => state.currentLoaderFilter,
+		getSearchFilter: (state) => state.currentSearchFilter,
 
-    searchMods: (state) => (query: string) => {
-      return state.allMods.filter(mod => 
-        mod.Name.toLowerCase().includes(query.toLowerCase())
-      )
-    },
-    
-    getModsByLoader: (state) => (loader: string) => {
-      return state.allMods.filter(mod => 
-        mod.Details?.some(detail => 
-          detail.Loader.toLowerCase().includes(loader.toLowerCase())
-        )
-      )
-    }
-  },
+		searchMods: (state) => (query: string) => {
+			return state.allMods.filter((mod) =>
+				mod.Name.toLowerCase().includes(query.toLowerCase()),
+			);
+		},
 
-  actions: {
-    setAllMods(mods: MinecraftMod[]) {
-      this.allMods = mods
-    },
+		getModsByLoader: (state) => (loader: string) => {
+			return state.allMods.filter((mod) =>
+				mod.Details?.some((detail) =>
+					detail.Loader.toLowerCase().includes(loader.toLowerCase()),
+				),
+			);
+		},
+	},
 
-    addMods(mods: MinecraftMod[]) {
-      const existingLinks = new Set(this.allMods.map(mod => mod.ModPageLink))
-      const uniqueNewMods = mods.filter(mod => !existingLinks.has(mod.ModPageLink))
-      this.allMods.push(...uniqueNewMods)
-    },
+	actions: {
+		setAllMods(mods: MinecraftMod[]) {
+			this.allMods = mods;
+		},
 
-    setCurrentMod(mod: MinecraftMod) {
-      this.currentMod = mod
-    },
+		addMods(mods: MinecraftMod[]) {
+			const existingLinks = new Set(this.allMods.map((mod) => mod.ModPageLink));
+			const uniqueNewMods = mods.filter(
+				(mod) => !existingLinks.has(mod.ModPageLink),
+			);
+			this.allMods.push(...uniqueNewMods);
+		},
 
-    setCurrentParsePage(page: number) {
-      this.currentParsePage = page
-    },
+		setCurrentMod(mod: MinecraftMod) {
+			this.currentMod = mod;
+		},
 
-    setVersionFilter(version: string) {
-      this.currentVersionFilter = version
-    },
+		setCurrentParsePage(page: number) {
+			this.currentParsePage = page;
+		},
 
-    setLoaderFilter(loader: string) {
-      this.currentLoaderFilter = loader
-    },
+		setVersionFilter(version: string) {
+			this.currentVersionFilter = version;
+		},
 
-    setSearchFilter(inputSearch: string) {
-      this.currentSearchFilter = inputSearch
-    },
+		setLoaderFilter(loader: string) {
+			this.currentLoaderFilter = loader;
+		},
 
-    clearCurrentMod() {
-      this.currentMod = null
-    },
+		setSearchFilter(inputSearch: string) {
+			this.currentSearchFilter = inputSearch;
+		},
 
-    clearAllMods() {
-      this.allMods = []
-      this.currentMod = null
-    },
+		clearCurrentMod() {
+			this.currentMod = null;
+		},
 
-    setLoading(loading: boolean) {
-      this.isLoading = loading
-    },
+		clearAllMods() {
+			this.allMods = [];
+			this.currentMod = null;
+		},
 
-    setError(message: string | null) {
-      this.error = message
-    }
-  }
-})
+		setLoading(loading: boolean) {
+			this.isLoading = loading;
+		},
+
+		setError(message: string | null) {
+			this.error = message;
+		},
+	},
+});

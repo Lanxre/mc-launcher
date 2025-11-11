@@ -1,31 +1,32 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import ModDependCard from './ModDependCard.vue';
-import type { ModDependency, PairDepend } from '@/types';
-import { filterDiskModDepends } from '@/api/utils';
-import { DeleteSavedMod } from '@wailsjs/go/main/FuncService'
+import { onMounted, ref } from "vue";
+import ModDependCard from "./ModDependCard.vue";
+import type { ModDependency, PairDepend } from "@/types";
+import { filterDiskModDepends } from "@/api/utils";
+import { DeleteSavedMod } from "@wailsjs/go/functools/FuncService";
 
 interface Props {
-    depends: ModDependency[]
+	depends: ModDependency[];
 }
 
-const props = defineProps<Props>()
-const pairDepends = ref<PairDepend[]>([])
+const props = defineProps<Props>();
+const pairDepends = ref<PairDepend[]>([]);
 
 const removeDepend = async (depend: ModDependency, filename: string) => {
-    pairDepends.value = pairDepends.value.filter(pd => pd.configDepend.Name !== depend.Name)
-    await DeleteSavedMod(filename)
-}
+	pairDepends.value = pairDepends.value.filter(
+		(pd) => pd.configDepend.Name !== depend.Name,
+	);
+	await DeleteSavedMod(filename);
+};
 
 onMounted(async () => {
-    try {
-        const filtred = await filterDiskModDepends(props.depends)
-        pairDepends.value = filtred
-    } catch (err) {
-        console.error(err)
-    }
-})
-
+	try {
+		const filtred = await filterDiskModDepends(props.depends);
+		pairDepends.value = filtred;
+	} catch (err) {
+		console.error(err);
+	}
+});
 </script>
 
 <template>

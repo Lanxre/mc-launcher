@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { openLink } from '@/api/utils';
-import Image from '../Image/Image.vue';
-import CrossIcon from '@/assets/images/close.png'
+import { openLink } from "@/api/utils";
+import Image from "../Image/Image.vue";
+import CrossIcon from "@/assets/images/close.png";
 
-import type { ModDependency } from '@/types';
+import type { ModDependency } from "@/types";
 
 interface Props {
-    depend: ModDependency
-    filename?: string
-    onDelete?: () => void 
+	depend: ModDependency;
+	filename?: string;
+	onDelete?: () => void;
 }
 
-defineProps<Props>()
-
+defineProps<Props>();
 </script>
 
 <template>

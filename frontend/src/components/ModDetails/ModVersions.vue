@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from "vue";
 
 interface Props {
-  versions: string[]
+	versions: string[];
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const hasVersions = computed(() => props.versions && props.versions.length > 0)
-
+const hasVersions = computed(() => props.versions && props.versions.length > 0);
 </script>
 
 <template>

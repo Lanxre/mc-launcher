@@ -1,40 +1,41 @@
 <script lang="ts" setup>
 const props = defineProps({
-    name: {
-        type: String,
-        required: true
-    },
-    color: {
-        type: String,
-        default: 'grey',
-        validator: (value: string) => ['grey', 'blue', 'red', 'green', 'yellow', 'purple'].includes(value)
-    },
-    clickable: {
-        type: Boolean,
-        default: true
-    },
-    closable: {
-        type: Boolean,
-        default: false
-    },
-    size: {
-        type: String,
-        default: 'medium',
-        validator: (value: string) => ['small', 'medium', 'large'].includes(value)
-    }
-})
+	name: {
+		type: String,
+		required: true,
+	},
+	color: {
+		type: String,
+		default: "grey",
+		validator: (value: string) =>
+			["grey", "blue", "red", "green", "yellow", "purple"].includes(value),
+	},
+	clickable: {
+		type: Boolean,
+		default: true,
+	},
+	closable: {
+		type: Boolean,
+		default: false,
+	},
+	size: {
+		type: String,
+		default: "medium",
+		validator: (value: string) => ["small", "medium", "large"].includes(value),
+	},
+});
 
-const emit = defineEmits(['click', 'close'])
+const emit = defineEmits(["click", "close"]);
 
 const handleClick = (event: Event) => {
-    if (props.clickable) {
-        emit('click', event)
-    }
-}
+	if (props.clickable) {
+		emit("click", event);
+	}
+};
 
 const handleClose = () => {
-    emit('close')
-}
+	emit("close");
+};
 </script>
 
 

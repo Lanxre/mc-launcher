@@ -29,95 +29,96 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, useSlots } from 'vue'
+import { computed, onMounted, onUnmounted, useSlots } from "vue";
 
 interface Props {
-  modelValue: boolean
-  title?: string
-  width?: number | string
-  maxWidth?: number | string
-  closable?: boolean
-  closeOnOverlay?: boolean
-  closeOnEscape?: boolean
-  preventScroll?: boolean
-  transition?: string
+	modelValue: boolean;
+	title?: string;
+	width?: number | string;
+	maxWidth?: number | string;
+	closable?: boolean;
+	closeOnOverlay?: boolean;
+	closeOnEscape?: boolean;
+	preventScroll?: boolean;
+	transition?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: false,
-  closable: true,
-  closeOnOverlay: true,
-  closeOnEscape: true,
-  preventScroll: false,
-  width: 'auto',
-  maxWidth: '600px'
-})
+	modelValue: false,
+	closable: true,
+	closeOnOverlay: true,
+	closeOnEscape: true,
+	preventScroll: false,
+	width: "auto",
+	maxWidth: "600px",
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  'close': []
-  'open': []
-}>()
+	"update:modelValue": [value: boolean];
+	close: [];
+	open: [];
+}>();
 
-const slots = useSlots()
+const slots = useSlots();
 
 const isVisible = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
-})
+	get: () => props.modelValue,
+	set: (value) => emit("update:modelValue", value),
+});
 
 const modalStyle = computed(() => ({
-  width: typeof props.width === 'number' ? `${props.width}px` : props.width,
-  maxWidth: typeof props.maxWidth === 'number' ? `${props.maxWidth}px` : props.maxWidth
-}))
+	width: typeof props.width === "number" ? `${props.width}px` : props.width,
+	maxWidth:
+		typeof props.maxWidth === "number" ? `${props.maxWidth}px` : props.maxWidth,
+}));
 
 const modalClass = computed(() => ({
-  'modal--with-header': !!props.title || !!slots.header,
-  'modal--with-footer': !!slots.footer
-}))
+	"modal--with-header": !!props.title || !!slots.header,
+	"modal--with-footer": !!slots.footer,
+}));
 
 const open = () => {
-  isVisible.value = true
-  emit('open')
-}
+	isVisible.value = true;
+	emit("open");
+};
 
 const close = () => {
-  isVisible.value = false
-  emit('close')
-}
+	isVisible.value = false;
+	emit("close");
+};
 
 const handleOverlayClick = () => {
-  if (props.closeOnOverlay) {
-    close()
-  }
-}
+	if (props.closeOnOverlay) {
+		close();
+	}
+};
 
 const handleEscapeKey = (event: KeyboardEvent) => {
-  if (event.key === 'Escape' && props.closeOnEscape && isVisible.value) {
-    close()
-  }
-}
+	if (event.key === "Escape" && props.closeOnEscape && isVisible.value) {
+		close();
+	}
+};
 
 const preventScroll = (event: Event) => {
-  if (props.preventScroll && isVisible.value) {
-    event.preventDefault()
-  }
-}
+	if (props.preventScroll && isVisible.value) {
+		event.preventDefault();
+	}
+};
 
 onMounted(() => {
-  document.addEventListener('keydown', handleEscapeKey)
-  
-  if (props.preventScroll) {
-    document.addEventListener('wheel', preventScroll, { passive: false })
-    document.addEventListener('touchmove', preventScroll, { passive: false })
-  }
-})
+	document.addEventListener("keydown", handleEscapeKey);
+
+	if (props.preventScroll) {
+		document.addEventListener("wheel", preventScroll, { passive: false });
+		document.addEventListener("touchmove", preventScroll, { passive: false });
+	}
+});
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleEscapeKey)
-  document.removeEventListener('wheel', preventScroll)
-  document.removeEventListener('touchmove', preventScroll)
-})
+	document.removeEventListener("keydown", handleEscapeKey);
+	document.removeEventListener("wheel", preventScroll);
+	document.removeEventListener("touchmove", preventScroll);
+});
 </script>
 
 <style lang="css" scoped>

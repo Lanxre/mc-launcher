@@ -1,11 +1,11 @@
 <script setup lang="ts">
 interface Props {
-    description: string,
+	description: string;
 }
 
 withDefaults(defineProps<Props>(), {
-    description: 'Описание мода',
-})
+	description: "Описание мода",
+});
 </script>
 
 <template>

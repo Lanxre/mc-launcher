@@ -27,7 +27,7 @@ func ScrapeDependency(depends []ModDependency) []ModDependency {
 }
 
 func ScrapeMinecraftInsideModsFull(url string) ([]MinecraftMod, error) {
-	
+
 	log.Printf("🔍 Scraping mods list: %s", url)
 
 	c := newCollectorWithRetry(3)
@@ -92,7 +92,7 @@ func ParseModBlock(e *colly.HTMLElement) MinecraftMod {
 	return MinecraftMod{
 		Name:        name,
 		Versions:    nameVersionParse(versions),
-		Loaders: 	 e.ChildAttrs("i.icon", "title"),	
+		Loaders:     e.ChildAttrs("i.icon", "title"),
 		ModPageLink: e.Request.AbsoluteURL(e.ChildAttr("h2.box__title a", "href")),
 		Icon:        e.Request.AbsoluteURL(e.ChildAttr("a.post__cover img", "src")),
 		Description: cleanDescription(e.ChildText("div.box__body > div:first-child"), name),

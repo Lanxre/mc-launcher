@@ -62,7 +62,7 @@ func setupSubDependenciesHandler(c *colly.Collector, results map[string]*ModDepe
 				Name:        text,
 			}
 
-			if strings.HasPrefix(dep.ModPageLink, "https://minecraft-inside.ru/mods"){
+			if strings.HasPrefix(dep.ModPageLink, "https://minecraft-inside.ru/mods") {
 				subDeps = append(subDeps, dep)
 			}
 

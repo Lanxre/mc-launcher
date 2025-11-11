@@ -3,7 +3,10 @@ package main
 import (
 	"embed"
 
-	"github.com/lanxre/mc-launcher/parser"
+	"github.com/lanxre/mc-launcher/backend/filetools"
+	"github.com/lanxre/mc-launcher/backend/functools"
+	"github.com/lanxre/mc-launcher/backend/parser"
+
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -15,8 +18,8 @@ var assets embed.FS
 
 func main() {
 	minecraftModsParser := parser.NewScraperService()
-	funcService := NewFuncService()
-	fileService := NewFileService()
+	funcService := functools.NewFuncService()
+	fileService := filetools.NewFileService()
 
 	app := NewApp()
 
@@ -27,7 +30,7 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		OnStartup:        app.startup,
+		OnStartup: app.startup,
 		Bind: []interface{}{
 			app, minecraftModsParser, funcService, fileService,
 		},

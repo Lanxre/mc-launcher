@@ -1,95 +1,94 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import { useModStore } from '@/stores/modStore';
+import { useRouter } from "vue-router";
+import { useModStore } from "@/stores/modStore";
 
-import type { MinecraftMod } from '@/types';
-import Tag from '@/components/Tags/Tag.vue';
-import TagImage from '@/components/Tags/TagImage.vue';
-import TagImageGroup from '@/components/Tags/TagImageGroup.vue';
+import type { MinecraftMod } from "@/types";
+import Tag from "@/components/Tags/Tag.vue";
+import TagImage from "@/components/Tags/TagImage.vue";
+import TagImageGroup from "@/components/Tags/TagImageGroup.vue";
 
-import ForgeMinecraftIcon from '@/assets/images/forge_minecraft.jpeg'
-import FabricMinecraftIcon from '@/assets/images/fabric_minecraft.png'
-import DeleteIcon from '@/assets/images/trash.png'
+import ForgeMinecraftIcon from "@/assets/images/forge_minecraft.jpeg";
+import FabricMinecraftIcon from "@/assets/images/fabric_minecraft.png";
+import DeleteIcon from "@/assets/images/trash.png";
 
-import { uniqueBy } from '@/api/utils';
-import { useScrollManager } from '@/composables/useScrollManager';
+import { uniqueBy } from "@/api/utils";
+import { useScrollManager } from "@/composables/useScrollManager";
 
-const router = useRouter()
-const modStore = useModStore()
+const router = useRouter();
+const modStore = useModStore();
 
-const { saveScrollBeforeLeave } = useScrollManager()
+const { saveScrollBeforeLeave } = useScrollManager();
 
 const props = defineProps<{
-    mods: MinecraftMod[],
-    loaderf?: string,
-    versionf?: string,
-    onDelete?: (mod: MinecraftMod) => void
-}>()
+	mods: MinecraftMod[];
+	loaderf?: string;
+	versionf?: string;
+	onDelete?: (mod: MinecraftMod) => void;
+}>();
 
 const loaderToTag = (loader: string) => {
-  const loaderMap: Record<string, { name: string; imageUrl: string }> = {
-    'forge': { 
-      name: 'Forge', 
-      imageUrl: ForgeMinecraftIcon 
-    },
-    'fabric': { 
-      name: 'Fabric', 
-      imageUrl: FabricMinecraftIcon 
-    }
-  };
-  
-  return loaderMap[loader] || { name: loader, imageUrl: '' };
-}
+	const loaderMap: Record<string, { name: string; imageUrl: string }> = {
+		forge: {
+			name: "Forge",
+			imageUrl: ForgeMinecraftIcon,
+		},
+		fabric: {
+			name: "Fabric",
+			imageUrl: FabricMinecraftIcon,
+		},
+	};
+
+	return loaderMap[loader] || { name: loader, imageUrl: "" };
+};
 
 const getLoaderTags = (mod: MinecraftMod) => {
-  return mod.Loaders.map(loader => {
-    const tag = loaderToTag(loader);
-    return {
-      id: loader,
-      name: tag.name,
-      imageUrl: tag.imageUrl,
-      altText: `${tag.name} loader`
-    };
-  }).filter(l => l.name !== 'quilt');
-}
+	return mod.Loaders.map((loader) => {
+		const tag = loaderToTag(loader);
+		return {
+			id: loader,
+			name: tag.name,
+			imageUrl: tag.imageUrl,
+			altText: `${tag.name} loader`,
+		};
+	}).filter((l) => l.name !== "quilt");
+};
 
 const applyFilters = () => {
-  if (props.loaderf !== undefined && props.loaderf !== "") {
-    modStore.setLoaderFilter(props.loaderf)
-  }
+	if (props.loaderf !== undefined && props.loaderf !== "") {
+		modStore.setLoaderFilter(props.loaderf);
+	}
 
-  if (props.versionf !== undefined && props.versionf !== "") {
-    modStore.setVersionFilter(props.versionf)
-  }
-}
+	if (props.versionf !== undefined && props.versionf !== "") {
+		modStore.setVersionFilter(props.versionf);
+	}
+};
 
 const setStoreMod = (mod: MinecraftMod) => {
-  modStore.setCurrentMod(mod)
-}
+	modStore.setCurrentMod(mod);
+};
 
 const routerPushPage = (modName: string) => {
-  router.push({
-    name: 'mod',
-    params: {
-      name: modName
-    }
-  })
-}
+	router.push({
+		name: "mod",
+		params: {
+			name: modName,
+		},
+	});
+};
 
 const redirectToMod = (mod: MinecraftMod): void => {
-  saveScrollBeforeLeave()
-  setStoreMod(mod)
+	saveScrollBeforeLeave();
+	setStoreMod(mod);
 
-  applyFilters()
-  
-  routerPushPage(mod.Name)
-}
+	applyFilters();
+
+	routerPushPage(mod.Name);
+};
 
 const handleDelete = (mod: MinecraftMod, event: MouseEvent) => {
-  event.stopPropagation()
-  props.onDelete?.(mod)
-}
-
+	event.stopPropagation();
+	props.onDelete?.(mod);
+};
 </script>
 
 <template>

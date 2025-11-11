@@ -1,62 +1,63 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
-    name: {
-        type: String,
-        required: true
-    },
-    imageUrl: {
-        type: String,
-        default: ''
-    },
-    altText: {
-        type: String,
-        default: ''
-    },
-    clickable: {
-        type: Boolean,
-        default: true
-    },
-    closable: {
-        type: Boolean,
-        default: false
-    },
-    size: {
-        type: String,
-        default: 'medium',
-        validator: (value: string) => ['small', 'medium', 'large'].includes(value)
-    },
-    variant: {
-        type: String,
-        default: 'default',
-        validator: (value: string) => ['default', 'outlined', 'ghost'].includes(value)
-    },
-    rounded: {
-        type: Boolean,
-        default: true
-    }
-})
+	name: {
+		type: String,
+		required: true,
+	},
+	imageUrl: {
+		type: String,
+		default: "",
+	},
+	altText: {
+		type: String,
+		default: "",
+	},
+	clickable: {
+		type: Boolean,
+		default: true,
+	},
+	closable: {
+		type: Boolean,
+		default: false,
+	},
+	size: {
+		type: String,
+		default: "medium",
+		validator: (value: string) => ["small", "medium", "large"].includes(value),
+	},
+	variant: {
+		type: String,
+		default: "default",
+		validator: (value: string) =>
+			["default", "outlined", "ghost"].includes(value),
+	},
+	rounded: {
+		type: Boolean,
+		default: true,
+	},
+});
 
-const emit = defineEmits(['click', 'close', 'image-error'])
+const emit = defineEmits(["click", "close", "image-error"]);
 
 const fallbackText = computed(() => {
-    return props.name.charAt(0).toUpperCase()
-})
+	return props.name.charAt(0).toUpperCase();
+});
 
 const handleClick = (event: Event) => {
-    if (props.clickable) {
-        emit('click', event)
-    }
-}
+	if (props.clickable) {
+		emit("click", event);
+	}
+};
 
 const handleClose = () => {
-    emit('close')
-}
+	emit("close");
+};
 
 const handleImageError = (error: Event) => {
-    emit('image-error', error)
-}
+	emit("image-error", error);
+};
 </script>
 
 <template>

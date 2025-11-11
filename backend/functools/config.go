@@ -1,11 +1,11 @@
-package main
+package functools
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
 
-	"github.com/lanxre/mc-launcher/parser"
+	"github.com/lanxre/mc-launcher/backend/parser"
 	"gopkg.in/yaml.v3"
 )
 

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const props = defineProps<{
-  minHeight?: string
-}>() 
+	minHeight?: string;
+}>();
 </script>
 
 <template>
