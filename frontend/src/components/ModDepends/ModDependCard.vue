@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { openLink } from "@/api/utils";
-import Image from "../Image/Image.vue";
 import CrossIcon from "@/assets/images/close.png";
-
 import type { ModDependency } from "@/types";
+import Image from "../Image/Image.vue";
 
 interface Props {
 	depend: ModDependency;

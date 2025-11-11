@@ -2,8 +2,8 @@
 import { ref } from "vue";
 
 import SettingsIcon from "@/assets/images/setting.png";
-import Modal from "@/components/Modal/Modal.vue";
 import List from "@/components/List/List.vue";
+import Modal from "@/components/Modal/Modal.vue";
 import ImageButton from "../Buttons/ImageButton.vue";
 
 interface Props {

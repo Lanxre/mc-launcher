@@ -1,10 +1,10 @@
-import type { MinecraftMod, ModDependency, PairDepend } from "@/types";
-import { OpenExternalLink } from "@wailsjs/go/main/App";
 import {
 	GetSavedMods,
 	SaveYamlModConfig,
 } from "@wailsjs/go/functools/FuncService";
+import { OpenExternalLink } from "@wailsjs/go/main/App";
 import { GetModDetails } from "@wailsjs/go/parser/ScraperService";
+import type { MinecraftMod, ModDependency, PairDepend } from "@/types";
 
 export const uniqueBy = <T>(array: T[], keyFn: (item: T) => string): T[] => {
 	const seen = new Set<string>();

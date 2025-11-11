@@ -1,22 +1,19 @@
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
-import { useModStore } from "@/stores/modStore";
 import {
-	GetModDetails,
 	GetModDepends,
+	GetModDetails,
 } from "@wailsjs/go/parser/ScraperService";
+import { onMounted, ref } from "vue";
 import { enrichDependencies, saveModToYaml } from "@/api/utils";
-
-import type { MinecraftMod, ModDependency } from "@/types";
-
-import AppHeader from "@/layouts/AppHeader.vue";
-import AppFooter from "@/layouts/AppFooter.vue";
-
-import ModTitle from "@/components/ModDetails/ModTitle.vue";
-import ModVersions from "@/components/ModDetails/ModVersions.vue";
 import ModDescription from "@/components/ModDetails/ModDescription.vue";
 import ModDownloads from "@/components/ModDetails/ModDownloads.vue";
 import ModScreenshots from "@/components/ModDetails/ModScreenshots.vue";
+import ModTitle from "@/components/ModDetails/ModTitle.vue";
+import ModVersions from "@/components/ModDetails/ModVersions.vue";
+import AppFooter from "@/layouts/AppFooter.vue";
+import AppHeader from "@/layouts/AppHeader.vue";
+import { useModStore } from "@/stores/modStore";
+import type { MinecraftMod, ModDependency } from "@/types";
 
 const modStore = useModStore();
 const mod = ref<MinecraftMod | null>(null);
@@ -72,7 +69,7 @@ function applyFilters(modObj: MinecraftMod) {
 
 async function loadModDetails() {
 	try {
-		let currentMod = modStore.currentMod;
+		const currentMod = modStore.currentMod;
 		if (!currentMod?.ModPageLink) return;
 
 		const fullDetails = await GetModDetails(currentMod.ModPageLink);

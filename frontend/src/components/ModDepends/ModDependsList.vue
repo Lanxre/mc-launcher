@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import ModDependCard from "./ModDependCard.vue";
-import type { ModDependency, PairDepend } from "@/types";
-import { filterDiskModDepends } from "@/api/utils";
 import { DeleteSavedMod } from "@wailsjs/go/functools/FuncService";
+import { onMounted, ref } from "vue";
+import { filterDiskModDepends } from "@/api/utils";
+import type { ModDependency, PairDepend } from "@/types";
+import ModDependCard from "./ModDependCard.vue";
 
 interface Props {
 	depends: ModDependency[];

@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
-
-import HomeView from "@/views/HomeView.vue";
-import ModView from "@/views/ModView.vue";
 import DownloadsView from "@/views/DownloadsView.vue";
+import HomeView from "@/views/HomeView.vue";
 import ModFavourites from "@/views/ModFavourites.vue";
+import ModView from "@/views/ModView.vue";
 
 const routes = [
 	{

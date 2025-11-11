@@ -1,24 +1,23 @@
 <script lang="ts" setup>
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useModStore } from "@/stores/modStore";
-import { GetMods, GetModsByPage } from "@wailsjs/go/parser/ScraperService";
 import {
-	SortByVersions,
 	SortByLoader,
+	SortByVersions,
 } from "@wailsjs/go/functools/FuncService";
+import { GetMods, GetModsByPage } from "@wailsjs/go/parser/ScraperService";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { uniqueBy } from "@/api/utils";
-import type { MinecraftMod } from "@/types";
-import { useScrollManager } from "@/composables/useScrollManager";
-
 import FileIcon from "@/assets/images/file.png";
 import StarIcon from "@/assets/images/star.png";
+import ImageButton from "@/components/Buttons/ImageButton.vue";
+import InputSearch from "@/components/InputSearch/InputSearch.vue";
+import ModLoader from "@/components/Mods/ModLoader.vue";
 
 import ModsList from "@/components/Mods/ModsList.vue";
-import ModLoader from "@/components/Mods/ModLoader.vue";
 import SearchFilter from "@/components/SearchFilter/SearchFilter.vue";
-import InputSearch from "@/components/InputSearch/InputSearch.vue";
-import ImageButton from "@/components/Buttons/ImageButton.vue";
+import { useScrollManager } from "@/composables/useScrollManager";
+import { useModStore } from "@/stores/modStore";
+import type { MinecraftMod } from "@/types";
 
 const route = useRoute();
 const router = useRouter();

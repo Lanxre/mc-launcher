@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-
-import AppFooter from "@/layouts/AppFooter.vue";
-import AppHeader from "@/layouts/AppHeader.vue";
-import View from "@/components/View/View.vue";
-import ModsList from "@/components/Mods/ModsList.vue";
-import ModDependsList from "@/components/ModDepends/ModDependsList.vue";
-
 import {
+	DeleteSavedMod,
 	GetYamlConfig,
 	RemoveFromYamlConfig,
-	DeleteSavedMod,
 } from "@wailsjs/go/functools/FuncService";
 import { ShowInfoMessage } from "@wailsjs/go/main/App";
-import type { MinecraftMod, ModDependency } from "@/types";
+import { onMounted, ref } from "vue";
 import { getMinecraftDownloadFileName, uniqueBy } from "@/api/utils";
+import ModDependsList from "@/components/ModDepends/ModDependsList.vue";
+import ModsList from "@/components/Mods/ModsList.vue";
+import View from "@/components/View/View.vue";
+import AppFooter from "@/layouts/AppFooter.vue";
+import AppHeader from "@/layouts/AppHeader.vue";
+import type { MinecraftMod, ModDependency } from "@/types";
 
 const savedMods = ref<MinecraftMod[]>([]);
 const depends = ref<ModDependency[]>([]);

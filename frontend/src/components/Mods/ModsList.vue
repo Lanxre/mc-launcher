@@ -1,18 +1,15 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { useModStore } from "@/stores/modStore";
-
-import type { MinecraftMod } from "@/types";
+import { uniqueBy } from "@/api/utils";
+import FabricMinecraftIcon from "@/assets/images/fabric_minecraft.png";
+import ForgeMinecraftIcon from "@/assets/images/forge_minecraft.jpeg";
+import DeleteIcon from "@/assets/images/trash.png";
 import Tag from "@/components/Tags/Tag.vue";
 import TagImage from "@/components/Tags/TagImage.vue";
 import TagImageGroup from "@/components/Tags/TagImageGroup.vue";
-
-import ForgeMinecraftIcon from "@/assets/images/forge_minecraft.jpeg";
-import FabricMinecraftIcon from "@/assets/images/fabric_minecraft.png";
-import DeleteIcon from "@/assets/images/trash.png";
-
-import { uniqueBy } from "@/api/utils";
 import { useScrollManager } from "@/composables/useScrollManager";
+import { useModStore } from "@/stores/modStore";
+import type { MinecraftMod } from "@/types";
 
 const router = useRouter();
 const modStore = useModStore();

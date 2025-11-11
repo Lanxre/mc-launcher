@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
 import {
 	GetYamlConfig,
 	RemoveFromYamlConfig,
 } from "@wailsjs/go/functools/FuncService";
 import { ShowInfoMessage } from "@wailsjs/go/main/App";
-
-import type { MinecraftMod } from "@/types";
-
-import AppHeader from "@/layouts/AppHeader.vue";
-import AppFooter from "@/layouts/AppFooter.vue";
-import View from "@/components/View/View.vue";
-import ModsList from "@/components/Mods/ModsList.vue";
-
+import { onMounted, ref } from "vue";
 import StarIcon from "@/assets/images/star.png";
+import ModsList from "@/components/Mods/ModsList.vue";
+import View from "@/components/View/View.vue";
+import AppFooter from "@/layouts/AppFooter.vue";
+import AppHeader from "@/layouts/AppHeader.vue";
+import type { MinecraftMod } from "@/types";
 
 const mods = ref<MinecraftMod[]>([]);
 const isLoading = ref(true);
