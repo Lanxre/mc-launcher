@@ -6,6 +6,7 @@ import SearchFilter from '../SearchFilter/SearchFilter.vue';
 
 import StarIcon from '@/assets/images/star.png';
 import FileIcon from '@/assets/images/file.png';
+import MinecraftSettings from '../MinecraftSettings/MinecraftSettings.vue';
 
 
 interface Props {
@@ -36,6 +37,7 @@ defineProps<Props>();
 
 <template>
     <div class="filters">
+        <MinecraftSettings/>
         <ImageButton :img="StarIcon" @click="goToFavourites" border-radius="50%" title="Список избранных"/>
         <ImageButton :img="FileIcon" @click="goToDownloads" border-radius="50%" title="Список установленных модов"/>
         <InputSearch :modelValue="searchE" @update:modelValue="updateSearch" @search="applySearch" />

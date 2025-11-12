@@ -6,6 +6,10 @@ export function DeleteSavedMod(arg1) {
   return window['go']['functools']['FuncService']['DeleteSavedMod'](arg1);
 }
 
+export function GetMinecraftVersions() {
+  return window['go']['functools']['FuncService']['GetMinecraftVersions']();
+}
+
 export function GetSavedMods() {
   return window['go']['functools']['FuncService']['GetSavedMods']();
 }

@@ -4,6 +4,8 @@ import {parser} from '../models';
 
 export function DeleteSavedMod(arg1:string):Promise<void>;
 
+export function GetMinecraftVersions():Promise<Array<string>>;
+
 export function GetSavedMods():Promise<Array<string>>;
 
 export function GetYamlConfig(arg1:string):Promise<Array<parser.MinecraftMod>>;

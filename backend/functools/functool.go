@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"os"
 	"path"
+	"path/filepath"
 	"slices"
 
 	"github.com/lanxre/mc-launcher/backend/parser"
@@ -99,4 +100,31 @@ func (s *FuncService) IsModExist(modName string) bool {
 	}
 
 	return done
+}
+
+func (s *FuncService) GetMinecraftVersions() []string {
+	mcDir, err := GetMinecraftPath()
+	if err != nil {
+		return nil
+	}
+
+	minecraftVersionPath := filepath.Join(mcDir, "versions")
+
+	entries, err := os.ReadDir(minecraftVersionPath)
+	if err != nil {
+		return nil
+	}
+
+	var names []string
+	for _, entry := range entries {
+		if entry.IsDir() {
+			names = append(names, entry.Name())
+		}
+	}
+
+	if len(names) > 0 {
+		return names
+	} 
+
+	return nil
 }

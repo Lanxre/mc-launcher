@@ -7,14 +7,9 @@ import { GetMods, GetModsByPage } from "@wailsjs/go/parser/ScraperService";
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { uniqueBy } from "@/api/utils";
-import FileIcon from "@/assets/images/file.png";
-import StarIcon from "@/assets/images/star.png";
-import ImageButton from "@/components/Buttons/ImageButton.vue";
-import InputSearch from "@/components/InputSearch/InputSearch.vue";
 import ModLoader from "@/components/Mods/ModLoader.vue";
 
 import ModsList from "@/components/Mods/ModsList.vue";
-import SearchFilter from "@/components/SearchFilter/SearchFilter.vue";
 import { useScrollManager } from "@/composables/useScrollManager";
 import { useModStore } from "@/stores/modStore";
 import type { MinecraftMod } from "@/types";
