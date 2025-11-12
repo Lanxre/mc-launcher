@@ -147,6 +147,6 @@ const downloadMod = async (
 
   justify-content: center;
   align-items: center;
-  
+  background-color: var(--main-bg-color);
 }
 </style>

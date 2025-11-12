@@ -18,5 +18,6 @@ withDefaults(defineProps<Props>(), {
 .mod-description {
     margin-bottom: 3px;
     color: white;
+    background-color: var(--main-bg-color);
 }
 </style>

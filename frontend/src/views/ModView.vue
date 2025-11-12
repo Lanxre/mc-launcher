@@ -171,6 +171,7 @@ onMounted(loadModDetails);
   display: flex;
   flex-direction: column;
   gap: 16px;
+  background-color: var(--main-bg-color);
 }
 
 .loading-state,
