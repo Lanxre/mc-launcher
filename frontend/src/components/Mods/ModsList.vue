@@ -153,6 +153,10 @@ const handleDelete = (mod: MinecraftMod, event: MouseEvent) => {
   text-align: center;
   position: relative;
   cursor: pointer;
+
+  -webkit-box-shadow: 5px 5px 5px -5px rgba(255, 255, 255, 0.6) inset;
+  -moz-box-shadow: 5px 5px 5px -5px rgba(255, 255, 255, 0.6) inset;
+  box-shadow: 5px 5px 5px -5px rgba(255, 255, 255, 0.6) inset;
 }
 
 .mod-card:hover{

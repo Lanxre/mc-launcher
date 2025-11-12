@@ -18,6 +18,7 @@ import SearchFilter from "@/components/SearchFilter/SearchFilter.vue";
 import { useScrollManager } from "@/composables/useScrollManager";
 import { useModStore } from "@/stores/modStore";
 import type { MinecraftMod } from "@/types";
+import ModsFilter from "@/components/Mods/ModsFilter.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -208,17 +209,20 @@ onUnmounted(() => {
 
 <template>
   <div class="main" ref="mainElement">
-    <div class="filters">
-      <ImageButton :img="StarIcon" @click="goToFavourites" border-radius="50%" title="Список избранных"/>
-      <ImageButton :img="FileIcon" @click="goToDownloads" border-radius="50%" title="Список установленных модов"/>
-      <InputSearch v-model="searchE" @search="applySearch" />
-      <SearchFilter
-        :versions="getUniqueVersions"
-        :loaders="getUniqueLoaders"
-        @filter="(v,l) => { versionE = v; loaderE = l; applyFilters() }"
-      />
-    </div>
+    <ModsFilter
+		v-model:searchE="searchE"
+		v-model:versionE="versionE"
+		v-model:loaderE="loaderE"
+		
+		:get-unique-loaders="getUniqueLoaders"
+		:get-unique-versions="getUniqueVersions"
 
+		:go-to-downloads="goToDownloads"
+		:go-to-favourites="goToFavourites"
+		
+		:apply-filters="applyFilters"
+		:apply-search="applySearch"
+	/>
     <ModsList :mods="mods" :loaderf="loaderE" :versionf="versionE" :searchf="searchE" />
 
     <ModLoader
@@ -242,12 +246,7 @@ onUnmounted(() => {
   flex: 1;
   padding: 20px;
   gap: 15px;
-}
 
-.filters {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  gap: 5px;
+  background-color: var(--main-bg-color);
 }
 </style>

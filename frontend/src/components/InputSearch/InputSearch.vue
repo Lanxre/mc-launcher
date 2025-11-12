@@ -57,6 +57,8 @@ onMounted(() => {
     align-items: center;
     gap: 10px;
     color: white;
+
+    
 }
 
 .search {
@@ -71,6 +73,10 @@ onMounted(() => {
     border: 1px solid whitesmoke;
     outline: none;
     color: white;
+
+    -webkit-box-shadow: 5px 5px 5px -5px rgba(255, 255, 255, 0.6) inset;
+    -moz-box-shadow: 5px 5px 5px -5px rgba(255, 255, 255, 0.6) inset;
+    box-shadow: 5px 5px 5px -5px rgba(255, 255, 255, 0.6) inset;
 }
 
 .search-button {
