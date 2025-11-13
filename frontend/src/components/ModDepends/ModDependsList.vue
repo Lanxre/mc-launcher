@@ -32,8 +32,11 @@ onMounted(async () => {
 <template>
     <div>
         <span class="downloads-title"> Зависимости </span>
-        <div class="depend-list" v-for="depend in pairDepends" :key="depend.configDepend.Name">
+        <div class="depend-list" v-if="pairDepends.length > 0" v-for="depend in pairDepends" :key="depend.configDepend.Name">
             <ModDependCard :depend="depend.configDepend" :filename="depend.fileDepend" v-on:delete="removeDepend(depend.configDepend, depend.fileDepend)"/>
+        </div>
+        <div class="depend-list" v-else v-for="depend in props.depends">
+          <ModDependCard :depend="depend" :filename="depend.Name"/>
         </div>
     </div>
 </template>

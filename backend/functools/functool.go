@@ -2,6 +2,7 @@ package functools
 
 import (
 	"cmp"
+	// "fmt"
 	"os"
 	"path"
 	"path/filepath"
@@ -79,27 +80,8 @@ func (s *FuncService) DeleteSavedMod(modName string) {
 }
 
 func (s *FuncService) IsModExist(modName string) bool {
-
 	onFile := isExistModInDisk(modName)
-
-	if !onFile {
-		return !onFile
-	}
-
-	modsInConfig, err := s.GetYamlConfig("downloads")
-	done := false
-
-	if err != nil {
-		return done
-	}
-
-	for _, mod := range modsInConfig {
-		if mod.Name == modName {
-			return !done
-		}
-	}
-
-	return done
+	return onFile
 }
 
 func (s *FuncService) GetMinecraftVersions() []string {

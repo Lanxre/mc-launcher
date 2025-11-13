@@ -5,27 +5,36 @@ import type { ModDependency } from "@/types";
 import Image from "../Image/Image.vue";
 
 interface Props {
-	depend: ModDependency;
+	depend?: ModDependency;
 	filename?: string;
 	onDelete?: () => void;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const openModPage = () => {
+    if (props.depend !== undefined && props.depend !== null) {
+        openLink(props.depend.ModPageLink)
+    }
+}
 </script>
 
 <template>
      <div class="depend-card">
         <div class="depend-name">
-            <div class="d-name" title="Открыть в браузере" @click="openLink(depend.ModPageLink)">
-                <div>
+            <div class="d-name" title="Открыть в браузере" @click="openModPage">
+                <div v-if="depend !== undefined">
                     {{ depend.Name }}
+                </div>
+                <div v-else>
+                    Не скачана зависимость - 
                 </div>    
                 <div v-if="filename">
                     ({{ filename }})
                 </div>
             </div>
         </div>
-        <Image :img="CrossIcon" width="25px" height="25px" border-raduis="5px" title="Удалить" @click="onDelete"/>            
+        <Image v-if="onDelete" :img="CrossIcon" width="25px" height="25px" border-raduis="5px" title="Удалить" @click="onDelete"/>            
     </div>
 </template>
 

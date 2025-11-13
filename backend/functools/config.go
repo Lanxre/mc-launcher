@@ -63,15 +63,12 @@ func (s *FuncService) writeModsToFile(path string, mods []parser.MinecraftMod) e
 
 func (s *FuncService) SaveYamlModConfig(data parser.MinecraftMod, filename string) error {
 	filePath, err := s.getYamlFilePath(filename)
-	if err != nil {
-		return err
-	}
 
-	mods, err := s.readModsFromFile(filePath)
 	if err != nil {
-		return err
-	}
-
+		os.Create(filename)
+	} 
+	
+	mods, _ := s.readModsFromFile(filePath)
 	mods = append(mods, data)
 	return s.writeModsToFile(filePath, mods)
 }

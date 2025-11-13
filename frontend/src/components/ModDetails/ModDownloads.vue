@@ -102,7 +102,7 @@ const downloadMod = async (
 				return best ? [best] : [];
 			})
 			.filter((d): d is DownloadInfo => Boolean(d));
-
+	
 		if (depFiles.length > 0) {
 			const depNames = props.depends.map((d) => d?.Name ?? "dependency");
 			await DownloadsMods(depNames, depFiles);
