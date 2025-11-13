@@ -24,12 +24,10 @@ const openModPage = () => {
         <div class="depend-name">
             <div class="d-name" title="Открыть в браузере" @click="openModPage">
                 <div v-if="depend !== undefined">
-                    {{ depend.Name }}
-                </div>
-                <div v-else>
-                    Не скачана зависимость - 
-                </div>    
-                <div v-if="filename">
+                    <p v-if="onDelete"> {{ depend.Name }} </p>
+                    <p v-else> {{ depend.Name }} - зависимость не скачана</p>
+                </div> 
+                <div v-if="filename && onDelete">
                     ({{ filename }})
                 </div>
             </div>
