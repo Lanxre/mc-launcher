@@ -97,6 +97,12 @@ body {
 	height: 25px;
 }
 
+.shadow {
+	-webkit-box-shadow: 5px 5px 5px -5px rgba(0, 0, 0, 0.6) inset;
+	-moz-box-shadow: 5px 5px 5px -5px rgba(0, 0, 0, 0.6) inset;
+	box-shadow: 5px 5px 5px -5px rgba(0, 0, 0, 0.6) inset;
+}
+
 @font-face {
 	font-family: "Minecraftv1";
 	src: url("assets/fonts/MinecraftTen-VGORe.ttf") format("truetype");

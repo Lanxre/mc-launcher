@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DeleteSavedMod } from "@wailsjs/go/functools/FuncService";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { filterDiskModDepends } from "@/api/utils";
 import type { ModDependency, PairDepend } from "@/types";
 import ModDependCard from "./ModDependCard.vue";
@@ -12,12 +12,17 @@ interface Props {
 const props = defineProps<Props>();
 const pairDepends = ref<PairDepend[]>([]);
 
+const notDowloadDepends = computed(() => {
+  return props.depends.filter(dep => !pairDepends.value.flatMap(pd => pd.configDepend.Name).includes(dep.Name))
+})
+
 const removeDepend = async (depend: ModDependency, filename: string) => {
 	pairDepends.value = pairDepends.value.filter(
 		(pd) => pd.configDepend.Name !== depend.Name,
 	);
 	await DeleteSavedMod(filename);
 };
+
 
 onMounted(async () => {
 	try {
@@ -33,9 +38,9 @@ onMounted(async () => {
     <div>
         <span class="downloads-title"> Зависимости </span>
         <div class="depend-list" v-if="pairDepends.length > 0" v-for="depend in pairDepends" :key="depend.configDepend.Name">
-            <ModDependCard :depend="depend.configDepend" :filename="depend.fileDepend" v-on:delete="removeDepend(depend.configDepend, depend.fileDepend)"/>
+          <ModDependCard :depend="depend.configDepend" :filename="depend.fileDepend" v-on:delete="removeDepend(depend.configDepend, depend.fileDepend)"/>
         </div>
-        <div class="depend-list" v-else v-for="depend in props.depends">
+        <div class="depend-list" v-for="depend in notDowloadDepends">
           <ModDependCard :depend="depend" :filename="depend.Name"/>
         </div>
     </div>

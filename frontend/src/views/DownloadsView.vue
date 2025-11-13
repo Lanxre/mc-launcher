@@ -2,7 +2,7 @@
 import {
 	DeleteSavedMod,
 	GetYamlConfig,
-	RemoveFromYamlConfig,
+	RemoveFromYamlConfig
 } from "@wailsjs/go/functools/FuncService";
 import { ShowInfoMessage } from "@wailsjs/go/main/App";
 import { onMounted, ref } from "vue";
@@ -13,6 +13,7 @@ import View from "@/components/View/View.vue";
 import AppFooter from "@/layouts/AppFooter.vue";
 import AppHeader from "@/layouts/AppHeader.vue";
 import type { MinecraftMod, ModDependency } from "@/types";
+import ModDisk from "@/components/ModDepends/ModDisk.vue";
 
 const savedMods = ref<MinecraftMod[]>([]);
 const depends = ref<ModDependency[]>([]);
@@ -28,8 +29,8 @@ const loadDownloadedMods = async () => {
 				(d) => d.Name,
 			);
 			depends.value = uniqeDeps;
-			console.log(depends.value);
 		}
+
 	} catch (err) {
 		console.error("Ошибка при получении скачанных модов:", err);
 	}
@@ -59,12 +60,8 @@ onMounted(loadDownloadedMods);
         :mods="savedMods"
         :onDelete="removeFromDownloads"
       />
-
-      <p v-else class="no-mods">Нет скачанных модов</p>
-      
       <ModDependsList v-if="depends.length > 0" :depends="depends"/>
-      <span v-else class="downloads-title"> Нет зависимостей </span>
-    
+	  <ModDisk v-if="depends.length === 0"/>
     </div>
   </View>
   <AppFooter />
@@ -81,7 +78,7 @@ onMounted(loadDownloadedMods);
 .downloads-title {
   display: flex;
   justify-content: center;
-  font-size: 30px;
+  font-size: 18px;
   color: white;
   padding: 10px;
 }

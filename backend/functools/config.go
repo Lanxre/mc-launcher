@@ -65,7 +65,7 @@ func (s *FuncService) SaveYamlModConfig(data parser.MinecraftMod, filename strin
 	filePath, err := s.getYamlFilePath(filename)
 
 	if err != nil {
-		os.Create(filename)
+		os.Create(filePath)
 	} 
 	
 	mods, _ := s.readModsFromFile(filePath)
