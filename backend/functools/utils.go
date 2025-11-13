@@ -9,22 +9,12 @@ import (
 )
 
 func GetMinecraftModsPath() (string, error) {
-	var finalPath string
-	if runtime.GOOS == "windows" {
-		appData := os.Getenv("APPDATA")
-		if appData == "" {
-			return "", fmt.Errorf("APPDATA environment variable not found")
-		}
-		finalPath = filepath.Join(appData, ".minecraft", "mods")
-	} else {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return "", fmt.Errorf("failed to get user home directory: %v", err)
-		}
-		finalPath = filepath.Join(homeDir, ".minecraft", "mods")
+	mcPath, err := GetMinecraftPath()
+	if err != nil {
+		return "", err
 	}
 
-	return finalPath, nil
+	return filepath.Join(mcPath, "mods"), nil
 }
 
 func GetMinecraftModPath(filename string) (string, error) {
@@ -38,22 +28,19 @@ func GetMinecraftModPath(filename string) (string, error) {
 }
 
 func GetMinecraftPath() (string, error) {
-	var finalPath string
-	if runtime.GOOS == "windows" {
-		appData := os.Getenv("APPDATA")
-		if appData == "" {
-			return "", fmt.Errorf("APPDATA environment variable not found")
-		}
-		finalPath = filepath.Join(appData, ".minecraft")
-	} else {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return "", fmt.Errorf("failed to get user home directory: %v", err)
-		}
-		finalPath = filepath.Join(homeDir, ".minecraft")
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
 	}
 
-	return finalPath, nil
+	switch runtime.GOOS {
+	case "windows":
+		return filepath.Join(home, "AppData", "Roaming", ".minecraft"), nil
+	case "darwin":
+		return filepath.Join(home, "Library", "Application Support", "minecraft"), nil
+	default:
+		return filepath.Join(home, ".minecraft"), nil
+	}
 }
 
 func ConverModName(modName string) string {

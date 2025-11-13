@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/lanxre/mc-launcher/backend/functools"
@@ -33,10 +32,7 @@ func (l *LauncherService) LaunchMinecraft(version string) error {
 		}
 	}
 
-	javaPath, err := GetJava()
-	if err != nil {
-		return err
-	}
+	javaPath := GetJava()
 
 	return startMinecraft(javaPath, mcDir, version)
 }
@@ -45,31 +41,41 @@ func installForgeIfNeeded(mcDir, version string) error {
 	base, build := parseForgeVersion(version)
 	versionDir := filepath.Join(mcDir, "versions", version)
 	if _, err := os.Stat(versionDir); err == nil {
+		fmt.Println("Forge уже установлен.")
 		return nil
 	}
 
-	fmt.Printf("Installing Forge %s...\n", version)
+	fmt.Printf("📦 Устанавливаем Forge %s...\n", version)
 
-	installerURL := fmt.Sprintf("https://files.minecraftforge.net/maven/net/minecraftforge/forge/%s-%s/forge-%s-%s-installer.jar", base, build, base, build)
+	installerURL := fmt.Sprintf(
+		"https://maven.minecraftforge.net/net/minecraftforge/forge/%s-%s/forge-%s-%s-installer.jar",
+		base, build, base, build,
+	)
 	installerPath := filepath.Join(mcDir, "installers", fmt.Sprintf("forge-%s-installer.jar", version))
+	os.MkdirAll(filepath.Dir(installerPath), 0755)
+
 	if err := DownloadFile(installerURL, installerPath); err != nil {
-		return err
+		return fmt.Errorf("ошибка загрузки Forge: %w", err)
 	}
 
-	javaPath, _ := GetJava()
+	javaPath := GetJava()
 	cmd := exec.Command(javaPath, "-jar", installerPath, "--installClient", mcDir)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("forge install failed: %w", err)
+		return fmt.Errorf("ошибка установки Forge: %w", err)
 	}
 
-	fmt.Println("Forge installed!")
+	fmt.Println("✅ Forge установлен успешно!")
 	return nil
 }
 
 func parseForgeVersion(v string) (base, build string) {
 	parts := strings.Split(v, "-forge-")
+	if len(parts) < 2 {
+		return v, ""
+	}
 	return parts[0], parts[1]
 }
 
@@ -95,31 +101,24 @@ func startMinecraft(javaPath, mcDir, version string) error {
 		return err
 	}
 
-	args := []string{javaPath, "-Xmx4G", "-Xms2G"}
+	args := []string{"-Xmx4G", "-Xms2G"}
 	for _, a := range v.Arguments.JVM {
 		args = append(args, fmt.Sprintf("%v", a))
 	}
 
-	cp := func() string {
-		var paths []string
-		for _, lib := range []struct{ Name string }(v.Libraries) {
-			parts := strings.Split(lib.Name, ":")
-			if len(parts) < 3 {
-				continue
-			}
-			path := filepath.Join(mcDir, "libraries", strings.ReplaceAll(parts[0], ".", "/"), parts[1], parts[2], parts[1]+"-"+parts[2]+".jar")
-			if _, err := os.Stat(path); err == nil {
-				paths = append(paths, path)
-			}
+	var paths []string
+	for _, lib := range v.Libraries {
+		parts := strings.Split(lib.Name, ":")
+		if len(parts) < 3 {
+			continue
 		}
-		sep := ":"
-		if runtime.GOOS == "windows" {
-			sep = ";"
+		path := filepath.Join(mcDir, "libraries", strings.ReplaceAll(parts[0], ".", "/"), parts[1], parts[2], parts[1]+"-"+parts[2]+".jar")
+		if _, err := os.Stat(path); err == nil {
+			paths = append(paths, path)
 		}
-		return strings.Join(paths, sep)
-	}()
+	}
 
-
+	cp := strings.Join(paths, string(os.PathListSeparator))
 	args = append(args, "-cp", cp, v.MainClass)
 
 	gameArgs := []string{
@@ -135,7 +134,7 @@ func startMinecraft(javaPath, mcDir, version string) error {
 	}
 	args = append(args, gameArgs...)
 
-	cmd := exec.Command(args[0], args[1:]...)
+	cmd := exec.Command(javaPath, args...)
 	cmd.Dir = mcDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

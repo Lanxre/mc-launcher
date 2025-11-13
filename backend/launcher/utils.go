@@ -4,6 +4,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -23,4 +24,12 @@ func DownloadFile(url, path string) error {
 
 	_, err = io.Copy(out, resp.Body)
 	return err
+}
+
+func GetJava() string {
+	java, err := exec.LookPath("java")
+	if err != nil {
+		return "java"
+	}
+	return java
 }
