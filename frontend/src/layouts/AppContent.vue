@@ -8,12 +8,11 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { uniqueBy } from "@/api/utils";
 import ModLoader from "@/components/Mods/ModLoader.vue";
-
+import ModsFilter from "@/components/Mods/ModsFilter.vue";
 import ModsList from "@/components/Mods/ModsList.vue";
 import { useScrollManager } from "@/composables/useScrollManager";
 import { useModStore } from "@/stores/modStore";
 import type { MinecraftMod } from "@/types";
-import ModsFilter from "@/components/Mods/ModsFilter.vue";
 
 const route = useRoute();
 const router = useRouter();

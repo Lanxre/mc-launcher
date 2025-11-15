@@ -13,10 +13,10 @@ interface Props {
 const props = defineProps<Props>();
 
 const openModPage = () => {
-    if (props.depend !== undefined && props.depend !== null) {
-        openLink(props.depend.ModPageLink)
-    }
-}
+	if (props.depend !== undefined && props.depend !== null) {
+		openLink(props.depend.ModPageLink);
+	}
+};
 </script>
 
 <template>

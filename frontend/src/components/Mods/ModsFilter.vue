@@ -1,38 +1,34 @@
 <script setup lang="ts">
-
-import ImageButton from '../Buttons/ImageButton.vue';
-import InputSearch from '../InputSearch/InputSearch.vue';
-import SearchFilter from '../SearchFilter/SearchFilter.vue';
-
-import StarIcon from '@/assets/images/star.png';
-import FileIcon from '@/assets/images/file.png';
-import MinecraftSettings from '../MinecraftSettings/MinecraftSettings.vue';
-
+import FileIcon from "@/assets/images/file.png";
+import StarIcon from "@/assets/images/star.png";
+import ImageButton from "../Buttons/ImageButton.vue";
+import InputSearch from "../InputSearch/InputSearch.vue";
+import MinecraftSettings from "../MinecraftSettings/MinecraftSettings.vue";
+import SearchFilter from "../SearchFilter/SearchFilter.vue";
 
 interface Props {
-    versionE?: string;
-    loaderE?: string;
-    searchE: string;
-    goToFavourites: () => void;
-    goToDownloads: () => void;
-    applySearch:  () =>  Promise<void>;
-    applyFilters: () => Promise<void>;
-    getUniqueVersions: string[];
-    getUniqueLoaders:  string[]; 
+	versionE?: string;
+	loaderE?: string;
+	searchE: string;
+	goToFavourites: () => void;
+	goToDownloads: () => void;
+	applySearch: () => Promise<void>;
+	applyFilters: () => Promise<void>;
+	getUniqueVersions: string[];
+	getUniqueLoaders: string[];
 }
 
 const emit = defineEmits<{
-  "update:searchE": [value: string];
-  "update:versionE": [value: string];
-  "update:loaderE": [value: string];
+	"update:searchE": [value: string];
+	"update:versionE": [value: string];
+	"update:loaderE": [value: string];
 }>();
 
 const updateSearch = (value: string) => {
-  emit("update:searchE", value);
+	emit("update:searchE", value);
 };
 
 defineProps<Props>();
-
 </script>
 
 <template>

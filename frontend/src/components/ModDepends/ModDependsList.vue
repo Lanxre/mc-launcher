@@ -13,8 +13,13 @@ const props = defineProps<Props>();
 const pairDepends = ref<PairDepend[]>([]);
 
 const notDowloadDepends = computed(() => {
-  return props.depends.filter(dep => !pairDepends.value.flatMap(pd => pd.configDepend.Name).includes(dep.Name))
-})
+	return props.depends.filter(
+		(dep) =>
+			!pairDepends.value
+				.flatMap((pd) => pd.configDepend.Name)
+				.includes(dep.Name),
+	);
+});
 
 const removeDepend = async (depend: ModDependency, filename: string) => {
 	pairDepends.value = pairDepends.value.filter(
@@ -22,7 +27,6 @@ const removeDepend = async (depend: ModDependency, filename: string) => {
 	);
 	await DeleteSavedMod(filename);
 };
-
 
 onMounted(async () => {
 	try {

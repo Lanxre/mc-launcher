@@ -22,23 +22,26 @@ const isLoading = ref(true);
 const isError = ref(false);
 
 async function checkImageExists(url: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = url;
-  });
+	return new Promise((resolve) => {
+		const img = new Image();
+		img.onload = () => resolve(true);
+		img.onerror = () => resolve(false);
+		img.src = url;
+	});
 }
 
-async function filterExistingScreenshots(screenshots: string[]): Promise<string[]> {
-  
-  const checks = screenshots.map(async (screenshot) => {
-    const exists = await checkImageExists(screenshot);
-    return exists ? screenshot : null;
-  });
-  
-  const results = await Promise.all(checks);
-  return results.filter((screenshot): screenshot is string => screenshot !== null);
+async function filterExistingScreenshots(
+	screenshots: string[],
+): Promise<string[]> {
+	const checks = screenshots.map(async (screenshot) => {
+		const exists = await checkImageExists(screenshot);
+		return exists ? screenshot : null;
+	});
+
+	const results = await Promise.all(checks);
+	return results.filter(
+		(screenshot): screenshot is string => screenshot !== null,
+	);
 }
 
 async function fetchDependencies(
@@ -94,12 +97,14 @@ async function loadModDetails() {
 
 		const fullDetails = await GetModDetails(currentMod.ModPageLink);
 
-		 if (fullDetails.Screenshots && fullDetails.Screenshots.length > 0) {
-			currentMod.Screenshots = await filterExistingScreenshots(fullDetails.Screenshots);
+		if (fullDetails.Screenshots && fullDetails.Screenshots.length > 0) {
+			currentMod.Screenshots = await filterExistingScreenshots(
+				fullDetails.Screenshots,
+			);
 		} else {
 			currentMod.Screenshots = [];
 		}
-    
+
 		currentMod.Details = fullDetails.Details;
 		currentMod.Dependency = fullDetails.Dependency;
 
@@ -114,16 +119,15 @@ async function loadModDetails() {
 		await enrichDependencies(allDeps);
 		depends.value = allDeps;
 		mod.value = currentMod;
-		
-		if(mod.value.Dependency !== null && mod.value.Dependency !== undefined) {
+
+		if (mod.value.Dependency !== null && mod.value.Dependency !== undefined) {
 			mod.value.Dependency.forEach((dep) => {
-			const as = depends.value.find((d) => d.Name === dep.Name);
-			if (as != undefined) {
-				dep.Details = as.Details;
-			}
-		});
+				const as = depends.value.find((d) => d.Name === dep.Name);
+				if (as != undefined) {
+					dep.Details = as.Details;
+				}
+			});
 		}
-		
 	} catch (err) {
 		console.error("Ошибка при загрузке данных мода:", err);
 		isError.value = true;

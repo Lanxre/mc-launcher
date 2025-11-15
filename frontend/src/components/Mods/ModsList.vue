@@ -62,9 +62,9 @@ const applyFilters = () => {
 };
 
 const applySearchFilter = () => {
-  if (props.searchf !== undefined && props.searchf !== "") {
-    modStore.setSearchFilter(props.searchf);
-  }
+	if (props.searchf !== undefined && props.searchf !== "") {
+		modStore.setSearchFilter(props.searchf);
+	}
 };
 
 const setStoreMod = (mod: MinecraftMod) => {
@@ -72,10 +72,10 @@ const setStoreMod = (mod: MinecraftMod) => {
 };
 
 const routerPushPage = (modName: string) => {
-  router.push({
-    name: "mod",
+	router.push({
+		name: "mod",
 		params: {
-      name: modName,
+			name: modName,
 		},
 	});
 };
@@ -85,7 +85,7 @@ const redirectToMod = (mod: MinecraftMod): void => {
 	setStoreMod(mod);
 
 	applyFilters();
-  applySearchFilter();
+	applySearchFilter();
 
 	routerPushPage(mod.Name);
 };

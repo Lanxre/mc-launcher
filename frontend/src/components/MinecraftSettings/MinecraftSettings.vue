@@ -1,46 +1,41 @@
 <script setup lang="ts">
-
-import { onMounted, ref } from 'vue';
-import { GetMinecraftVersions } from '@wailsjs/go/functools/FuncService'
-import { ShowInfoMessage } from '@wailsjs/go/main/App';
-import { LaunchMinecraft } from '@wailsjs/go/launcher/LauncherService'
-
-import ImageButton from '../Buttons/ImageButton.vue';
-import Modal from '../Modal/Modal.vue';
-import List from '../List/List.vue';
-
-import FileIcon from '@/assets/images/file.png';
+import { GetMinecraftVersions } from "@wailsjs/go/functools/FuncService";
+import { LaunchMinecraft } from "@wailsjs/go/launcher/LauncherService";
+import { ShowInfoMessage } from "@wailsjs/go/main/App";
+import { onMounted, ref } from "vue";
+import FileIcon from "@/assets/images/file.png";
+import ImageButton from "../Buttons/ImageButton.vue";
+import List from "../List/List.vue";
+import Modal from "../Modal/Modal.vue";
 
 const isModalOpen = ref<boolean>(false);
-const selectedVersion = ref<string>("");    
+const selectedVersion = ref<string>("");
 const minecraftVersion = ref<string[]>([]);
 
 const openModal = () => (isModalOpen.value = true);
 
 const load = async () => {
-    try {
-        const mcVersions = await GetMinecraftVersions()
-        
-        if (mcVersions !== undefined && mcVersions !== null) {
-            minecraftVersion.value = mcVersions
-        }
+	try {
+		const mcVersions = await GetMinecraftVersions();
 
-    } catch (err) {
-        console.error("Ошибка загрузки конфигурации minecraft", err)
-    }
-}
+		if (mcVersions !== undefined && mcVersions !== null) {
+			minecraftVersion.value = mcVersions;
+		}
+	} catch (err) {
+		console.error("Ошибка загрузки конфигурации minecraft", err);
+	}
+};
 
 const openMinecraft = async () => {
-    if (selectedVersion.value) {
-        await LaunchMinecraft(selectedVersion.value)
-        await ShowInfoMessage("Успех", "Игра запускается")
-    } else {
-        await ShowInfoMessage("Ошибка", "Не выбрана версия!")
-    }
-}
+	if (selectedVersion.value) {
+		await LaunchMinecraft(selectedVersion.value);
+		await ShowInfoMessage("Успех", "Игра запускается");
+	} else {
+		await ShowInfoMessage("Ошибка", "Не выбрана версия!");
+	}
+};
 
-onMounted(load)
-
+onMounted(load);
 </script>
 
 <template>

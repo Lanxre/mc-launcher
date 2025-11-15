@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
 
+	"github.com/lanxre/mc-launcher/backend/functools"
 	"github.com/lanxre/mc-launcher/backend/parser"
-	"github.com/lanxre/mc-launcher/pkg"
 )
 
 type FileService struct{}
@@ -172,16 +173,17 @@ func downloadDirect(client *http.Client, url, filename string) error {
 		return fmt.Errorf("download failed: %d", resp.StatusCode)
 	}
 
-	path, err := pkg.GetMinecraftModPath(filename)
+	finalPath, err := functools.GetMinecraftModsPath()
+	finalPath = path.Join(finalPath, filename)
 	if err != nil {
 		return fmt.Errorf("get mod path failed: %w", err)
 	}
 
-	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(finalPath), 0755); err != nil {
 		return fmt.Errorf("create directory failed: %w", err)
 	}
 
-	file, err := os.Create(path)
+	file, err := os.Create(finalPath)
 	if err != nil {
 		return fmt.Errorf("create file failed: %w", err)
 	}

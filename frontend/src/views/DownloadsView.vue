@@ -2,18 +2,17 @@
 import {
 	DeleteSavedMod,
 	GetYamlConfig,
-	RemoveFromYamlConfig
+	RemoveFromYamlConfig,
 } from "@wailsjs/go/functools/FuncService";
 import { ShowInfoMessage } from "@wailsjs/go/main/App";
 import { onMounted, ref } from "vue";
 import { getMinecraftDownloadFileName, uniqueBy } from "@/api/utils";
 import ModDependsList from "@/components/ModDepends/ModDependsList.vue";
+import ModDisk from "@/components/ModDepends/ModDisk.vue";
 import ModsList from "@/components/Mods/ModsList.vue";
 import View from "@/components/View/View.vue";
-import AppFooter from "@/layouts/AppFooter.vue";
 import AppHeader from "@/layouts/AppHeader.vue";
 import type { MinecraftMod, ModDependency } from "@/types";
-import ModDisk from "@/components/ModDepends/ModDisk.vue";
 
 const savedMods = ref<MinecraftMod[]>([]);
 const depends = ref<ModDependency[]>([]);
@@ -30,7 +29,6 @@ const loadDownloadedMods = async () => {
 			);
 			depends.value = uniqeDeps;
 		}
-
 	} catch (err) {
 		console.error("Ошибка при получении скачанных модов:", err);
 	}
@@ -61,10 +59,9 @@ onMounted(loadDownloadedMods);
         :onDelete="removeFromDownloads"
       />
       <ModDependsList v-if="depends.length > 0" :depends="depends"/>
-	  <ModDisk v-if="depends.length === 0"/>
+	  <ModDisk/>
     </div>
   </View>
-  <AppFooter />
 </template>
 
 <style lang="css" scoped>

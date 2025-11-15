@@ -17,6 +17,7 @@ const props = defineProps<{
   width: 100%;
   padding: 20px;
   gap: 15px;
+  background-color: var(--main-bg-color);
 }
 
 </style>
