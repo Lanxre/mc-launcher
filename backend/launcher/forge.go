@@ -122,6 +122,7 @@ func startMinecraft(javaPath, mcDir, version string) error {
 	args = append(args, "-cp", cp, v.MainClass)
 
 	gameArgs := []string{
+		"--username", "SuperVitalij",
 		"--version", version,
 		"--gameDir", mcDir,
 		"--assetsDir", filepath.Join(mcDir, "assets"),
