@@ -43,6 +43,7 @@ onMounted(load);
   flex-direction: column;
   padding: 10px;
   gap: 5px;
+  color: white;
 }
 
 .list-mod {
@@ -55,6 +56,7 @@ onMounted(load);
     border-radius: 30px;
     padding: 10px;
     margin-bottom: 5px;
+    background-color: var(--main-bg-color);
 }
 
 .title {
@@ -64,6 +66,7 @@ onMounted(load);
     font-size: 35px;
     font-family: "Minecraftv1";
     margin-bottom: 5px;
+    color: white;
 }
 
 .mod-name {
@@ -72,6 +75,7 @@ onMounted(load);
     align-items: center;
     text-align: center;
     width: 100%;
+    color: white;
 }
 
 </style>

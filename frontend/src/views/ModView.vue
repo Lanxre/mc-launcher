@@ -169,6 +169,7 @@ onMounted(loadModDetails);
   flex-direction: column;
   gap: 24px;
   padding: 20px;
+  background-color: var(--main-bg-color);
 }
 
 .mod-content {
