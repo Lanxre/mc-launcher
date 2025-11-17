@@ -110,3 +110,8 @@ func (s *FuncService) GetMinecraftVersions() []string {
 
 	return nil
 }
+
+func (s *FuncService) OpenModsFolder() {
+	modPath, _ := GetMinecraftModsPath()
+	OpenFolder(modPath)
+}

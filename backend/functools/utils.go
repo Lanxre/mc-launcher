@@ -3,6 +3,7 @@ package functools
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -70,4 +71,15 @@ func isExistModInDisk(modName string) bool {
 	}
 
 	return done
+}
+
+func OpenFolder(inputPath string) {
+	switch runtime.GOOS {
+	case "windows":
+		exec.Command("explorer", inputPath).Start()
+	case "darwin":
+		exec.Command("open", inputPath).Start()
+	default:
+		exec.Command("xdg-open", inputPath).Start()
+	}
 }
