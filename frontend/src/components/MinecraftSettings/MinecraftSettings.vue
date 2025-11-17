@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { GetMinecraftVersions } from "@wailsjs/go/functools/FuncService";
+import { GetMinecraftVersions, OpenModsFolder } from "@wailsjs/go/functools/FuncService";
 import { LaunchMinecraft } from "@wailsjs/go/launcher/LauncherService";
 import { ShowInfoMessage } from "@wailsjs/go/main/App";
 import { onMounted, ref } from "vue";
-import FileIcon from "@/assets/images/file.png";
+import PlayIcon from "@/assets/images/play.png";
 import ImageButton from "../Buttons/ImageButton.vue";
 import List from "../List/List.vue";
 import Modal from "../Modal/Modal.vue";
@@ -35,17 +35,24 @@ const openMinecraft = async () => {
 	}
 };
 
+const openModFolder = async () => {
+  await OpenModsFolder()
+}
+
 onMounted(load);
 </script>
 
 <template>
     <div class="minecraft-settings">
-        <ImageButton :img="FileIcon" @click="openModal" border-radius="50%" title="Настройка запуска игры"/>
+        <ImageButton :img="PlayIcon" @click="openModal" border-radius="50%" title="Настройка запуска игры"/>
         <Modal v-model="isModalOpen" title="Настройки запуска">
             <div class="settings">
                 <div class="settings-item">
                     <p class="text text-shd">Доступные установки</p>
                     <List :items="minecraftVersion" v-model="selectedVersion" placeholder="Установки" />
+                </div>
+                <div class="settings-item">
+                  <button class="button confirm-button" @click="openModFolder"> Открыть папку с модами </button>
                 </div>
             </div>
 
@@ -89,6 +96,7 @@ onMounted(load);
   display: flex;
   gap: 10px;
   font-size: 12px;
+  margin-bottom: 10px;
 }
 
 .settings-item p {

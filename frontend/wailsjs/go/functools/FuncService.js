@@ -22,6 +22,10 @@ export function IsModExist(arg1) {
   return window['go']['functools']['FuncService']['IsModExist'](arg1);
 }
 
+export function OpenModsFolder() {
+  return window['go']['functools']['FuncService']['OpenModsFolder']();
+}
+
 export function RemoveFromYamlConfig(arg1, arg2) {
   return window['go']['functools']['FuncService']['RemoveFromYamlConfig'](arg1, arg2);
 }

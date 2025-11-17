@@ -32,7 +32,7 @@ const openModPage = () => {
                 </div>
             </div>
         </div>
-        <Image v-if="onDelete" :img="CrossIcon" width="25px" height="25px" border-raduis="5px" title="Удалить" @click="onDelete"/>            
+        <Image v-if="onDelete" :img="CrossIcon" width="25px" height="25px" border-raduis="50%" title="Удалить" @click="onDelete"/>            
     </div>
 </template>
 

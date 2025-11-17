@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { GetSavedMods, DeleteSavedMod } from "@wailsjs/go/functools/FuncService";
+import {
+	DeleteSavedMod,
+	GetSavedMods,
+} from "@wailsjs/go/functools/FuncService";
 import { ShowInfoMessage } from "@wailsjs/go/main/App";
 import { onMounted, ref } from "vue";
 import CrossIcon from "@/assets/images/close.png";
@@ -9,8 +12,8 @@ const savedMods = ref<string[]>([]);
 
 const onDelete = async (modName: string) => {
 	savedMods.value = savedMods.value.filter((m) => m !== modName);
-    await DeleteSavedMod(modName);
-    await ShowInfoMessage("Успех", "Мод успешно удалён")
+	await DeleteSavedMod(modName);
+	await ShowInfoMessage("Успех", "Мод успешно удалён");
 };
 
 const load = async () => {
@@ -29,7 +32,7 @@ onMounted(load);
         <span class="title" v-if="savedMods.length"> Mod on Disk </span>
         <div v-for="mod in savedMods" :key="mod" class="list-mod shadow">
             <div class="mod-name">{{ mod }}</div>
-            <Image :img="CrossIcon" width="25px" height="25px" border-raduis="5px" title="Удалить" @click="onDelete(mod)"/>         
+            <Image :img="CrossIcon" width="25px" height="25px" border-raduis="50%" title="Удалить" @click="onDelete(mod)"/>         
         </div>
     </div>
 </template>
