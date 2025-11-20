@@ -59,7 +59,7 @@ async function fetchDependencies(
 
 		uniqueDeps.forEach((d) => visited.add(d.ModPageLink));
 
-		const newDeps = await GetModDepends(uniqueDeps, modStore.currentMod?.Versions);
+		const newDeps = await GetModDepends(uniqueDeps, modStore.currentMod?.Versions!);
 		allDeps.push(...newDeps);
 
 		const nestedDeps = newDeps

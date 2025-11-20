@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {
-	SortByLoader,
-	SortByVersions,
+  SortByLoader,
+  SortByVersions,
 } from "@wailsjs/go/functools/FuncService";
 import { GetMods, GetModsByPage } from "@wailsjs/go/parser/ScraperService";
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
@@ -19,211 +19,240 @@ const router = useRouter();
 const modStore = useModStore();
 const { restoreMainPageScroll } = useScrollManager();
 
-const mods = ref<MinecraftMod[]>([]);
-const allMods = ref<MinecraftMod[]>([]);
-const versionE = ref("");
-const loaderE = ref("");
-const searchE = ref("");
+const displayedMods = ref<MinecraftMod[]>([]); 
+const cachedMods = ref<MinecraftMod[]>([]);
+
+const selectedVersion = ref("");
+const selectedLoader = ref("");
+const searchQuery = ref("");
 
 const currentPage = ref(1);
 const searchPage = ref(1);
 const loadingMore = ref(false);
 const hasMore = ref(true);
 
-const loaderTrigger = ref<any>(null);
-const mainElement = ref<HTMLElement | null>(null);
+const loaderTriggerRef = ref<InstanceType<typeof ModLoader> | null>(null);
+const mainContainerRef = ref<HTMLElement | null>(null);
 let observer: IntersectionObserver | null = null;
 
-const getUniqueVersions = computed(() =>
-	[...new Set(allMods.value.flatMap((m) => m.Versions || []))].sort(),
+const uniqueVersions = computed(() =>
+  [...new Set(cachedMods.value.flatMap((m) => m.Versions || []))].sort()
 );
 
-const getUniqueLoaders = computed(() =>
-	[
-		...new Set(allMods.value.flatMap((m) => m.Loaders || []).filter(Boolean)),
-	].sort(),
+const uniqueLoaders = computed(() =>
+  [...new Set(cachedMods.value.flatMap((m) => m.Loaders || []).filter(Boolean))].sort()
 );
 
-const resetPaging = () => {
-	currentPage.value = 1;
-	searchPage.value = 1;
-	hasMore.value = true;
+const resetPagination = () => {
+  currentPage.value = 1;
+  searchPage.value = 1;
+  hasMore.value = true;
 };
 
-const updateMods = (list: MinecraftMod[]) => {
-	mods.value = list;
-	allMods.value = [...list];
-	hasMore.value = list.length > 0;
-};
+const applyLocalFilters = async () => {
+  let result = [...cachedMods.value];
 
-const loadInitialMods = async () => {
-	if (modStore.getAllMods.length > 0) {
-		allMods.value = modStore.getAllMods;
-		mods.value = [...allMods.value];
-		versionE.value = modStore.getVersionFilter ?? "";
-		loaderE.value = modStore.getLoaderFilter ?? "";
-		searchE.value = modStore.getSearchFilter ?? "";
+  if (selectedVersion.value) {
+    result = await SortByVersions(result, selectedVersion.value);
+    modStore.setVersionFilter(selectedVersion.value);
+  }
+  
+  if (selectedLoader.value) {
+    result = await SortByLoader(result, selectedLoader.value);
+    modStore.setLoaderFilter(selectedLoader.value);
+  }
 
-		if (versionE.value || loaderE.value) await applyFilters();
-		if (searchE.value) await applySearch();
-	} else {
-		const result = await GetMods();
-		updateMods(uniqueBy(result, (m) => m.Name));
-		modStore.addMods(allMods.value);
-		modStore.setCurrentParsePage(1);
-	}
-	await nextTick();
-	checkAutoLoad();
+  displayedMods.value = result;
 };
 
 const loadMoreMods = async () => {
-	if (loadingMore.value || !hasMore.value) return;
-	loadingMore.value = true;
+  if (loadingMore.value || !hasMore.value) return;
+  loadingMore.value = true;
 
-	try {
-		const nextPage = searchE.value
-			? ++searchPage.value
-			: (modStore.getParsePage ?? currentPage.value) + 1;
+  try {
+    const isSearch = !!searchQuery.value;
+    const nextPage = isSearch 
+      ? searchPage.value + 1 
+      : (modStore.getParsePage ?? currentPage.value) + 1;
 
-		const result = await GetModsByPage(nextPage, searchE.value || null);
-		if (!result?.length) return (hasMore.value = false);
+    const fetched = await GetModsByPage(nextPage, searchQuery.value || null);
 
-		const existingUrls = new Set(mods.value.map((m) => m.ModPageLink));
-		const newMods = uniqueBy(
-			result.filter((m) => !existingUrls.has(m.ModPageLink)),
-			(m) => m.Name,
-		);
+    if (!fetched || fetched.length === 0) {
+      hasMore.value = false;
+      return;
+    }
 
-		if (!newMods.length) return (hasMore.value = false);
+    const existingLinks = new Set(cachedMods.value.map((m) => m.ModPageLink));
+    const uniqueNewMods = uniqueBy(
+      fetched.filter((m) => !existingLinks.has(m.ModPageLink)),
+      (m) => m.Name
+    );
 
-		mods.value.push(...newMods);
-		allMods.value.push(...newMods);
-		modStore.setCurrentParsePage(nextPage);
+    if (uniqueNewMods.length === 0) {
+      hasMore.value = false;
+      return;
+    }
 
-		if (versionE.value || loaderE.value) await applyFilters();
-		await nextTick();
-		reinitObserver();
-	} finally {
-		loadingMore.value = false;
-	}
+    cachedMods.value.push(...uniqueNewMods);
+    if (!isSearch) {
+      modStore.setCurrentParsePage(nextPage);
+    }
+    
+    if (isSearch) searchPage.value = nextPage;
+    else currentPage.value = nextPage;
+
+    await applyLocalFilters();
+  } finally {
+    loadingMore.value = false;
+  }
 };
 
-const applyFilters = async () => {
-	let filtered = [...allMods.value];
-	if (versionE.value) {
-		filtered = await SortByVersions(filtered, versionE.value);
-		modStore.setVersionFilter(versionE.value);
-	}
-	if (loaderE.value) {
-		filtered = await SortByLoader(filtered, loaderE.value);
-		modStore.setLoaderFilter(loaderE.value);
-	}
-	mods.value = filtered;
+
+const initData = async () => {
+  if (modStore.getAllMods.length > 0) {
+    cachedMods.value = modStore.getAllMods;
+    selectedVersion.value = modStore.getVersionFilter ?? "";
+    selectedLoader.value = modStore.getLoaderFilter ?? "";
+    searchQuery.value = modStore.getSearchFilter ?? "";
+    
+    if (searchQuery.value) {
+      await handleSearch(searchQuery.value, false);
+    } else {
+      await applyLocalFilters();
+    }
+  } 
+  else {
+    const result = await GetMods();
+    cachedMods.value = uniqueBy(result, (m) => m.Name);
+    displayedMods.value = [...cachedMods.value];
+    modStore.addMods(cachedMods.value);
+    modStore.setCurrentParsePage(1);
+  }
+
+  await nextTick();
+
+  if (route.path === "/") {
+    restoreMainPageScroll();
+  }
+
+  initObserver();
+  checkAutoLoad();
 };
 
-const applySearch = async () => {
-	resetPaging();
-	if (!searchE.value) {
-		updateMods(
-			modStore.getAllMods.length ? modStore.getAllMods : allMods.value,
-		);
-		modStore.setSearchFilter("");
-	} else {
-		const searched = await GetModsByPage(1, searchE.value);
-		updateMods(searched);
-		modStore.setSearchFilter(searchE.value);
-	}
+let searchTimeout: ReturnType<typeof setTimeout>;
 
-	if (versionE.value || loaderE.value) await applyFilters();
-	await nextTick();
-	reinitObserver();
+const onSearchInput = (query: string) => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => handleSearch(query), 400);
 };
 
-const initObserver = async (el: HTMLElement) => {
-	observer?.disconnect();
-	observer = new IntersectionObserver(
-		([entry]) => {
-			if (entry?.isIntersecting && hasMore.value && !loadingMore.value)
-				loadMoreMods();
-		},
-		{ rootMargin: "100px", threshold: 0.1 },
-	);
-	observer.observe(el);
-};
+const handleSearch = async (query: string, updateStore = true) => {
+  resetPagination();
+  searchQuery.value = query;
+  
+  if (updateStore) modStore.setSearchFilter(query);
 
-const reinitObserver = async () => {
-	if (!loaderTrigger.value?.loaderTrigger) return;
-	observer?.disconnect();
-	await nextTick();
-	observer?.observe(loaderTrigger.value.loaderTrigger);
-};
+  if (!query) {
+    cachedMods.value = modStore.getAllMods.length ? modStore.getAllMods : cachedMods.value;
+  } else {
+	const searched = await GetModsByPage(1, query);
+    cachedMods.value = searched;
+  }
 
-const checkAutoLoad = () => {
-	if (!mainElement.value || !hasMore.value || loadingMore.value) return;
-	const containerHeight = mainElement.value.getBoundingClientRect().height;
-	if (containerHeight < window.innerHeight - 100) loadMoreMods();
+  await applyLocalFilters();
+  await nextTick();
+  checkAutoLoad();
 };
 
 const goToDownloads = () => {
-	modStore.setAllMods(mods.value);
-	modStore.setCurrentParsePage(currentPage.value);
-	router.push({ name: "mod-downloads" });
+  modStore.setAllMods(displayedMods.value);
+  modStore.setCurrentParsePage(currentPage.value);
+  router.push({ name: "mod-downloads" });
 };
 
 const goToFavourites = () => {
-	router.push({ name: "mod-favourites" });
+  router.push({ name: "mod-favourites" });
 };
 
-watch(
-	loaderTrigger,
-	async (comp) => {
-		if (comp?.loaderTrigger && hasMore.value) {
-			await nextTick();
-			initObserver(comp.loaderTrigger);
-		}
-	},
-	{ flush: "post" },
-);
+const initObserver = () => {
+  observer?.disconnect();
+  
+  const target = loaderTriggerRef.value?.$el || loaderTriggerRef.value?.loaderTrigger; // Поддержка доступа к DOM элементу компонента
+  
+  if (!target) return;
 
-watch(searchE, () => {
-	if (!searchE.value) searchPage.value = 1;
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry && entry.isIntersecting && hasMore.value && !loadingMore.value) {
+        loadMoreMods();
+      }
+    },
+    { rootMargin: "200px", threshold: 0.1 }
+  );
+  
+  observer.observe(target);
+};
+
+const checkAutoLoad = () => {
+  if (!mainContainerRef.value || !hasMore.value || loadingMore.value) return;
+  const containerHeight = mainContainerRef.value.getBoundingClientRect().height;
+  if (containerHeight < window.innerHeight) {
+    loadMoreMods();
+  }
+};
+
+watch([selectedVersion, selectedLoader], async () => {
+  await applyLocalFilters();
+  await nextTick();
+  checkAutoLoad();
+});
+
+watch(() => loaderTriggerRef.value, () => {
+  initObserver();
 });
 
 onMounted(async () => {
-	if (route.path === "/") restoreMainPageScroll();
-	await loadInitialMods();
-	window.addEventListener("resize", checkAutoLoad);
+  await initData();
+  window.addEventListener("resize", checkAutoLoad);
 });
 
 onUnmounted(() => {
-	observer?.disconnect();
-	window.removeEventListener("resize", checkAutoLoad);
+  observer?.disconnect();
+  window.removeEventListener("resize", checkAutoLoad);
 });
 </script>
 
 <template>
-  <div class="main" ref="mainElement">
+  <div class="main" ref="mainContainerRef">
     <ModsFilter
-		v-model:searchE="searchE"
-		v-model:versionE="versionE"
-		v-model:loaderE="loaderE"
-		
-		:get-unique-loaders="getUniqueLoaders"
-		:get-unique-versions="getUniqueVersions"
+      :searchE="searchQuery"
+      @update:searchE="onSearchInput"
+      
+      v-model:versionE="selectedVersion"
+      v-model:loaderE="selectedLoader"
+      
+      :get-unique-loaders="uniqueLoaders"
+      :get-unique-versions="uniqueVersions"
 
-		:go-to-downloads="goToDownloads"
-		:go-to-favourites="goToFavourites"
-		
-		:apply-filters="applyFilters"
-		:apply-search="applySearch"
-	/>
-    <ModsList :mods="mods" :loaderf="loaderE" :versionf="versionE" :searchf="searchE" />
+      :go-to-downloads="goToDownloads"
+      :go-to-favourites="goToFavourites"
+      
+      :apply-filters="applyLocalFilters"
+      :apply-search="() => handleSearch(searchQuery)"
+    />
+    
+    <ModsList 
+      :mods="displayedMods" 
+      :loaderf="selectedLoader" 
+      :versionf="selectedVersion" 
+      :searchf="searchQuery" 
+    />
 
     <ModLoader
-      ref="loaderTrigger"
+      ref="loaderTriggerRef"
       :has-more="hasMore"
       :loading-more="loadingMore"
-      :count="mods.length"
+      :count="displayedMods.length"
       loading-text="Загрузка модов..."
       end-message="Все моды загружены"
       @load-more="loadMoreMods"
