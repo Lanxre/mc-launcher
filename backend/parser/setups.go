@@ -49,9 +49,14 @@ func setupDependencyDetailsHandler(c *colly.Collector, results map[string]*ModDe
 			name := f["name"].(string)
 			fileID := f["id"].(string)
 			downloads := getString(f, "downloads")
-
-			loaders := f["loaders"].([]interface{})
-			loader := loaders[0].(string)
+			
+			var loader string
+			if f["loaders"] != nil {
+				loaders := f["loaders"].([]any)
+				loader = loaders[0].(string)
+			} else {
+				loader = "forge"
+			}
 
 			parsedVerson := parseVersion(name)
 			parsedSplitVersion := strings.Split(parsedVerson, ",")
