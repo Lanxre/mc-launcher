@@ -9,13 +9,13 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-func ScrapeDependency(depends []ModDependency) []ModDependency {
+func ScrapeDependency(depends []ModDependency, versions []string) []ModDependency {
 	c := newDependencyCollector()
 
 	results := make(map[string]*ModDependency)
 	mu := &sync.Mutex{}
 
-	setupDependencyHandlers(c, results, mu)
+	setupDependencyHandlers(c, results, mu, versions)
 
 	for i := range depends {
 		results[depends[i].ModPageLink] = &depends[i]

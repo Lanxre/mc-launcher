@@ -188,7 +188,6 @@ func downloadDirect(client *http.Client, url, filename string) error {
 		return fmt.Errorf("create file failed: %w", err)
 	}
 	defer file.Close()
-
 	if _, err := io.Copy(file, resp.Body); err != nil {
 		return fmt.Errorf("copy file failed: %w", err)
 	}

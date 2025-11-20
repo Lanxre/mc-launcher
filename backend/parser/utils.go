@@ -103,3 +103,10 @@ func cleanDescription(desc, name string) string {
 	}
 	return strings.TrimSpace(desc)
 }
+
+func getString(m map[string]interface{}, key string) string {
+	if val, ok := m[key]; ok {
+		return val.(string)
+	}
+	return "0"
+}

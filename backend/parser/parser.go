@@ -28,8 +28,8 @@ func (s *ScraperService) GetModsByPage(page int, inputSearch *string) ([]Minecra
 	return ScrapeMinecraftInsideModsFull(url)
 }
 
-func (s *ScraperService) GetModDetails(link string) (MinecraftMod, error) {
-	return ScrapDetails(link)
+func (s *ScraperService) GetModDetails(link string, versions []string) (MinecraftMod, error) {
+	return ScrapDetails(link, versions)
 }
 
 func (s *ScraperService) GetSearchMods(searchedValue string, page int) ([]MinecraftMod, error) {
@@ -39,6 +39,11 @@ func (s *ScraperService) GetSearchMods(searchedValue string, page int) ([]Minecr
 	return ScrapeMinecraftInsideModsFull(url)
 }
 
-func (s *ScraperService) GetModDepends(depends []ModDependency) []ModDependency {
-	return ScrapeDependency(depends)
+func (s *ScraperService) GetModDepends(depends []ModDependency, versions []string) []ModDependency {
+	return ScrapeDependency(depends, versions)
+}
+
+func (s *ScraperService) GetMinecraftModDetailsV1(modUrl string) []MinecraftModDetails {
+	modDetails := ScrapeMinecraftModDetails(modUrl)
+	return modDetails
 }

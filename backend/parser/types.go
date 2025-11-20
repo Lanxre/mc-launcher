@@ -25,3 +25,13 @@ type MinecraftMod struct {
 	Dependency  []ModDependency `yaml:"dependencies"`
 	Details     []DownloadInfo  `yaml:"details"`
 }
+
+type MinecraftModDetails struct {
+	FileID      string `json:"file_id"`
+	Version     string `json:"minecraft"`
+	Loader      string `json:"loader"`
+	Date        string `json:"date"`
+	Size        string `json:"size"`
+	Downloads   string `json:"downloads"`
+	DownloadURL string `json:"download_url"`
+}
