@@ -12,11 +12,11 @@ import (
 )
 
 func setupDependencyHandlers(c *colly.Collector, results map[string]*ModDependency, mu *sync.Mutex, versions []string) {
-	setupDependencyDetailsHandler(c, results, versions)
+	setupDependencyDetailsHandler(c, results, mu, versions)
 	setupSubDependenciesHandler(c, results, mu)
 }
 
-func setupDependencyDetailsHandler(c *colly.Collector, results map[string]*ModDependency, versions []string) {
+func setupDependencyDetailsHandler(c *colly.Collector, results map[string]*ModDependency, mu *sync.Mutex, versions []string) {
 	var details []DownloadInfo
 	c.OnHTML("script", func(e *colly.HTMLElement) {
 		parentURL := e.Request.URL.String()
@@ -64,14 +64,15 @@ func setupDependencyDetailsHandler(c *colly.Collector, results map[string]*ModDe
 					}
 				}
 			}
-
 			if mod, ok := results[parentURL]; ok && isFound {
+				mu.Lock()
 				mod.Details = append(mod.Details, DownloadInfo{
 					URL:       "https://minecraft-inside.ru/download/" + fileID + "/",
 					Version:   parsedVerson,
 					Loader:    loader,
 					Downloads: downloads,
 				})
+				mu.Unlock()
 			}
 		}
 		
