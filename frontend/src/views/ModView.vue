@@ -59,7 +59,7 @@ async function fetchDependencies(
 
 		uniqueDeps.forEach((d) => visited.add(d.ModPageLink));
 
-		const newDeps = await GetModDepends(uniqueDeps);
+		const newDeps = await GetModDepends(uniqueDeps, modStore.currentMod?.Versions);
 		allDeps.push(...newDeps);
 
 		const nestedDeps = newDeps
@@ -95,8 +95,7 @@ async function loadModDetails() {
 		const currentMod = modStore.currentMod;
 		if (!currentMod?.ModPageLink) return;
 
-		const fullDetails = await GetModDetails(currentMod.ModPageLink);
-
+		const fullDetails = await GetModDetails(currentMod.ModPageLink, currentMod.Versions);
 		if (fullDetails.Screenshots && fullDetails.Screenshots.length > 0) {
 			currentMod.Screenshots = await filterExistingScreenshots(
 				fullDetails.Screenshots,
@@ -107,7 +106,6 @@ async function loadModDetails() {
 
 		currentMod.Details = fullDetails.Details;
 		currentMod.Dependency = fullDetails.Dependency;
-
 		applyFilters(currentMod);
 		let allDeps = await fetchDependencies(currentMod.Dependency);
 		allDeps = allDeps.filter(
@@ -116,7 +114,7 @@ async function loadModDetails() {
 				i === self.findIndex((d) => d.ModPageLink === dep.ModPageLink),
 		);
 
-		await enrichDependencies(allDeps);
+		await enrichDependencies(allDeps, currentMod.Versions);
 		depends.value = allDeps;
 		mod.value = currentMod;
 
@@ -128,6 +126,7 @@ async function loadModDetails() {
 				}
 			});
 		}
+		console.log(mod.value)
 	} catch (err) {
 		console.error("Ошибка при загрузке данных мода:", err);
 		isError.value = true;

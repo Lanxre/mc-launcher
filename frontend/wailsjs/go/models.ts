@@ -100,6 +100,30 @@ export namespace parser {
 		    return a;
 		}
 	}
+	export class MinecraftModDetails {
+	    file_id: string;
+	    minecraft: string;
+	    loader: string;
+	    date: string;
+	    size: string;
+	    downloads: string;
+	    download_url: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new MinecraftModDetails(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.file_id = source["file_id"];
+	        this.minecraft = source["minecraft"];
+	        this.loader = source["loader"];
+	        this.date = source["date"];
+	        this.size = source["size"];
+	        this.downloads = source["downloads"];
+	        this.download_url = source["download_url"];
+	    }
+	}
 
 }
 

@@ -5,3 +5,7 @@
 export function LaunchMinecraft(arg1) {
   return window['go']['launcher']['LauncherService']['LaunchMinecraft'](arg1);
 }
+
+export function LaunchMinecraftD() {
+  return window['go']['launcher']['LauncherService']['LaunchMinecraftD']();
+}

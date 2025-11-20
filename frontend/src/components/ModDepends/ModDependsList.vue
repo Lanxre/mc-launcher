@@ -40,7 +40,7 @@ onMounted(async () => {
 
 <template>
     <div>
-        <span class="downloads-title"> Зависимости </span>
+        <span class="downloads-title"> Dependency </span>
         <div class="depend-list" v-if="pairDepends.length > 0" v-for="depend in pairDepends" :key="depend.configDepend.Name">
           <ModDependCard :depend="depend.configDepend" :filename="depend.fileDepend" v-on:delete="removeDepend(depend.configDepend, depend.fileDepend)"/>
         </div>
@@ -62,9 +62,10 @@ onMounted(async () => {
 .downloads-title {
   display: flex;
   justify-content: center;
-  font-size: 30px;
+  font-size: 45px;
   color: white;
   padding: 10px;
+  font-family: "MinecraftV1";
 }
 
 </style>

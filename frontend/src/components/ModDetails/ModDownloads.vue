@@ -83,9 +83,12 @@ const downloadMod = async (
 						const versions = dl.Version.split(",")
 							.map((v) => v.trim())
 							.filter(Boolean);
-						const loaders = dl.Loader.split(",")
+						let loaders = dl.Loader.split(",")
 							.map((l) => l.trim())
-							.filter(Boolean);
+							
+						if (loaders === undefined)  return false
+						else loaders = loaders.filter(Boolean)
+						
 						if (!loaders.includes(detail.Loader)) return false;
 
 						const valid = versions

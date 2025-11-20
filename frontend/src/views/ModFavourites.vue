@@ -49,8 +49,8 @@ onMounted(loadFavourites);
   <View min-height="100vh">
     <div class="mod-favourite">
       <div class="mod-favourite__title">
-        <span>Список избранных</span>
-        <img class="icon" :src="StarIcon" alt="Избранное"/>
+        <span style="height: 50px;">Favourites</span>
+        <img class="icon" style="padding: 10px; margin-bottom: 5px;" :src="StarIcon" alt="Избранное"/>
       </div>
 
       <div v-if="isLoading" class="mod-favourite__state">
@@ -81,11 +81,12 @@ onMounted(loadFavourites);
 
 .mod-favourite__title {
   display: flex;
-  align-items: center;
+  flex-direction: row;
   justify-content: center;
+  align-items: center;
   gap: 10px;
 
-  font-size: 65px;
+  font-size: 45px;
   font-family: 'Minecraftv1';
   color: white;
 

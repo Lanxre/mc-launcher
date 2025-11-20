@@ -88,10 +88,10 @@ export const filterNoDiskModDepends = async (depends: ModDependency[]) => {
 	return result;
 };
 
-export async function enrichDependencies(deps: ModDependency[]) {
+export async function enrichDependencies(deps: ModDependency[], versions: string[]) {
 	for (const dep of deps) {
 		if (dep.Details == null || dep.Details.length === 0) {
-			const data = await GetModDetails(dep.ModPageLink);
+			const data = await GetModDetails(dep.ModPageLink, versions);
 			dep.Details = data.Details;
 		}
 	}

@@ -25,7 +25,10 @@ const openModPage = () => {
             <div class="d-name" title="Открыть в браузере" @click="openModPage">
                 <div v-if="depend !== undefined">
                     <p v-if="onDelete"> {{ depend.Name }} </p>
-                    <p v-else> {{ depend.Name }} - зависимость не скачана</p>
+                    <div v-else class="d-cl"> 
+                        <p>{{ depend.Name }}</p>
+                        <span class="no-d-text">Зависимость не скачана</span>
+                    </div>
                 </div> 
                 <div v-if="filename && onDelete">
                     ({{ filename }})
@@ -44,11 +47,11 @@ const openModPage = () => {
   gap: 10px;
   align-items: center;
 
-  padding: 5px;
+  padding: 10px;
 
   color: white;
   border: 1px solid white;
-  border-radius: 5px;
+  border-radius: 30px;
   margin-bottom: 10px;
 }
 
@@ -67,6 +70,17 @@ const openModPage = () => {
     align-items: center;
     cursor: pointer;
     color: white;
+}
+
+.d-cl {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.no-d-text {
+    color: rgb(165, 72, 72);
 }
 
 </style>
