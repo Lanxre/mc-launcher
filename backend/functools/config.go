@@ -10,6 +10,7 @@ import (
 )
 
 const FAVOURITES = "favourite.yaml"
+const DOWNLOADS = "downloads.yaml"
 
 func (s *FuncService) getYamlFilePath(filename string) (string, error) {
 	mcPath, err := GetMinecraftPath()
@@ -61,6 +62,16 @@ func (s *FuncService) writeModsToFile(path string, mods []parser.MinecraftMod) e
 	return s.writeYamlFile(path, mods)
 }
 
+func (s *FuncService) clearYamlConfig(filename string) error {
+	filePath, err := s.getYamlFilePath(filename)
+	if err != nil {
+		return err
+	}
+	
+	empty := []parser.MinecraftMod{}
+	return s.writeModsToFile(filePath, empty)
+}
+
 func (s *FuncService) SaveYamlModConfig(data parser.MinecraftMod, filename string) error {
 	filePath, err := s.getYamlFilePath(filename)
 
@@ -104,4 +115,9 @@ func (s *FuncService) RemoveFromYamlConfig(mod parser.MinecraftMod, filename str
 	}
 
 	return nil
+}
+
+func (s *FuncService) RemoveFromDownloads() error {
+	err := s.clearYamlConfig(DOWNLOADS)
+	return err
 }

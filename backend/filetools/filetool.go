@@ -193,3 +193,25 @@ func downloadDirect(client *http.Client, url, filename string) error {
 	}
 	return nil
 }
+
+func (s *FileService) RemoveAllMods() error {
+	modPath, err := functools.GetMinecraftModsPath()
+	if err != nil {
+		return  err
+	}
+
+	entries, err := os.ReadDir(modPath)
+	if err != nil {
+		return err
+	}
+
+	for _, entry := range entries {
+		entryPath := filepath.Join(modPath, entry.Name())
+		err := os.RemoveAll(entryPath)
+		if err != nil {
+			return  err
+		}
+	}
+
+	return err
+}
