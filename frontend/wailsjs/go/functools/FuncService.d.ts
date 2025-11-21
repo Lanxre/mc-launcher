@@ -14,6 +14,8 @@ export function IsModExist(arg1:string):Promise<boolean>;
 
 export function OpenModsFolder():Promise<void>;
 
+export function RemoveFromDownloads():Promise<void>;
+
 export function RemoveFromYamlConfig(arg1:parser.MinecraftMod,arg2:string):Promise<void>;
 
 export function SaveYamlModConfig(arg1:parser.MinecraftMod,arg2:string):Promise<void>;

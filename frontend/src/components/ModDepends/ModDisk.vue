@@ -1,30 +1,12 @@
 <script setup lang="ts">
-import {
-	DeleteSavedMod,
-	GetSavedMods,
-} from "@wailsjs/go/functools/FuncService";
-import { ShowInfoMessage } from "@wailsjs/go/main/App";
-import { onMounted, ref } from "vue";
 import CrossIcon from "@/assets/images/close.png";
 import Image from "@/components/Image/Image.vue";
 
-const savedMods = ref<string[]>([]);
+defineProps<{
+    savedMods: string[];
+    onDelete: (mod: string) => void;
+}>();
 
-const onDelete = async (modName: string) => {
-	savedMods.value = savedMods.value.filter((m) => m !== modName);
-	await DeleteSavedMod(modName);
-	await ShowInfoMessage("Успех", "Мод успешно удалён");
-};
-
-const load = async () => {
-	try {
-		savedMods.value = await GetSavedMods();
-	} catch (err) {
-		console.log("Ошибка загрузки с диска", err);
-	}
-};
-
-onMounted(load);
 </script>
 
 <template>

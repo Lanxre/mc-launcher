@@ -5,3 +5,5 @@ import {parser} from '../models';
 export function DownloadFileToMinecraftMods(arg1:string,arg2:string):Promise<void>;
 
 export function DownloadsMods(arg1:Array<string>,arg2:Array<parser.DownloadInfo>):Promise<void>;
+
+export function RemoveAllMods():Promise<void>;

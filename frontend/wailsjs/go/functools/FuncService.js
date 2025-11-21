@@ -26,6 +26,10 @@ export function OpenModsFolder() {
   return window['go']['functools']['FuncService']['OpenModsFolder']();
 }
 
+export function RemoveFromDownloads() {
+  return window['go']['functools']['FuncService']['RemoveFromDownloads']();
+}
+
 export function RemoveFromYamlConfig(arg1, arg2) {
   return window['go']['functools']['FuncService']['RemoveFromYamlConfig'](arg1, arg2);
 }

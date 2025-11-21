@@ -9,3 +9,7 @@ export function DownloadFileToMinecraftMods(arg1, arg2) {
 export function DownloadsMods(arg1, arg2) {
   return window['go']['filetools']['FileService']['DownloadsMods'](arg1, arg2);
 }
+
+export function RemoveAllMods() {
+  return window['go']['filetools']['FileService']['RemoveAllMods']();
+}
