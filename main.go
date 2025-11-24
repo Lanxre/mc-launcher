@@ -5,7 +5,6 @@ import (
 
 	"github.com/lanxre/mc-launcher/backend/filetools"
 	"github.com/lanxre/mc-launcher/backend/functools"
-	"github.com/lanxre/mc-launcher/backend/launcher"
 	"github.com/lanxre/mc-launcher/backend/parser"
 
 	"github.com/wailsapp/wails/v2"
@@ -21,7 +20,6 @@ func main() {
 	minecraftModsParser := parser.NewScraperService()
 	funcService := functools.NewFuncService()
 	fileService := filetools.NewFileService()
-	launcherService := launcher.NewLauncherService()
 
 	app := NewApp()
 
@@ -34,7 +32,10 @@ func main() {
 		},
 		OnStartup: app.startup,
 		Bind: []interface{}{
-			app, minecraftModsParser, funcService, fileService, launcherService,
+			app, 
+			minecraftModsParser, 
+			funcService,
+			fileService,
 		},
 		Windows: &windows.Options{
 			WebviewIsTransparent:              true,

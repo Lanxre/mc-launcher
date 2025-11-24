@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { GetMinecraftVersions, OpenModsFolder } from "@wailsjs/go/functools/FuncService";
-import { LaunchMinecraft, LaunchMinecraftD } from "@wailsjs/go/launcher/LauncherService";
 import { ShowInfoMessage } from "@wailsjs/go/main/App";
 import { onMounted, ref } from "vue";
 import PlayIcon from "@/assets/images/play.png";
@@ -28,8 +27,6 @@ const load = async () => {
 
 const openMinecraft = async () => {
 	if (selectedVersion.value) {
-		// await LaunchMinecraft(selectedVersion.value);
-    await LaunchMinecraftD()
 		await ShowInfoMessage("Успех", "Игра запускается");
 	} else {
 		await ShowInfoMessage("Ошибка", "Не выбрана версия!");
