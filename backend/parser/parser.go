@@ -8,7 +8,6 @@ import (
 const (
 	baseURL       = "https://minecraft-inside.ru"
 	modsPath      = "mods"
-	resourcesPath = "resource-packs"
 )
 
 type ScraperService struct{}
@@ -23,11 +22,6 @@ func (s *ScraperService) GetMods() ([]MinecraftMod, error) {
 
 func (s *ScraperService) GetModsByPage(page int, inputSearch *string) ([]MinecraftMod, error) {
 	url := s.buildURL(modsPath, page, inputSearch)
-	return ScrapeMinecraftInsideModsFull(url)
-}
-
-func (s *ScraperService) GetTextureByPage(page int, inputSearch *string) ([]MinecraftMod, error) {
-	url := s.buildURL(resourcesPath, page, inputSearch)
 	return ScrapeMinecraftInsideModsFull(url)
 }
 
