@@ -5,6 +5,12 @@ import (
 	"strings"
 )
 
+const (
+	baseURL       = "https://minecraft-inside.ru"
+	modsPath      = "mods"
+	resourcesPath = "resource-packs"
+)
+
 type ScraperService struct{}
 
 func NewScraperService() *ScraperService {
@@ -12,19 +18,16 @@ func NewScraperService() *ScraperService {
 }
 
 func (s *ScraperService) GetMods() ([]MinecraftMod, error) {
-	url := "https://minecraft-inside.ru/mods/page/1/"
-	return ScrapeMinecraftInsideModsFull(url)
+	return s.GetModsByPage(1, nil)
 }
 
 func (s *ScraperService) GetModsByPage(page int, inputSearch *string) ([]MinecraftMod, error) {
-	var url string
-	if inputSearch != nil {
-		searchedValue := strings.ReplaceAll(*inputSearch, " ", "+")
-		url = fmt.Sprintf("https://minecraft-inside.ru/mods/page/%d/?q=%s", page, searchedValue)
-	} else {
-		url = fmt.Sprintf("https://minecraft-inside.ru/mods/page/%d/", page)
-	}
+	url := s.buildURL(modsPath, page, inputSearch)
+	return ScrapeMinecraftInsideModsFull(url)
+}
 
+func (s *ScraperService) GetTextureByPage(page int, inputSearch *string) ([]MinecraftMod, error) {
+	url := s.buildURL(resourcesPath, page, inputSearch)
 	return ScrapeMinecraftInsideModsFull(url)
 }
 
@@ -33,10 +36,7 @@ func (s *ScraperService) GetModDetails(link string, versions []string) (Minecraf
 }
 
 func (s *ScraperService) GetSearchMods(searchedValue string, page int) ([]MinecraftMod, error) {
-	searchedValue = strings.ReplaceAll(searchedValue, " ", "+")
-	url := fmt.Sprintf("https://minecraft-inside.ru/mods/page/%d/?q=%s", page, searchedValue)
-
-	return ScrapeMinecraftInsideModsFull(url)
+	return s.GetModsByPage(page, &searchedValue)
 }
 
 func (s *ScraperService) GetModDepends(depends []ModDependency, versions []string) []ModDependency {
@@ -44,6 +44,14 @@ func (s *ScraperService) GetModDepends(depends []ModDependency, versions []strin
 }
 
 func (s *ScraperService) GetMinecraftModDetailsV1(modUrl string) []MinecraftModDetails {
-	modDetails := ScrapeMinecraftModDetails(modUrl)
-	return modDetails
+	return ScrapeMinecraftModDetails(modUrl)
+}
+
+func (s *ScraperService) buildURL(category string, page int, search *string) string {
+	base := fmt.Sprintf("%s/%s/page/%d/", baseURL, category, page)
+	if search != nil && *search != "" {
+		query := strings.ReplaceAll(*search, " ", "+")
+		return fmt.Sprintf("%s?q=%s", base, query)
+	}
+	return base
 }

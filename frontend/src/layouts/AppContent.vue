@@ -177,7 +177,7 @@ const goToFavourites = () => {
 const initObserver = () => {
   observer?.disconnect();
   
-  const target = loaderTriggerRef.value?.$el || loaderTriggerRef.value?.loaderTrigger; // Поддержка доступа к DOM элементу компонента
+  const target = loaderTriggerRef.value?.$el || loaderTriggerRef.value?.loaderTrigger;
   
   if (!target) return;
 

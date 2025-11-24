@@ -13,3 +13,5 @@ export function GetMods():Promise<Array<parser.MinecraftMod>>;
 export function GetModsByPage(arg1:number,arg2:any):Promise<Array<parser.MinecraftMod>>;
 
 export function GetSearchMods(arg1:string,arg2:number):Promise<Array<parser.MinecraftMod>>;
+
+export function GetTextureByPage(arg1:number,arg2:any):Promise<Array<parser.MinecraftMod>>;

@@ -15,6 +15,7 @@ const props = defineProps<{
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-height: 100vh;
   padding: 20px;
   gap: 15px;
   background-color: var(--main-bg-color);
