@@ -25,7 +25,3 @@ export function GetModsByPage(arg1, arg2) {
 export function GetSearchMods(arg1, arg2) {
   return window['go']['parser']['ScraperService']['GetSearchMods'](arg1, arg2);
 }
-
-export function GetTextureByPage(arg1, arg2) {
-  return window['go']['parser']['ScraperService']['GetTextureByPage'](arg1, arg2);
-}
